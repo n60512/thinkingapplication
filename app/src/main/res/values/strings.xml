@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">思考力遊戲平台</string>
+    <string name="username">Username : </string>
+    <string name="password">Password : </string>
+    <string name="sign_me_in">Sign in</string>
+    <string name="login">login</string>
+    <string name="sign_android_string_httperrorunsupportedscheme">Sign @android:string/httpErrorUnsupportedScheme</string>
+    <string name="textview">TextView</string>
+    <string name="game1">一筆畫遊戲</string>
+    <string name="game2">屬性聯想遊戲</string>
+    <string name="game3">簡圖聯想遊戲</string>
+    <string name="game4">圖繪展開遊戲</string>
+    <string name="name">Hi, test01 同學</string>
+</resources>
