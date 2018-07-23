@@ -5,10 +5,19 @@
     <string name="sign_me_in">Sign in</string>
     <string name="login">login</string>
     <string name="sign_android_string_httperrorunsupportedscheme">Sign @android:string/httpErrorUnsupportedScheme</string>
-    <string name="textview">TextView</string>
     <string name="game1">一筆畫遊戲</string>
     <string name="game2">屬性聯想遊戲</string>
     <string name="game3">簡圖聯想遊戲</string>
     <string name="game4">圖繪展開遊戲</string>
     <string name="name">Hi, test01 同學</string>
+    <string name="submit">提早交卷</string>
+    <string name="textView">測驗時間 :</string>
+    <string name="GameSubmit">送出</string>
+    <string name="GameClear">清除</string>
+    <string name="GameGraphName">替您的大作取名</string>
+    <string name="GameTimer1">8 分 00 秒</string>
+    <string name="enterName">輸入文字敘述</string>
+    <string name="GameTimer2">10 分 00 秒</string>
+    <string name="GameTimer3">8 分 00 秒</string>
+    <string name="GameTimer4">20 分 00 秒</string>
 </resources>
