@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -41,6 +42,7 @@ public class AttributeActivity extends AppCompatActivity {
     private LinearLayout lLayoutA,lLayoutB,lLayoutC,lLayoutD,lLayoutE;
     private ImageView imgA, imgB, imgC, imgD, imgE;
     private boolean clickA = false, clickB = false, clickC = false, clickD = false, clickE = false;
+    private int count = 0;
 
     private TextView txtListName, txtListSelect;
     private LinearLayout llList;
@@ -102,10 +104,12 @@ public class AttributeActivity extends AppCompatActivity {
                 if(clickA==false){
                     lLayoutA.setBackgroundColor(0xffaaaaaa);
                     clickA = true;
+                    count++;
                 }
                 else{
                     lLayoutA.setBackgroundColor(0x00ffffff);
                     clickA = false;
+                    count--;
                 }
 
             }
@@ -117,10 +121,12 @@ public class AttributeActivity extends AppCompatActivity {
                 if(clickB==false){
                     lLayoutB.setBackgroundColor(0xffaaaaaa);
                     clickB = true;
+                    count++;
                 }
                 else{
                     lLayoutB.setBackgroundColor(0x00ffffff);
                     clickB = false;
+                    count--;
                 }
             }
         });
@@ -131,10 +137,12 @@ public class AttributeActivity extends AppCompatActivity {
                 if(clickC==false){
                     lLayoutC.setBackgroundColor(0xffaaaaaa);
                     clickC = true;
+                    count++;
                 }
                 else{
                     lLayoutC.setBackgroundColor(0x00ffffff);
                     clickC = false;
+                    count--;
                 }
             }
         });
@@ -145,10 +153,12 @@ public class AttributeActivity extends AppCompatActivity {
                 if(clickD==false){
                     lLayoutD.setBackgroundColor(0xffaaaaaa);
                     clickD = true;
+                    count++;
                 }
                 else{
                     lLayoutD.setBackgroundColor(0x00ffffff);
                     clickD = false;
+                    count--;
                 }
             }
         });
@@ -159,10 +169,12 @@ public class AttributeActivity extends AppCompatActivity {
                 if(clickE==false){
                     lLayoutE.setBackgroundColor(0xffaaaaaa);
                     clickE = true;
+                    count++;
                 }
                 else{
                     lLayoutE.setBackgroundColor(0x00ffffff);
                     clickE = false;
+                    count--;
                 }
             }
         });
@@ -173,30 +185,39 @@ public class AttributeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // click then add data to mlist and change adapter
-                String choose = "";
-                if(clickA==true) choose = choose + "A";
-                if(clickB==true) choose = choose + "B";
-                if(clickC==true) choose = choose + "C";
-                if(clickD==true) choose = choose + "D";
-                if(clickE==true) choose = choose + "E";
-                mlist.add(new listContext(edtName.getText().toString(),choose));
+                if(count<2){
+                    Toast.makeText(AttributeActivity.this,"請選擇兩張(含)以上圖片",Toast.LENGTH_SHORT).show();
+                }
+                else if(edtName.getText().toString().equals("")){
+                    Toast.makeText(AttributeActivity.this,"請輸入作品名稱",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    // click then add data to mlist and change adapter
+                    String choose = "";
+                    if(clickA==true) choose = choose + "A";
+                    if(clickB==true) choose = choose + "B";
+                    if(clickC==true) choose = choose + "C";
+                    if(clickD==true) choose = choose + "D";
+                    if(clickE==true) choose = choose + "E";
+                    mlist.add(new listContext(edtName.getText().toString(),choose));
 
-                adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
 
 
-                // clear all
-                edtName.setText("");
-                clickA = false;
-                clickB = false;
-                clickC = false;
-                clickD = false;
-                clickE = false;
-                lLayoutA.setBackgroundColor(0x00ffffff);
-                lLayoutB.setBackgroundColor(0x00ffffff);
-                lLayoutC.setBackgroundColor(0x00ffffff);
-                lLayoutD.setBackgroundColor(0x00ffffff);
-                lLayoutE.setBackgroundColor(0x00ffffff);
+                    // clear all
+                    edtName.setText("");
+                    clickA = false;
+                    clickB = false;
+                    clickC = false;
+                    clickD = false;
+                    clickE = false;
+                    lLayoutA.setBackgroundColor(0x00ffffff);
+                    lLayoutB.setBackgroundColor(0x00ffffff);
+                    lLayoutC.setBackgroundColor(0x00ffffff);
+                    lLayoutD.setBackgroundColor(0x00ffffff);
+                    lLayoutE.setBackgroundColor(0x00ffffff);
+                    count = 0;
+                }
 
             }
         });

@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -98,15 +100,23 @@ public class ExpandActivity extends AppCompatActivity {
         btnOk.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v) {
-                mlist.add(new listContext(baseBitmap, edtName.getText().toString()));
-                adapter.notifyDataSetChanged();
+                if(baseBitmap==null){
+                    Toast.makeText(ExpandActivity.this,"請完成作畫",Toast.LENGTH_SHORT).show();
+                }
+                else if(edtName.getText().toString().equals("")){
+                    Toast.makeText(ExpandActivity.this,"請輸入作品名稱",Toast.LENGTH_SHORT).show();
+                }
                 // clear all
-                edtName.setText("");
-                if(baseBitmap!=null){
+                else if(baseBitmap!=null&&!TextUtils.isEmpty(edtName.getText().toString())){
+                    mlist.add(new listContext(baseBitmap, edtName.getText().toString()));
+                    adapter.notifyDataSetChanged();
+
+                    edtName.setText("");
                     baseBitmap = Bitmap.createBitmap(imgvExpand.getWidth(),imgvExpand.getHeight(),Bitmap.Config.ARGB_8888);
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvExpand.setImageBitmap(baseBitmap);
+                    baseBitmap = null;
                 }
             }
         });
@@ -122,6 +132,7 @@ public class ExpandActivity extends AppCompatActivity {
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvExpand.setImageBitmap(baseBitmap);
+                    baseBitmap = null;
                 }
             }
         });

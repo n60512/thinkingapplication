@@ -45,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
                     // show alert dialog
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("一筆畫遊戲作答說明")
-                            .setMessage("此測驗在\"8分鐘\"內須完成圖像的作答，並且為圖片輸入作品名稱。\n" +
-                                        "圖像作答需一筆畫完成，並且不能超過作圖區。\n" +
-                                        "在作答時間之內可連續作答，每次的作答紀錄均會在右側的作答歷程中顯示。\n" +
-                                        "結束作答可在頁面上按送出按鍵繳交作答，繼續作畫。")
+                            .setMessage("【 作答時間 : 8 分鐘 】\n"+
+                                        "圖像作答需一筆畫完成，並且為圖片輸入作品名稱。\n" +
+                                        "作答完成可在頁面上按送出按鍵繳交作答，並繼續作畫。\n"+
+                                        "在作答時間內可連續作答，每次的作答紀錄均會在左側的作答歷程中顯示。\n")
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -68,12 +68,11 @@ public class MainActivity extends AppCompatActivity {
                 if(view.getId()==R.id.btnAttribute){
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("屬性聯想遊戲作答說明")
-                            .setMessage("此測驗在\"10分鐘\"選出兩張(含)以上相關連性質的圖片。\n" +
-                                        "在下方輸入相關的文字敘述，作答完按下存檔送出。\n" +
-                                        "例如:在圖片中選出【衣服】和【雞蛋】，聯想到\"顏色間具有相同性質\"\n" +
-                                        "在下方就可以輸入【白色】，作答完按下存檔即可送出。\n" +
-                                        "在作答時間之內可連續作答，每次的作答紀錄均會在下側的作答歷程中顯示。\n" +
-                                        "結束作答可在頁面上按\"送出\"按鍵繳交答案，繼續作答。")
+                            .setMessage("【 作答時間 : 10 分鐘 】\n"+
+                                        "選出兩張(含)以上相關連性質的圖片，在下方輸入相關的文字敘述，作答完按下送出按鍵繳交作答。\n" +
+                                        "例如 : 選出【衣服】和【雞蛋】，聯想到\"顏色間具有相同性質\"\n" +
+                                        "就可以在下方輸入【白色】，並按下送出鍵送出作答。\n" +
+                                        "作答時間之內可連續作答，每次的作答紀錄均會在左側的作答歷程中顯示。\n")
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -93,9 +92,10 @@ public class MainActivity extends AppCompatActivity {
                 if(view.getId()==R.id.btnAssociate){
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("簡圖聯想遊戲作答說明")
-                            .setMessage("此測驗在\"8分鐘內\"針對題目給予的圖片輸入文字作答\n" +
-                                        "在作答時間之內可連續作答，每次的作答紀錄均會在右側的作答歷程中顯示。\n" +
-                                        "若提早結束作答可在頁面上按\"送出\"按鍵繳交作答。")
+                            .setMessage("【 作答時間 : 8 分鐘 】 \n"+
+                                        "針對題目給予的圖片輸入文字作答\n" +
+                                        "在作答時間之內可連續作答，每次的作答紀錄均會在左側的作答歷程中顯示。\n" +
+                                        "若提早結束作答可在頁面上按\"提早交卷\"繳交作答。")
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -115,8 +115,9 @@ public class MainActivity extends AppCompatActivity {
                 if(view.getId()==R.id.btnExpand){
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("圖繪展開遊戲作答說明")
-                            .setMessage("此測驗在\"20分鐘內\"須完成圖像的作答，並且為圖片\"輸入作品名稱\"。\n" +
-                                        "在作答時間之內可連續作答，每次的作答紀錄均會在右側的作答歷程中顯示。\n" +
+                            .setMessage("【 測驗時間 : 20 分鐘 】\n"+
+                                        "完成圖像的作答，並且在下方為圖片輸入作品名稱。\n" +
+                                        "作答時間之內可連續作答，每次的作答紀錄均會在左側的作答歷程中顯示。\n" +
                                         "結束作答可在頁面上按\"送出\"按鍵繳交作答，繼續作畫。")
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override

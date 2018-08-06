@@ -12,6 +12,7 @@ import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,17 +98,25 @@ public class DrawActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                mlist.add(new listContext(baseBitmap, edtName.getText().toString()));
-                adapter.notifyDataSetChanged();
+                if(baseBitmap==null){
+                    Toast.makeText(DrawActivity.this,"請完成作畫",Toast.LENGTH_SHORT).show();
+                }
+                else if(edtName.getText().toString().equals("")){
+                    Toast.makeText(DrawActivity.this,"請輸入作品名稱",Toast.LENGTH_SHORT).show();
+                }
                 // clear all
-                edtName.setText("");
-                if(baseBitmap!=null){
+                else if(baseBitmap!=null&&!TextUtils.isEmpty(edtName.getText().toString())){
+                    mlist.add(new listContext(baseBitmap, edtName.getText().toString()));
+                    adapter.notifyDataSetChanged();
+
+                    edtName.setText("");
                     baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(),imgvDraw.getHeight(),Bitmap.Config.ARGB_8888);
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvDraw.setImageBitmap(baseBitmap);
+                    baseBitmap = null;
+                    isTouch = false;
                 }
-                isTouch = false;
             }
         });
 
@@ -122,6 +132,7 @@ public class DrawActivity extends AppCompatActivity {
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvDraw.setImageBitmap(baseBitmap);
+                    baseBitmap = null;
                 }
             }
         });
