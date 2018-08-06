@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnGame1"
+        android:id="@+id/btnDraw"
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:layout_marginEnd="16dp"
@@ -30,7 +30,7 @@
         android:layout_marginTop="44dp"
         android:alpha="0.8"
         android:background="#48D1CC"
-        android:text="@string/game1"
+        android:text="@string/gameDraw"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -40,41 +40,41 @@
         app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
     <Button
-        android:id="@+id/btnGame2"
+        android:id="@+id/btnAttribute"
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:background="#48D1CC"
         android:alpha="0.8"
-        android:text="@string/game2"
+        android:background="#48D1CC"
+        android:text="@string/gameAttribute"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGame1" />
+        app:layout_constraintTop_toBottomOf="@+id/btnDraw" />
 
     <Button
-        android:id="@+id/btnGame3"
+        android:id="@+id/btnAssociate"
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:background="#48D1CC"
         android:alpha="0.8"
-        android:text="@string/game3"
+        android:background="#48D1CC"
+        android:text="@string/gameAssociate"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGame2" />
+        app:layout_constraintTop_toBottomOf="@+id/btnAttribute" />
 
     <Button
-        android:id="@+id/btnGame4"
+        android:id="@+id/btnExpand"
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:layout_marginEnd="16dp"
@@ -82,12 +82,12 @@
         android:layout_marginTop="8dp"
         android:alpha="0.8"
         android:background="#48D1CC"
-        android:text="@string/game4"
+        android:text="@string/gameExpand"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGame3" />
+        app:layout_constraintTop_toBottomOf="@+id/btnAssociate" />
 
 </android.support.constraint.ConstraintLayout>

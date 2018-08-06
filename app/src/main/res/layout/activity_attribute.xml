@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Game2Activity">
+    tools:context=".AttributeActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -33,12 +33,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/txtTimer2"
+            android:id="@+id/txtAttributeTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingStart="8dp"
-            android:text="@string/GameTimer2"
+            android:text="@string/AttributeTimer"
             android:textSize="18sp" />
 
     </LinearLayout>
@@ -65,7 +65,7 @@
             android:layout_weight="9">
 
             <LinearLayout
-                android:id="@+id/lLayout5"
+                android:id="@+id/lLayoutE"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginEnd="8dp"
@@ -75,128 +75,134 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/lLayout4"
-                app:layout_constraintTop_toBottomOf="@+id/lLayout2">
+                app:layout_constraintStart_toEndOf="@+id/lLayoutD"
+                app:layout_constraintTop_toBottomOf="@+id/lLayoutB">
 
                 <TextView
-                    android:id="@+id/txt05"
+                    android:id="@+id/txtE"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="E." />
 
                 <ImageView
-                    android:id="@+id/img05"
+                    android:id="@+id/imgE"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/graph5" />
+                    android:clickable="true"
+                    app:srcCompat="@drawable/img5" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/lLayout4"
+                android:id="@+id/lLayoutD"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/lLayout5"
+                app:layout_constraintEnd_toStartOf="@+id/lLayoutE"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/lLayout3"
-                app:layout_constraintTop_toBottomOf="@+id/lLayout2"
+                app:layout_constraintStart_toEndOf="@+id/lLayoutC"
+                app:layout_constraintTop_toBottomOf="@+id/lLayoutB"
                 app:layout_constraintVertical_bias="1.0">
 
                 <TextView
-                    android:id="@+id/txt04"
+                    android:id="@+id/txtD"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="D." />
 
                 <ImageView
-                    android:id="@+id/img04"
+                    android:id="@+id/imgD"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/graph4" />
+                    android:clickable="true"
+                    app:srcCompat="@drawable/img4" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/lLayout3"
+                android:id="@+id/lLayoutC"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/lLayout4"
+                app:layout_constraintEnd_toStartOf="@+id/lLayoutD"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/lLayout1">
+                app:layout_constraintTop_toBottomOf="@+id/lLayoutA">
 
                 <TextView
-                    android:id="@+id/txt03"
+                    android:id="@+id/txtC"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="C." />
 
                 <ImageView
-                    android:id="@+id/img03"
+                    android:id="@+id/imgC"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/graph3" />
+                    android:clickable="true"
+                    app:srcCompat="@drawable/img3" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/lLayout2"
+                android:id="@+id/lLayoutB"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="@+id/lLayout5"
+                app:layout_constraintBottom_toTopOf="@+id/lLayoutE"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/lLayout1"
+                app:layout_constraintStart_toEndOf="@+id/lLayoutA"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/txt02"
+                    android:id="@+id/txtB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="B." />
 
                 <ImageView
-                    android:id="@+id/img02"
+                    android:id="@+id/imgB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/graph2" />
+                    android:clickable="true"
+                    app:srcCompat="@drawable/img2" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/lLayout1"
+                android:id="@+id/lLayoutA"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_marginEnd="4dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="@+id/lLayout3"
-                app:layout_constraintEnd_toStartOf="@+id/lLayout2"
+                app:layout_constraintBottom_toTopOf="@+id/lLayoutC"
+                app:layout_constraintEnd_toStartOf="@+id/lLayoutB"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/txt01"
+                    android:id="@+id/txtA"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="A." />
 
                 <ImageView
-                    android:id="@+id/img01"
+                    android:id="@+id/imgA"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/graph1" />
+                    app:srcCompat="@drawable/img1" />
 
             </LinearLayout>
         </android.support.constraint.ConstraintLayout>
@@ -208,7 +214,7 @@
             android:layout_weight="1">
 
             <EditText
-                android:id="@+id/edtName2"
+                android:id="@+id/edtAttributeName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
@@ -216,10 +222,11 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="@string/enterName"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:maxLength="10" />
 
             <Button
-                android:id="@+id/btnOk2"
+                android:id="@+id/btnAttributeOk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
@@ -231,7 +238,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btnClr2"
+                android:id="@+id/btnAttributeClr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"

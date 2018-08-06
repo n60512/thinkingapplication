@@ -17,10 +17,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity" />
-        <activity android:name=".Game1Activity" />
-        <activity android:name=".Game2Activity" />
-        <activity android:name=".Game3Activity" />
-        <activity android:name=".Game4Activity"></activity>
+        <activity android:name=".DrawActivity" />
+        <activity android:name=".AttributeActivity" />
+        <activity android:name=".AssociateActivity" />
+        <activity android:name=".ExpandActivity"></activity>
     </application>
 
 </manifest>

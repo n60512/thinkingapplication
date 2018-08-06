@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Game1Activity">
+    tools:context=".DrawActivity">
 
 
         <LinearLayout
@@ -34,12 +34,12 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/txtTimer1"
+                android:id="@+id/txtDrawTimer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingStart="8dp"
-                android:text="@string/GameTimer1"
+                android:text="@string/DrawTimer"
                 android:textSize="18sp" />
 
         </LinearLayout>
@@ -61,16 +61,16 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_weight="9">
 
-                <View
-                    android:id="@+id/view1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="12dp"
+                <ImageView
+                    android:id="@+id/imgvDraw"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:background="	#FFFFF0"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -85,7 +85,7 @@
                 android:layout_weight="1">
 
                 <EditText
-                    android:id="@+id/edtName1"
+                    android:id="@+id/edtDrawName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
@@ -96,7 +96,7 @@
                     android:inputType="textPersonName" />
 
                 <Button
-                    android:id="@+id/btnOk1"
+                    android:id="@+id/btnDrawOk"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
@@ -108,7 +108,7 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/btnClr1"
+                    android:id="@+id/btnDrawClr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
