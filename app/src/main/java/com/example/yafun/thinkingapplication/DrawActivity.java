@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.Image;
 import android.os.CountDownTimer;
@@ -111,6 +112,7 @@ public class DrawActivity extends AppCompatActivity {
 
                     edtName.setText("");
                     baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(),imgvDraw.getHeight(),Bitmap.Config.ARGB_8888);
+                    baseBitmap = resizeImage(baseBitmap,320,360);
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvDraw.setImageBitmap(baseBitmap);
@@ -129,6 +131,7 @@ public class DrawActivity extends AppCompatActivity {
                 edtName.setText("");
                 if(baseBitmap!=null){
                     baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(),imgvDraw.getHeight(),Bitmap.Config.ARGB_8888);
+                    baseBitmap = resizeImage(baseBitmap,320,360);
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvDraw.setImageBitmap(baseBitmap);
@@ -379,6 +382,22 @@ public class DrawActivity extends AppCompatActivity {
                 this.txtImgName = txtImgName;
             }
         }
+    }
+
+    public Bitmap resizeImage(Bitmap bitmap, int w, int h) {
+        Bitmap BitmapOrg = bitmap;
+        int width = BitmapOrg.getWidth();
+        int height = BitmapOrg.getHeight();
+        int newWidth = w;
+        int newHeight = h;
+
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width, height, matrix, true);
+        return resizedBitmap;
     }
 
     // intercept back

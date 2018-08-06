@@ -65,13 +65,18 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_weight="9">
+                android:layout_weight="7"
+                android:gravity="center">
 
                 <ImageView
                     android:id="@+id/imgvDraw"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="	#FFFFF0"
+                    android:layout_width="320dp"
+                    android:layout_height="360dp"
+                    android:background="#fffff0"
+                    android:paddingBottom="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingStart="2dp"
+                    android:paddingTop="2dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
@@ -82,7 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_weight="1">
+                android:layout_weight="3">
 
                 <EditText
                     android:id="@+id/edtDrawName"

@@ -113,6 +113,7 @@ public class ExpandActivity extends AppCompatActivity {
 
                     edtName.setText("");
                     baseBitmap = Bitmap.createBitmap(imgvExpand.getWidth(),imgvExpand.getHeight(),Bitmap.Config.ARGB_8888);
+                    baseBitmap = resizeImage(baseBitmap,320,360);
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvExpand.setImageBitmap(baseBitmap);
@@ -129,6 +130,7 @@ public class ExpandActivity extends AppCompatActivity {
                 edtName.setText("");
                 if(baseBitmap!=null){
                     baseBitmap = Bitmap.createBitmap(imgvExpand.getWidth(),imgvExpand.getHeight(),Bitmap.Config.ARGB_8888);
+                    baseBitmap = resizeImage(baseBitmap,320,360);
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvExpand.setImageBitmap(baseBitmap);
@@ -372,6 +374,22 @@ public class ExpandActivity extends AppCompatActivity {
                 this.txtImgName = txtImgName;
             }
         }
+    }
+
+    public Bitmap resizeImage(Bitmap bitmap, int w, int h) {
+        Bitmap BitmapOrg = bitmap;
+        int width = BitmapOrg.getWidth();
+        int height = BitmapOrg.getHeight();
+        int newWidth = w;
+        int newHeight = h;
+
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width, height, matrix, true);
+        return resizedBitmap;
     }
 
     // intercept back
