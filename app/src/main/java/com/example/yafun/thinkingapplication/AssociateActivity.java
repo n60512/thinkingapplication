@@ -2,6 +2,8 @@ package com.example.yafun.thinkingapplication;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,6 +27,10 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
@@ -36,6 +43,9 @@ public class AssociateActivity extends AppCompatActivity {
     private Button btnOk, btnClr;
     private TextView txtAssociateTimer;
     private CountDownTimer timer;
+
+    private int imgA_number;
+    private ImageView photoA;
 
     private ListView lvAssociate;
 
@@ -53,6 +63,45 @@ public class AssociateActivity extends AppCompatActivity {
         // set view set title
         setContentView(R.layout.drawerlayout_associate);
         setTitle("簡圖聯想遊戲");
+
+        while(true){
+            try {
+                imgA_number = (int)(Math.random()*100+1);
+                java.net.URL urlA = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgA_number +".jpg");
+                java.net.HttpURLConnection ucA = (java.net.HttpURLConnection) urlA
+                        .openConnection();
+                ucA.setRequestProperty("User-agent", "IE/6.0");
+                ucA.setReadTimeout(30000);
+                ucA.connect();
+
+                int statusA = ucA.getResponseCode();
+
+                if(statusA == 404){
+                    continue;
+                }
+                else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgA_number + ".jpg");
+
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run(){
+                                    photoA = (ImageView)findViewById(R.id.imgAssociate);
+                                    photoA.setImageBitmap (mBitmap);
+                                }}
+                            );
+                        }}).start();
+                    break;
+                }
+            }catch (java.net.MalformedURLException e) {
+                e.printStackTrace();
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         // set variable value
         edtName = (EditText)findViewById(R.id.edtAssociateName);
@@ -218,6 +267,21 @@ public class AssociateActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+    public static Bitmap getBitmapFormURL(String src){
+        try{
+            URL url = new URL(src);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.connect();
+
+            InputStream input = conn.getInputStream();
+            Bitmap mBitmap = BitmapFactory.decodeStream(input);
+            return mBitmap;
+        }catch (IOException e){
+            e.printStackTrace();
+            return null;
+        }
+        //return null;
     }
 
 }
