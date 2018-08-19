@@ -88,8 +88,7 @@
                     android:id="@+id/imgE"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
-                    app:srcCompat="@drawable/img5" />
+                    android:clickable="true" />
             </LinearLayout>
 
             <LinearLayout
@@ -116,8 +115,7 @@
                     android:id="@+id/imgD"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
-                    app:srcCompat="@drawable/img4" />
+                    android:clickable="true" />
 
             </LinearLayout>
 
@@ -144,8 +142,7 @@
                     android:id="@+id/imgC"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
-                    app:srcCompat="@drawable/img3" />
+                    android:clickable="true" />
 
             </LinearLayout>
 
@@ -173,8 +170,7 @@
                     android:id="@+id/imgB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
-                    app:srcCompat="@drawable/img2" />
+                    android:clickable="true" />
 
             </LinearLayout>
 
@@ -201,8 +197,7 @@
                 <ImageView
                     android:id="@+id/imgA"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/img1" />
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
         </android.support.constraint.ConstraintLayout>
