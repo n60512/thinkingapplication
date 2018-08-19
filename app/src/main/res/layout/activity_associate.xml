@@ -61,8 +61,7 @@
         <ImageView
             android:id="@+id/imgAssociate"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/graph1" />
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 
     <LinearLayout
