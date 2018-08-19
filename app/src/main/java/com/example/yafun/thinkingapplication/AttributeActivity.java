@@ -2,6 +2,8 @@ package com.example.yafun.thinkingapplication;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
@@ -26,10 +28,16 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+
+import static com.example.yafun.thinkingapplication.AssociateActivity.getBitmapFormURL;
 
 public class AttributeActivity extends AppCompatActivity {
 
@@ -40,7 +48,10 @@ public class AttributeActivity extends AppCompatActivity {
     private CountDownTimer timer;
 
     private LinearLayout lLayoutA,lLayoutB,lLayoutC,lLayoutD,lLayoutE;
-    private ImageView imgA, imgB, imgC, imgD, imgE;
+
+    private int imgA_number, imgB_number, imgC_number, imgD_number, imgE_number;
+    private ImageView photoA, photoB, photoC, photoD, photoE;
+
     private boolean clickA = false, clickB = false, clickC = false, clickD = false, clickE = false;
     private int count = 0;
 
@@ -67,6 +78,135 @@ public class AttributeActivity extends AppCompatActivity {
         setContentView(R.layout.drawerlayout_attribute);
         setTitle("屬性聯想遊戲");
 
+        while(true){
+            try {
+                imgA_number = (int)(Math.random()*100+1);
+                imgB_number = (int)(Math.random()*100+1);
+                imgC_number = (int)(Math.random()*100+1);
+                imgD_number = (int)(Math.random()*100+1);
+                imgE_number = (int)(Math.random()*100+1);
+
+                java.net.URL urlA = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgA_number +".jpg");
+                java.net.HttpURLConnection ucA = (java.net.HttpURLConnection) urlA
+                        .openConnection();
+                ucA.setRequestProperty("User-agent", "IE/6.0");
+                ucA.setReadTimeout(30000);
+                ucA.connect();
+
+                java.net.URL urlB = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgB_number +".jpg");
+                java.net.HttpURLConnection ucB = (java.net.HttpURLConnection) urlB
+                        .openConnection();
+                ucB.setRequestProperty("User-agent", "IE/6.0");
+                ucB.setReadTimeout(30000);
+                ucB.connect();
+
+                java.net.URL urlC = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgC_number +".jpg");
+                java.net.HttpURLConnection ucC = (java.net.HttpURLConnection) urlC
+                        .openConnection();
+                ucC.setRequestProperty("User-agent", "IE/6.0");
+                ucC.setReadTimeout(30000);
+                ucC.connect();
+
+                java.net.URL urlD = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgD_number +".jpg");
+                java.net.HttpURLConnection ucD = (java.net.HttpURLConnection) urlD
+                        .openConnection();
+                ucD.setRequestProperty("User-agent", "IE/6.0");
+                ucD.setReadTimeout(30000);
+                ucD.connect();
+
+                java.net.URL urlE = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgE_number +".jpg");
+                java.net.HttpURLConnection ucE = (java.net.HttpURLConnection) urlE
+                        .openConnection();
+                ucE.setRequestProperty("User-agent", "IE/6.0");
+                ucE.setReadTimeout(30000);
+                ucE.connect();
+
+                int statusA = ucA.getResponseCode();
+                int statusB = ucB.getResponseCode();
+                int statusC = ucC.getResponseCode();
+                int statusD = ucD.getResponseCode();
+                int statusE = ucE.getResponseCode();
+
+                if((statusA == 404) || (statusB == 404) || (statusC == 404) || (statusD == 404) || (statusE == 404)){
+                    continue;
+                }
+                else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgA_number + ".jpg");
+
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run(){
+                                    photoA = (ImageView)findViewById(R.id.imgA);
+                                    photoA.setImageBitmap (mBitmap);
+                                }}
+                            );
+                        }}).start();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgB_number + ".jpg");
+
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run(){
+                                    photoB = (ImageView)findViewById(R.id.imgB);
+                                    photoB.setImageBitmap (mBitmap);
+                                }}
+                            );
+                        }}).start();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgC_number + ".jpg");
+
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run(){
+                                    photoC = (ImageView)findViewById(R.id.imgC);
+                                    photoC.setImageBitmap (mBitmap);
+                                }}
+                            );
+                        }}).start();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgD_number + ".jpg");
+
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run(){
+                                    photoD = (ImageView)findViewById(R.id.imgD);
+                                    photoD.setImageBitmap (mBitmap);
+                                }}
+                            );
+                        }}).start();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgE_number + ".jpg");
+
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run(){
+                                    photoE = (ImageView)findViewById(R.id.imgE);
+                                    photoE.setImageBitmap (mBitmap);
+                                }}
+                            );
+                        }}).start();
+                    break;
+                }
+            }catch (java.net.MalformedURLException e) {
+                e.printStackTrace();
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
         // set variable value
         edtName = (EditText)findViewById(R.id.edtAttributeName);
         btnOk = (Button)findViewById(R.id.btnAttributeOk);
@@ -78,11 +218,11 @@ public class AttributeActivity extends AppCompatActivity {
         lLayoutC = (LinearLayout)findViewById(R.id.lLayoutC);
         lLayoutD = (LinearLayout)findViewById(R.id.lLayoutD);
         lLayoutE = (LinearLayout)findViewById(R.id.lLayoutE);
-        imgA = (ImageView)findViewById(R.id.imgA);
-        imgB = (ImageView)findViewById(R.id.imgB);
-        imgC = (ImageView)findViewById(R.id.imgC);
-        imgD = (ImageView)findViewById(R.id.imgD);
-        imgE = (ImageView)findViewById(R.id.imgE);
+        photoA = (ImageView)findViewById(R.id.imgA);
+        photoB = (ImageView)findViewById(R.id.imgB);
+        photoC = (ImageView)findViewById(R.id.imgC);
+        photoD = (ImageView)findViewById(R.id.imgD);
+        photoE = (ImageView)findViewById(R.id.imgE);
 
         txtListName = (TextView)findViewById(R.id.txtListName);
         txtListSelect = (TextView)findViewById(R.id.txtListSelect);
@@ -98,7 +238,7 @@ public class AttributeActivity extends AppCompatActivity {
         startTimer();
 
         // img click action
-        imgA.setOnClickListener(new View.OnClickListener() {
+        photoA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(clickA==false){
@@ -115,7 +255,7 @@ public class AttributeActivity extends AppCompatActivity {
             }
         });
 
-        imgB.setOnClickListener(new View.OnClickListener() {
+        photoB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(clickB==false){
@@ -131,7 +271,7 @@ public class AttributeActivity extends AppCompatActivity {
             }
         });
 
-        imgC.setOnClickListener(new View.OnClickListener() {
+        photoC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(clickC==false){
@@ -147,7 +287,7 @@ public class AttributeActivity extends AppCompatActivity {
             }
         });
 
-        imgD.setOnClickListener(new View.OnClickListener() {
+        photoD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(clickD==false){
@@ -163,7 +303,7 @@ public class AttributeActivity extends AppCompatActivity {
             }
         });
 
-        imgE.setOnClickListener(new View.OnClickListener() {
+        photoE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(clickE==false){
@@ -451,6 +591,21 @@ public class AttributeActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+    public static Bitmap getBitmapFormURL(String src){
+        try{
+            URL url = new URL(src);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.connect();
+
+            InputStream input = conn.getInputStream();
+            Bitmap mBitmap = BitmapFactory.decodeStream(input);
+            return mBitmap;
+        }catch (IOException e){
+            e.printStackTrace();
+            return null;
+        }
+        //return null;
     }
 
 }
