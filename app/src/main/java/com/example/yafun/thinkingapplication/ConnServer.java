@@ -15,7 +15,7 @@ import org.json.*;
 
 public class ConnServer {
 
-    private String database = null;
+    private String database = null;        // database
     private String webRequest = null;      //  web request;type:json
     private String imageID = "-1";
 
