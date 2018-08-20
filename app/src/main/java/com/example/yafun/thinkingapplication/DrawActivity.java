@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -159,12 +160,27 @@ public class DrawActivity extends AppCompatActivity {
                 isPaused = true;
                 new AlertDialog.Builder(DrawActivity.this)
                         .setMessage("確定提早交卷嗎?")
+                        // submit sheet
                         .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                             // if yes stop the timer and submit the sheet
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 timer.cancel();
                                 timer = null;
+                                // commit content to database
+                                Thread thread = new Thread(){
+                                    public void run(){
+                                        int count = adapter.getCount();
+                                        ConnServer[] conn = new ConnServer[count];
+                                        for(int index=0; index<count; index++){
+                                            String content = adapter.getItem(index).getName();
+                                            conn[index] = new ConnServer("drawing",content,"test01");
+                                            String imgID = conn[index].getImageID();
+                                        }
+                                    }
+                                };
+                                thread.start();
+
                                 finish();
                             }
                         })
@@ -335,7 +351,7 @@ public class DrawActivity extends AppCompatActivity {
 
         public myAdapter(Context context, List<listContext> listcontext){
             mInflater = LayoutInflater.from(context);
-            this.mdatas = listcontext;
+            mdatas = listcontext;
         }
 
         @Override
@@ -344,7 +360,7 @@ public class DrawActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object getItem(int position) {
+        public listContext getItem(int position) {
             return mdatas.get(position);
         }
 

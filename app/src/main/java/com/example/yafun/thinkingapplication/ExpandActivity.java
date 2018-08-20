@@ -161,7 +161,21 @@ public class ExpandActivity extends AppCompatActivity {
                             // if yes stop the timer and submit the sheet
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                timer.cancel();
                                 timer = null;
+                                // commit content to database
+                                Thread thread = new Thread(){
+                                    public void run(){
+                                        int count = adapter.getCount();
+                                        ConnServer[] conn = new ConnServer[count];
+                                        for(int index=0; index<count; index++){
+                                            String content = adapter.getItem(index).getName();
+                                            conn[index] = new ConnServer("drawingmult",content,"test01");
+                                            String imgID = conn[index].getImageID();
+                                        }
+                                    }
+                                };
+                                thread.start();
                                 finish();
                             }
                         })
@@ -336,7 +350,7 @@ public class ExpandActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object getItem(int position) {
+        public listContext getItem(int position) {
             return mdatas.get(position);
         }
 
