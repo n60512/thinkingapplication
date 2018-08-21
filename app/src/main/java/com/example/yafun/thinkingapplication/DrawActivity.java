@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.os.Environment;
 import android.media.Image;
 import android.net.Uri;
 import android.os.CountDownTimer;
@@ -42,10 +43,15 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -135,7 +141,15 @@ public class DrawActivity extends AppCompatActivity {
                 else if(baseBitmap!=null&&!TextUtils.isEmpty(edtName.getText().toString())){
                     mlist.add(new listContext(baseBitmap, edtName.getText().toString()));
                     adapter.notifyDataSetChanged();
-
+                    //upload
+                    saveImage();
+                    Uri selectedImageUri = getImageUri(imgvDraw.getContext(),baseBitmap);
+                    Log.e("Uri",selectedImageUri+"");
+                    imagepath = getPath(selectedImageUri);
+                    Log.e("imagepath",imagepath);
+                    Bitmap bitmap= BitmapFactory.decodeFile(imagepath);
+                    uploadFile(imagepath);
+                    //clear
                     edtName.setText("");
                     baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(),imgvDraw.getHeight(),Bitmap.Config.ARGB_8888);
                     baseBitmap = resizeImage(baseBitmap,320,360);
@@ -144,16 +158,11 @@ public class DrawActivity extends AppCompatActivity {
                     imgvDraw.setImageBitmap(baseBitmap);
                     baseBitmap = null;
                     isTouch = false;
-
-                    data = new Intent();
-                    data.setType("image/*");
-                    data.setAction(Intent.ACTION_CREATE_SHORTCUT);
-                    startActivityForResult(Intent.createChooser(data, "Complete action using"), 1);
-
-                    Uri selectedImageUri = data.getData();
-                    imagepath = getPath(selectedImageUri);
-                    Bitmap bitmap= BitmapFactory.decodeFile(imagepath);
-                    uploadFile(imagepath);
+//                    data = new Intent();
+//                    data.setType("image/*");
+//                    data.setAction(Intent.ACTION_CREATE_SHORTCUT);
+//                    startActivityForResult(Intent.createChooser(data, "Complete action using"), 1);
+//                    Log.e("intent",data+"");
                 }
             }
         });
@@ -179,6 +188,16 @@ public class DrawActivity extends AppCompatActivity {
 
     }
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+//        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+//        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        Log.e("getContentResolver",inContext.getContentResolver()+"");
+        Log.e("inImage",inImage+"");
+        String path = MediaStore.Images.Media.insertImage(DrawActivity.this.getContentResolver(), inImage, edtName.getText().toString(), null);
+        Log.e("pathpath",path+"");
+        return Uri.parse(path);
+    }
+
     public String getPath(Uri uri) {
         String[] projection = { MediaStore.Images.Media.DATA };
         Cursor cursor = managedQuery(uri, projection, null, null, null);
@@ -186,9 +205,23 @@ public class DrawActivity extends AppCompatActivity {
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
-
+//    public void saveImage(){
+//        File file = new File(path);
+//        if(file.exists()) {
+//            file.delete();
+//        }
+//        try {
+//            FileOutputStream fileOutputStream = new FileOutputStream(file);
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ((OutputStream)fileOutputStream));
+//            fileOutputStream.close();
+//            System.out.println("----------save success-------------------");
+//        }
+//        catch(Exception v0) {
+//            v0.printStackTrace();
+//        }
+//
+//    }
     public int uploadFile(String sourceFileUri) {
-
 
         String fileName = sourceFileUri;
 
