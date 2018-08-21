@@ -26,6 +26,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -78,7 +80,7 @@ public class AttributeActivity extends AppCompatActivity {
         setContentView(R.layout.drawerlayout_attribute);
         setTitle("屬性聯想遊戲");
 
-        while(true){
+        /*while(true){
             try {
                 imgA_number = (int)(Math.random()*100+1);
                 imgB_number = (int)(Math.random()*100+1);
@@ -205,7 +207,7 @@ public class AttributeActivity extends AppCompatActivity {
             }
 
 
-        }
+        }*/
 
         // set variable value
         edtName = (EditText)findViewById(R.id.edtAttributeName);
@@ -223,6 +225,11 @@ public class AttributeActivity extends AppCompatActivity {
         photoC = (ImageView)findViewById(R.id.imgC);
         photoD = (ImageView)findViewById(R.id.imgD);
         photoE = (ImageView)findViewById(R.id.imgE);
+        Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/1.jpg").into(photoA);
+        Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/2.jpg").into(photoB);
+        Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/3.jpg").into(photoC);
+        Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/4.jpg").into(photoD);
+        Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/5.jpg").into(photoE);
 
         txtListName = (TextView)findViewById(R.id.txtListName);
         txtListSelect = (TextView)findViewById(R.id.txtListSelect);
@@ -592,7 +599,7 @@ public class AttributeActivity extends AppCompatActivity {
         }
         return false;
     }
-    public static Bitmap getBitmapFormURL(String src){
+    /*public static Bitmap getBitmapFormURL(String src){
         try{
             URL url = new URL(src);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -606,6 +613,6 @@ public class AttributeActivity extends AppCompatActivity {
             return null;
         }
         //return null;
-    }
+    }*/
 
 }
