@@ -7,9 +7,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
+import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,6 +30,17 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -35,7 +48,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 
@@ -49,24 +64,22 @@ public class AttributeActivity extends AppCompatActivity {
     private TextView txtAttributeTimer;
     private CountDownTimer timer;
 
-    private LinearLayout lLayoutA,lLayoutB,lLayoutC,lLayoutD,lLayoutE;
-
-    private int imgA_number, imgB_number, imgC_number, imgD_number, imgE_number;
-    private ImageView photoA, photoB, photoC, photoD, photoE;
-
+    private ImageView imgvA, imgvB, imgvC, imgvD, imgvE;
+    private LinearLayout lLayoutA, lLayoutB, lLayoutC, lLayoutD, lLayoutE;
     private boolean clickA = false, clickB = false, clickC = false, clickD = false, clickE = false;
     private int count = 0;
+    Dictionary dict = new Hashtable();
 
     private TextView txtListName, txtListSelect;
     private LinearLayout llList;
     private ListView lvAttribute;
     // list arr for save data
-    List<listContext> mlist = new ArrayList<listContext>();
+    ArrayList<listContext> mlist = new ArrayList<listContext>();
     // declare my adapter
     private myAdapter adapter;
 
     //timer count
-    private final long TIME = 601*1000L;
+    private final long TIME = 601 * 1000L;
     private final long INTERVAL = 1000L;
 
     // timer state
@@ -80,180 +93,73 @@ public class AttributeActivity extends AppCompatActivity {
         setContentView(R.layout.drawerlayout_attribute);
         setTitle("屬性聯想遊戲");
 
-        /*while(true){
-            try {
-                imgA_number = (int)(Math.random()*100+1);
-                imgB_number = (int)(Math.random()*100+1);
-                imgC_number = (int)(Math.random()*100+1);
-                imgD_number = (int)(Math.random()*100+1);
-                imgE_number = (int)(Math.random()*100+1);
-
-                java.net.URL urlA = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgA_number +".jpg");
-                java.net.HttpURLConnection ucA = (java.net.HttpURLConnection) urlA
-                        .openConnection();
-                ucA.setRequestProperty("User-agent", "IE/6.0");
-                ucA.setReadTimeout(30000);
-                ucA.connect();
-
-                java.net.URL urlB = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgB_number +".jpg");
-                java.net.HttpURLConnection ucB = (java.net.HttpURLConnection) urlB
-                        .openConnection();
-                ucB.setRequestProperty("User-agent", "IE/6.0");
-                ucB.setReadTimeout(30000);
-                ucB.connect();
-
-                java.net.URL urlC = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgC_number +".jpg");
-                java.net.HttpURLConnection ucC = (java.net.HttpURLConnection) urlC
-                        .openConnection();
-                ucC.setRequestProperty("User-agent", "IE/6.0");
-                ucC.setReadTimeout(30000);
-                ucC.connect();
-
-                java.net.URL urlD = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgD_number +".jpg");
-                java.net.HttpURLConnection ucD = (java.net.HttpURLConnection) urlD
-                        .openConnection();
-                ucD.setRequestProperty("User-agent", "IE/6.0");
-                ucD.setReadTimeout(30000);
-                ucD.connect();
-
-                java.net.URL urlE = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgE_number +".jpg");
-                java.net.HttpURLConnection ucE = (java.net.HttpURLConnection) urlE
-                        .openConnection();
-                ucE.setRequestProperty("User-agent", "IE/6.0");
-                ucE.setReadTimeout(30000);
-                ucE.connect();
-
-                int statusA = ucA.getResponseCode();
-                int statusB = ucB.getResponseCode();
-                int statusC = ucC.getResponseCode();
-                int statusD = ucD.getResponseCode();
-                int statusE = ucE.getResponseCode();
-
-                if((statusA == 404) || (statusB == 404) || (statusC == 404) || (statusD == 404) || (statusE == 404)){
-                    continue;
-                }
-                else{
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgA_number + ".jpg");
-
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    photoA = (ImageView)findViewById(R.id.imgA);
-                                    photoA.setImageBitmap (mBitmap);
-                                }}
-                            );
-                        }}).start();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgB_number + ".jpg");
-
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    photoB = (ImageView)findViewById(R.id.imgB);
-                                    photoB.setImageBitmap (mBitmap);
-                                }}
-                            );
-                        }}).start();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgC_number + ".jpg");
-
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    photoC = (ImageView)findViewById(R.id.imgC);
-                                    photoC.setImageBitmap (mBitmap);
-                                }}
-                            );
-                        }}).start();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgD_number + ".jpg");
-
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    photoD = (ImageView)findViewById(R.id.imgD);
-                                    photoD.setImageBitmap (mBitmap);
-                                }}
-                            );
-                        }}).start();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgE_number + ".jpg");
-
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    photoE = (ImageView)findViewById(R.id.imgE);
-                                    photoE.setImageBitmap (mBitmap);
-                                }}
-                            );
-                        }}).start();
-                    break;
-                }
-            }catch (java.net.MalformedURLException e) {
-                e.printStackTrace();
-            } catch (java.io.IOException e) {
-                e.printStackTrace();
-            }
-
-
-        }*/
-
         // set variable value
-        edtName = (EditText)findViewById(R.id.edtAttributeName);
-        btnOk = (Button)findViewById(R.id.btnAttributeOk);
-        btnClr = (Button)findViewById(R.id.btnAttributeClr);
-        txtAttributeTimer = (TextView)findViewById(R.id.txtAttributeTimer);
+        edtName = (EditText) findViewById(R.id.edtAttributeName);
+        btnOk = (Button) findViewById(R.id.btnAttributeOk);
+        btnClr = (Button) findViewById(R.id.btnAttributeClr);
+        txtAttributeTimer = (TextView) findViewById(R.id.txtAttributeTimer);
 
-        lLayoutA = (LinearLayout)findViewById(R.id.lLayoutA);
-        lLayoutB = (LinearLayout)findViewById(R.id.lLayoutB);
-        lLayoutC = (LinearLayout)findViewById(R.id.lLayoutC);
-        lLayoutD = (LinearLayout)findViewById(R.id.lLayoutD);
-        lLayoutE = (LinearLayout)findViewById(R.id.lLayoutE);
-        photoA = (ImageView)findViewById(R.id.imgA);
-        photoB = (ImageView)findViewById(R.id.imgB);
-        photoC = (ImageView)findViewById(R.id.imgC);
-        photoD = (ImageView)findViewById(R.id.imgD);
-        photoE = (ImageView)findViewById(R.id.imgE);
-        Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/1.jpg").into(photoA);
-        Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/2.jpg").into(photoB);
-        Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/3.jpg").into(photoC);
-        Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/4.jpg").into(photoD);
-        Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/5.jpg").into(photoE);
+        imgvA = (ImageView) findViewById(R.id.imgA);
+        imgvB = (ImageView) findViewById(R.id.imgB);
+        imgvC = (ImageView) findViewById(R.id.imgC);
+        imgvD = (ImageView) findViewById(R.id.imgD);
+        imgvE = (ImageView) findViewById(R.id.imgE);
+        lLayoutA = (LinearLayout) findViewById(R.id.lLayoutA);
+        lLayoutB = (LinearLayout) findViewById(R.id.lLayoutB);
+        lLayoutC = (LinearLayout) findViewById(R.id.lLayoutC);
+        lLayoutD = (LinearLayout) findViewById(R.id.lLayoutD);
+        lLayoutE = (LinearLayout) findViewById(R.id.lLayoutE);
 
-        txtListName = (TextView)findViewById(R.id.txtListName);
-        txtListSelect = (TextView)findViewById(R.id.txtListSelect);
-        llList = (LinearLayout)findViewById(R.id.llList);
-        lvAttribute = (ListView)findViewById(R.id.lvAttribute);
+        // set random image
+        Thread thread = new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                try{
+                    ArrayList<String> random_list = randomSetImage();
+                    if(random_list != null) Log.d("thread_try","Successed");
+                    else Log.d("thread_catch","Failed");
+                    dict.put("A",random_list.get(0));
+                    dict.put("B",random_list.get(1));
+                    dict.put("C",random_list.get(2));
+                    dict.put("D",random_list.get(3));
+                    dict.put("E",random_list.get(4));
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/"+dict.get("A")+".png").into(imgvA);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/"+dict.get("B")+".png").into(imgvB);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/"+dict.get("C")+".png").into(imgvC);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/"+dict.get("D")+".png").into(imgvD);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/"+dict.get("E")+".png").into(imgvE);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        thread.run();
+
+        txtListName = (TextView) findViewById(R.id.txtListName);
+        txtListSelect = (TextView) findViewById(R.id.txtListSelect);
+        llList = (LinearLayout) findViewById(R.id.llList);
+        lvAttribute = (ListView) findViewById(R.id.lvAttribute);
         // add title to mlist
-        mlist.add(new listContext("名稱","選擇"));
+        ArrayList<String> initial = new ArrayList<String>(){{add("選擇");}};
+        mlist.add(new listContext("名稱", initial));
         // new adapter with context and set
-        adapter = new myAdapter(AttributeActivity.this,mlist);
+        adapter = new myAdapter(AttributeActivity.this, mlist);
         lvAttribute.setAdapter(adapter);
 
         // start timer
         startTimer();
 
         // img click action
-        photoA.setOnClickListener(new View.OnClickListener() {
+        imgvA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickA==false){
+                if (clickA == false) {
                     lLayoutA.setBackgroundColor(0xffaaaaaa);
                     clickA = true;
                     count++;
-                }
-                else{
+                } else {
                     lLayoutA.setBackgroundColor(0x00ffffff);
                     clickA = false;
                     count--;
@@ -262,15 +168,14 @@ public class AttributeActivity extends AppCompatActivity {
             }
         });
 
-        photoB.setOnClickListener(new View.OnClickListener() {
+        imgvB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickB==false){
+                if (clickB == false) {
                     lLayoutB.setBackgroundColor(0xffaaaaaa);
                     clickB = true;
                     count++;
-                }
-                else{
+                } else {
                     lLayoutB.setBackgroundColor(0x00ffffff);
                     clickB = false;
                     count--;
@@ -278,15 +183,14 @@ public class AttributeActivity extends AppCompatActivity {
             }
         });
 
-        photoC.setOnClickListener(new View.OnClickListener() {
+        imgvC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickC==false){
+                if (clickC == false) {
                     lLayoutC.setBackgroundColor(0xffaaaaaa);
                     clickC = true;
                     count++;
-                }
-                else{
+                } else {
                     lLayoutC.setBackgroundColor(0x00ffffff);
                     clickC = false;
                     count--;
@@ -294,15 +198,14 @@ public class AttributeActivity extends AppCompatActivity {
             }
         });
 
-        photoD.setOnClickListener(new View.OnClickListener() {
+        imgvD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickD==false){
+                if (clickD == false) {
                     lLayoutD.setBackgroundColor(0xffaaaaaa);
                     clickD = true;
                     count++;
-                }
-                else{
+                } else {
                     lLayoutD.setBackgroundColor(0x00ffffff);
                     clickD = false;
                     count--;
@@ -310,15 +213,14 @@ public class AttributeActivity extends AppCompatActivity {
             }
         });
 
-        photoE.setOnClickListener(new View.OnClickListener() {
+        imgvE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickE==false){
+                if (clickE == false) {
                     lLayoutE.setBackgroundColor(0xffaaaaaa);
                     clickE = true;
                     count++;
-                }
-                else{
+                } else {
                     lLayoutE.setBackgroundColor(0x00ffffff);
                     clickE = false;
                     count--;
@@ -327,26 +229,28 @@ public class AttributeActivity extends AppCompatActivity {
         });
 
         // btnOk click
-        btnOk.setOnClickListener(new View.OnClickListener(){
+        btnOk.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
 
-                if(count<2){
-                    Toast.makeText(AttributeActivity.this,"請選擇兩張(含)以上圖片",Toast.LENGTH_SHORT).show();
-                }
-                else if(edtName.getText().toString().equals("")){
-                    Toast.makeText(AttributeActivity.this,"請輸入作品名稱",Toast.LENGTH_SHORT).show();
-                }
-                else{
+                if (count < 2) {
+                    Toast.makeText(AttributeActivity.this, "請選擇兩張(含)以上圖片", Toast.LENGTH_SHORT).show();
+                } else if (edtName.getText().toString().equals("")) {
+                    Toast.makeText(AttributeActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
+                } else {
                     // click then add data to mlist and change adapter
-                    String choose = "";
-                    if(clickA==true) choose = choose + "A";
-                    if(clickB==true) choose = choose + "B";
-                    if(clickC==true) choose = choose + "C";
-                    if(clickD==true) choose = choose + "D";
-                    if(clickE==true) choose = choose + "E";
-                    mlist.add(new listContext(edtName.getText().toString(),choose));
+                    ArrayList<String> choose_list = new ArrayList<String>();
+                    //String choose = "";
+                    if (clickA == true) choose_list.add("A"); //choose = choose + "A";
+                    if (clickB == true) choose_list.add("B"); //choose = choose + "B";
+                    if (clickC == true) choose_list.add("C"); //choose = choose + "C";
+                    if (clickD == true) choose_list.add("D"); //choose = choose + "D";
+                    if (clickE == true) choose_list.add("E"); //choose = choose + "E";
+                    //for(String chosen:choose_list)
+                        //choose += chosen;
+                    //Log.d("chosen string",choose);
+                    mlist.add(new listContext(edtName.getText().toString(), choose_list));
 
                     adapter.notifyDataSetChanged();
 
@@ -370,7 +274,7 @@ public class AttributeActivity extends AppCompatActivity {
         });
 
         // btnClr click
-        btnClr.setOnClickListener(new Button.OnClickListener(){
+        btnClr.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -393,14 +297,14 @@ public class AttributeActivity extends AppCompatActivity {
     // create menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu,menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     // set menu's function
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             // btnSubmit click
             case R.id.btnSubmit:
                 // timer pause and show alert dialog
@@ -412,6 +316,26 @@ public class AttributeActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 timer = null;
+                                Thread thread = new Thread(){
+                                    public void run(){
+                                        int count = adapter.getCount()-1;
+                                        ConnServer[] conn = new ConnServer[count];
+                                        for(int index=0; index<count; index++){
+                                            String content = adapter.getItem(index+1).getName();
+                                            ArrayList<String> select = adapter.getItem(index+1).getSelect();
+                                            String[] chosenImgID = new String[select.size()];
+                                            for(int idIndex = 0; idIndex<select.size(); idIndex++){
+                                                String key = select.get(idIndex);
+                                                String value = ""+dict.get(key);
+                                                chosenImgID[idIndex] = value;
+                                                Log.d("chosenID",value);
+                                            }
+
+                                            conn[index] = new ConnServer("association",content,chosenImgID,"test01");
+                                        }
+                                    }
+                                };
+                                thread.start();
                                 finish();
                             }
                         })
@@ -423,18 +347,18 @@ public class AttributeActivity extends AppCompatActivity {
                                 // set remain time to new timer
                                 long millisInFuture = timeRemaining;
                                 long countDownInterval = 1000;
-                                timer = new CountDownTimer(millisInFuture, countDownInterval){
+                                timer = new CountDownTimer(millisInFuture, countDownInterval) {
                                     @Override
                                     public void onTick(long l) {
                                         long time = l / 1000;
-                                        if(isPaused){
+                                        if (isPaused) {
                                             timer.cancel();
-                                        }
-                                        else{
-                                            txtAttributeTimer.setText(String.format("%02d 分 %02d 秒",time/60,time%60));
-                                            timeRemaining = l-1000;
+                                        } else {
+                                            txtAttributeTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
+                                            timeRemaining = l - 1000;
                                         }
                                     }
+
                                     @Override
                                     public void onFinish() {
                                         txtAttributeTimer.setText(String.format("00 分 00 秒"));
@@ -460,17 +384,17 @@ public class AttributeActivity extends AppCompatActivity {
     }
 
     // timer start function
-    private void startTimer(){
-        if(timer==null){
+    private void startTimer() {
+        if (timer == null) {
             // use MyCountDownTimer set myself context
-            timer = new AttributeActivity.MyCountDownTimer(TIME,INTERVAL);
+            timer = new AttributeActivity.MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
     }
 
     // CountDownTimer function
     private class MyCountDownTimer extends CountDownTimer {
-        public MyCountDownTimer(long millisInFuture, long countDownInterval){
+        public MyCountDownTimer(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
         }
 
@@ -478,12 +402,11 @@ public class AttributeActivity extends AppCompatActivity {
         @Override
         public void onTick(long l) {
             long time = l / 1000;
-            if(isPaused){
+            if (isPaused) {
                 timer.cancel();
-            }
-            else{
-                txtAttributeTimer.setText(String.format("%02d 分 %02d 秒",time/60,time%60));
-                timeRemaining = l-1000;
+            } else {
+                txtAttributeTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
+                timeRemaining = l - 1000;
             }
         }
 
@@ -506,10 +429,11 @@ public class AttributeActivity extends AppCompatActivity {
     }
 
     // list context class
-    public class listContext{
+    public class listContext {
         private String name;
-        private String select;
-        public listContext(String name,String select){
+        private ArrayList<String> select;
+
+        public listContext(String name, ArrayList<String> select) {
             this.name = name;
             this.select = select;
         }
@@ -518,7 +442,7 @@ public class AttributeActivity extends AppCompatActivity {
             this.name = name;
         }
 
-        public void setSelect(String select) {
+        public void setSelect(ArrayList<String> select) {
             this.select = select;
         }
 
@@ -526,20 +450,20 @@ public class AttributeActivity extends AppCompatActivity {
             return name;
         }
 
-        public String getSelect() {
+        public ArrayList<String> getSelect() {
             return select;
         }
     }
 
     // my adapter
-    public class myAdapter extends BaseAdapter{
+    public class myAdapter extends BaseAdapter {
 
         // inflater context
         private LayoutInflater mInflater;
         // data context list
-        private List<listContext> mdatas;
+        private ArrayList<listContext> mdatas;
 
-        public myAdapter(Context context, List<listContext> listcontext){
+        public myAdapter(Context context, ArrayList<listContext> listcontext) {
             mInflater = LayoutInflater.from(context);
             this.mdatas = listcontext;
         }
@@ -550,7 +474,7 @@ public class AttributeActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object getItem(int position) {
+        public listContext getItem(int position) {
             return mdatas.get(position);
         }
 
@@ -563,27 +487,30 @@ public class AttributeActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             // set holder
             ViewHolder holder = null;
-            if(convertView==null){
-                convertView = mInflater.inflate(R.layout.listitem,null);
-                holder = new ViewHolder((TextView)convertView.findViewById(R.id.txtListName),
-                        (TextView)convertView.findViewById(R.id.txtListSelect));
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.listitem, null);
+                holder = new ViewHolder((TextView) convertView.findViewById(R.id.txtListName),
+                        (TextView) convertView.findViewById(R.id.txtListSelect));
                 convertView.setTag(holder);
-            }
-            else{
+            } else {
                 holder = (ViewHolder) convertView.getTag();
             }
             // set convertview with holder
-            listContext context = (listContext)getItem(position);
+            listContext context = (listContext) getItem(position);
             holder.txtListName.setText(context.getName());
-            holder.txtListSelect.setText(context.getSelect());
+            String temp = "";
+            for(String str_sel:context.getSelect())
+                temp+=str_sel;
+            holder.txtListSelect.setText(temp);
             return convertView;
         }
 
         // holder structure
-        private class ViewHolder{
+        private class ViewHolder {
             TextView txtListName;
             TextView txtListSelect;
-            public ViewHolder(TextView txtListName, TextView txtListSelect){
+
+            public ViewHolder(TextView txtListName, TextView txtListSelect) {
                 this.txtListName = txtListName;
                 this.txtListSelect = txtListSelect;
             }
@@ -593,26 +520,43 @@ public class AttributeActivity extends AppCompatActivity {
     // intercept back
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             // no action
             return true;
         }
         return false;
     }
-    /*public static Bitmap getBitmapFormURL(String src){
-        try{
-            URL url = new URL(src);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.connect();
 
-            InputStream input = conn.getInputStream();
-            Bitmap mBitmap = BitmapFactory.decodeStream(input);
-            return mBitmap;
-        }catch (IOException e){
-            e.printStackTrace();
-            return null;
+    // post random image number
+    private ArrayList<String> randomSetImage() {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        String webRequest = null;
+        ArrayList<String> num_list = new ArrayList<String>();
+
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/associationrulestest/fileCount.php");
+
+        try {
+            HttpResponse response = client.execute(request);
+            HttpEntity resEntity = response.getEntity();
+            webRequest = EntityUtils.toString(resEntity);
+            Log.d("webRequest", webRequest);
+
+            JSONObject obj = new JSONObject(webRequest);  // parse web request
+            for(int i=1;i<=5;i++){
+                num_list.add(obj.getString("random"+i));
+            }
+            return num_list;
+
+        } catch (java.io.IOException e) {
+            Log.d("IOException", e.getMessage());
         }
-        //return null;
-    }*/
-
+        catch (org.json.JSONException e) {
+            Log.d("JSON Error", e.getMessage());
+        }
+        return null;
+    }
 }
