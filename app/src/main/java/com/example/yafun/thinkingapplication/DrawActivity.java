@@ -81,7 +81,7 @@ public class DrawActivity extends AppCompatActivity {
     private myAdapter adapter;
 
     // timer count
-    private final long TIME = 481*1000L;
+    private final long TIME = 481 * 1000L;
     private final long INTERVAL = 1000L;
 
     // timer state
@@ -91,8 +91,9 @@ public class DrawActivity extends AppCompatActivity {
     //pic
     private int serverResponseCode = 0;
     private String upLoadServerUri = null;
-    private String imagepath="http://140.122.91.218/thinkingapp/connDB/upload_file.php";
+    private String imagepath = "http://140.122.91.218/thinkingapp/connDB/upload_file.php";
     Intent data;
+    String imgID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,19 +103,19 @@ public class DrawActivity extends AppCompatActivity {
         setTitle("一筆畫遊戲");
 
         // set variable value
-        edtName = (EditText)findViewById(R.id.edtDrawName);
-        btnOk = (Button)findViewById(R.id.btnDrawOk);
-        btnClr = (Button)findViewById(R.id.btnDrawClr);
-        txtDrawTimer = (TextView)findViewById(R.id.txtDrawTimer);
-        imgvDraw = (ImageView)findViewById(R.id.imgvDraw);
+        edtName = (EditText) findViewById(R.id.edtDrawName);
+        btnOk = (Button) findViewById(R.id.btnDrawOk);
+        btnClr = (Button) findViewById(R.id.btnDrawClr);
+        txtDrawTimer = (TextView) findViewById(R.id.txtDrawTimer);
+        imgvDraw = (ImageView) findViewById(R.id.imgvDraw);
 
-        imgImgDraw = (ImageView)findViewById(R.id.imgImgDraw);
-        txtImgName = (TextView)findViewById(R.id.txtImgName);
-        llImg = (LinearLayout)findViewById(R.id.llImg);
-        lvDraw = (ListView)findViewById(R.id.lvDraw);
+        imgImgDraw = (ImageView) findViewById(R.id.imgImgDraw);
+        txtImgName = (TextView) findViewById(R.id.txtImgName);
+        llImg = (LinearLayout) findViewById(R.id.llImg);
+        lvDraw = (ListView) findViewById(R.id.lvDraw);
 
         // new adapter with context and set
-        adapter = new myAdapter(DrawActivity.this,mlist);
+        adapter = new myAdapter(DrawActivity.this, mlist);
         lvDraw.setAdapter(adapter);
 
         // start timer
@@ -127,57 +128,51 @@ public class DrawActivity extends AppCompatActivity {
         imgvDraw.setOnTouchListener(touch);
 
         // btnOk click
-        btnOk.setOnClickListener(new Button.OnClickListener(){
+        btnOk.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                if(baseBitmap==null){
-                    Toast.makeText(DrawActivity.this,"請完成作畫",Toast.LENGTH_SHORT).show();
-                }
-                else if(edtName.getText().toString().equals("")){
-                    Toast.makeText(DrawActivity.this,"請輸入作品名稱",Toast.LENGTH_SHORT).show();
+                if (baseBitmap == null) {
+                    Toast.makeText(DrawActivity.this, "請完成作畫", Toast.LENGTH_SHORT).show();
+                } else if (edtName.getText().toString().equals("")) {
+                    Toast.makeText(DrawActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
                 }
                 // clear all
-                else if(baseBitmap!=null&&!TextUtils.isEmpty(edtName.getText().toString())){
+                else if (baseBitmap != null && !TextUtils.isEmpty(edtName.getText().toString())) {
                     mlist.add(new listContext(baseBitmap, edtName.getText().toString()));
                     adapter.notifyDataSetChanged();
                     //upload
-                    saveImage();
-                    Uri selectedImageUri = getImageUri(imgvDraw.getContext(),baseBitmap);
-                    Log.e("Uri",selectedImageUri+"");
+                    saveImage(baseBitmap);
+                    Uri selectedImageUri = getImageUri(imgvDraw.getContext(), baseBitmap);
+                    Log.e("Uri", selectedImageUri + "");
                     imagepath = getPath(selectedImageUri);
-                    Log.e("imagepath",imagepath);
-                    Bitmap bitmap= BitmapFactory.decodeFile(imagepath);
+                    Log.e("imagepath", imagepath);
+                    Bitmap bitmap = BitmapFactory.decodeFile(imagepath);
                     uploadFile(imagepath);
                     //clear
                     edtName.setText("");
-                    baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(),imgvDraw.getHeight(),Bitmap.Config.ARGB_8888);
-                    baseBitmap = resizeImage(baseBitmap,320,360);
+                    baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(), imgvDraw.getHeight(), Bitmap.Config.ARGB_8888);
+                    baseBitmap = resizeImage(baseBitmap, 320, 360);
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvDraw.setImageBitmap(baseBitmap);
                     baseBitmap = null;
                     isTouch = false;
-//                    data = new Intent();
-//                    data.setType("image/*");
-//                    data.setAction(Intent.ACTION_CREATE_SHORTCUT);
-//                    startActivityForResult(Intent.createChooser(data, "Complete action using"), 1);
-//                    Log.e("intent",data+"");
                 }
             }
         });
 
 
         // btnClr click
-        btnClr.setOnClickListener(new Button.OnClickListener(){
+        btnClr.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 isTouch = false;
                 edtName.setText("");
-                if(baseBitmap!=null){
-                    baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(),imgvDraw.getHeight(),Bitmap.Config.ARGB_8888);
-                    baseBitmap = resizeImage(baseBitmap,320,360);
+                if (baseBitmap != null) {
+                    baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(), imgvDraw.getHeight(), Bitmap.Config.ARGB_8888);
+                    baseBitmap = resizeImage(baseBitmap, 320, 360);
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvDraw.setImageBitmap(baseBitmap);
@@ -191,36 +186,45 @@ public class DrawActivity extends AppCompatActivity {
     public Uri getImageUri(Context inContext, Bitmap inImage) {
 //        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 //        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        Log.e("getContentResolver",inContext.getContentResolver()+"");
-        Log.e("inImage",inImage+"");
+        Log.e("getContentResolver", inContext.getContentResolver() + "");
+        Log.e("inImage", inImage + "");
         String path = MediaStore.Images.Media.insertImage(DrawActivity.this.getContentResolver(), inImage, edtName.getText().toString(), null);
-        Log.e("pathpath",path+"");
+        Log.e("pathpath", path + "");
         return Uri.parse(path);
     }
 
     public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
-//    public void saveImage(){
-//        File file = new File(path);
-//        if(file.exists()) {
-//            file.delete();
-//        }
-//        try {
-//            FileOutputStream fileOutputStream = new FileOutputStream(file);
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ((OutputStream)fileOutputStream));
-//            fileOutputStream.close();
-//            System.out.println("----------save success-------------------");
-//        }
-//        catch(Exception v0) {
-//            v0.printStackTrace();
-//        }
-//
-//    }
+
+    public void saveImage(Bitmap bitmap) {
+        FileOutputStream fOut;
+        try {
+            File dir = new File("/sdcard/thinkingTest/");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+
+            String tmp = "/sdcard/thinkingTest/" + imgID + ".jpg";
+            fOut = new FileOutputStream(tmp);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+
+            try {
+                fOut.flush();
+                fOut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public int uploadFile(String sourceFileUri) {
 
         String fileName = sourceFileUri;
@@ -237,21 +241,17 @@ public class DrawActivity extends AppCompatActivity {
 
         if (!sourceFile.isFile()) {
 
-            Log.e("uploadFile", "Source File not exist :"+imagepath);
+            Log.e("uploadFile", "Source File not exist :" + imagepath);
 
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Log.e("Source File not exist :"+ imagepath,"");
+                    Log.e("Source File not exist :" + imagepath, "");
                 }
             });
 
             return 0;
-
-        }
-        else
-        {
+        } else {
             try {
-
                 // open a URL connection to the Servlet
                 FileInputStream fileInputStream = new FileInputStream(sourceFile);
                 URL url = new URL(upLoadServerUri);
@@ -272,7 +272,6 @@ public class DrawActivity extends AppCompatActivity {
                 dos.writeBytes(twoHyphens + boundary + lineEnd);
                 dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
                         + fileName + "\"" + lineEnd);
-
                 dos.writeBytes(lineEnd);
 
                 // create a buffer of  maximum size
@@ -285,12 +284,10 @@ public class DrawActivity extends AppCompatActivity {
                 bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
                 while (bytesRead > 0) {
-
                     dos.write(buffer, 0, bufferSize);
                     bytesAvailable = fileInputStream.available();
                     bufferSize = Math.min(bytesAvailable, maxBufferSize);
                     bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
                 }
 
                 // send multipart form data necesssary after file data...
@@ -304,8 +301,7 @@ public class DrawActivity extends AppCompatActivity {
                 Log.i("uploadFile", "HTTP Response is : "
                         + serverResponseMessage + ": " + serverResponseCode);
 
-                if(serverResponseCode == 200){
-
+                if (serverResponseCode == 200) {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             String msg = "File Upload Completed.\n\n See uploaded file your server. \n\n";
@@ -319,50 +315,43 @@ public class DrawActivity extends AppCompatActivity {
                 fileInputStream.close();
                 dos.flush();
                 dos.close();
-
             } catch (MalformedURLException ex) {
-
                 //dialog.dismiss();
                 ex.printStackTrace();
-
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Log.e("MalformedURLcheckscript","");
+                        Log.e("MalformedURLcheckscript", "");
                         Toast.makeText(DrawActivity.this, "MalformedURLException", Toast.LENGTH_SHORT).show();
                     }
                 });
-
                 Log.e("Upload file to server", "error: " + ex.getMessage(), ex);
             } catch (Exception e) {
-
                 //dialog.dismiss();
                 e.printStackTrace();
-
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Log.e("GotExceptionseelogcat ","");
+                        Log.e("GotExceptionseelogcat ", "");
                         Toast.makeText(DrawActivity.this, "Got Exception : see logcat ", Toast.LENGTH_SHORT).show();
                     }
                 });
-                Log.e("UpfiletoserverException", "Exception : "  + e.getMessage(), e);
+                Log.e("UpfiletoserverException", "Exception : " + e.getMessage(), e);
             }
             //dialog.dismiss();
             return serverResponseCode;
-
         } // End else block
     }
 
     // create menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu,menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     // set menu's function
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             // btnSubmit click
             case R.id.btnSubmit:
                 // timer pause and show alert dialog
@@ -377,14 +366,14 @@ public class DrawActivity extends AppCompatActivity {
                                 timer.cancel();
                                 timer = null;
                                 // commit content to database
-                                Thread thread = new Thread(){
-                                    public void run(){
+                                Thread thread = new Thread() {
+                                    public void run() {
                                         int count = adapter.getCount();
                                         ConnServer[] conn = new ConnServer[count];
-                                        for(int index=0; index<count; index++){
+                                        for (int index = 0; index < count; index++) {
                                             String content = adapter.getItem(index).getName();
-                                            conn[index] = new ConnServer("drawing",content,"test01");
-                                            String imgID = conn[index].getImageID();
+                                            conn[index] = new ConnServer("drawing", content, "test01");
+                                            imgID = conn[index].getImageID();
                                         }
                                     }
                                 };
@@ -401,18 +390,18 @@ public class DrawActivity extends AppCompatActivity {
                                 // set remain time to new timer
                                 long millisInFuture = timeRemaining;
                                 long countDownInterval = 1000;
-                                timer = new CountDownTimer(millisInFuture,countDownInterval){
+                                timer = new CountDownTimer(millisInFuture, countDownInterval) {
                                     @Override
                                     public void onTick(long l) {
                                         long time = l / 1000;
-                                        if(isPaused){
+                                        if (isPaused) {
                                             timer.cancel();
-                                        }
-                                        else{
-                                            txtDrawTimer.setText(String.format("%02d 分 %02d 秒",time/60,time%60));
-                                            timeRemaining = l-1000;
+                                        } else {
+                                            txtDrawTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
+                                            timeRemaining = l - 1000;
                                         }
                                     }
+
                                     @Override
                                     public void onFinish() {
                                         txtDrawTimer.setText(String.format("00 分 00 秒"));
@@ -438,17 +427,17 @@ public class DrawActivity extends AppCompatActivity {
     }
 
     // timer start function
-    private void startTimer(){
-        if(timer==null){
+    private void startTimer() {
+        if (timer == null) {
             // use MyCountDownTimer set myself context
-            timer = new MyCountDownTimer(TIME,INTERVAL);
+            timer = new MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
     }
 
     // CountDownTimer function
     public class MyCountDownTimer extends CountDownTimer {
-        public MyCountDownTimer(long millisInFuture, long countDownInterval){
+        public MyCountDownTimer(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
         }
 
@@ -456,12 +445,11 @@ public class DrawActivity extends AppCompatActivity {
         @Override
         public void onTick(long l) {
             long time = l / 1000;
-            if(isPaused){
+            if (isPaused) {
                 timer.cancel();
-            }
-            else{
-                txtDrawTimer.setText(String.format("%02d 分 %02d 秒",time/60,time%60));
-                timeRemaining = l-1000;
+            } else {
+                txtDrawTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
+                timeRemaining = l - 1000;
             }
         }
 
@@ -484,17 +472,18 @@ public class DrawActivity extends AppCompatActivity {
     }
 
     // draw of touch event
-    private View.OnTouchListener touch = new View.OnTouchListener(){
+    private View.OnTouchListener touch = new View.OnTouchListener() {
 
         float startX;
         float startY;
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
 
-            switch (event.getAction()){
+            switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    if(baseBitmap == null){
-                        baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(),imgvDraw.getHeight(),Bitmap.Config.ARGB_8888);
+                    if (baseBitmap == null) {
+                        baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(), imgvDraw.getHeight(), Bitmap.Config.ARGB_8888);
                         canvas = new Canvas(baseBitmap);
                         canvas.drawColor(0xfffffff0);
                     }
@@ -503,10 +492,10 @@ public class DrawActivity extends AppCompatActivity {
                     break;
 
                 case MotionEvent.ACTION_MOVE:
-                    if(isTouch!=true){
+                    if (isTouch != true) {
                         float stopX = event.getX();
                         float stopY = event.getY();
-                        canvas.drawLine(startX,startY,stopX,stopY,paint);
+                        canvas.drawLine(startX, startY, stopX, stopY, paint);
                         startX = event.getX();
                         startY = event.getY();
                         imgvDraw.setImageBitmap(baseBitmap);
@@ -524,15 +513,16 @@ public class DrawActivity extends AppCompatActivity {
     };
 
     // list context class
-    public class listContext{
+    public class listContext {
         private Bitmap image;
         private String name;
-        public listContext(Bitmap image,String name){
+
+        public listContext(Bitmap image, String name) {
             this.image = image;
             this.name = name;
         }
 
-        public void setImage(Bitmap image){
+        public void setImage(Bitmap image) {
             this.image = image;
         }
 
@@ -540,7 +530,7 @@ public class DrawActivity extends AppCompatActivity {
             this.name = name;
         }
 
-        public Bitmap getImage(){
+        public Bitmap getImage() {
             return image;
         }
 
@@ -558,7 +548,7 @@ public class DrawActivity extends AppCompatActivity {
         // data context list
         private List<listContext> mdatas;
 
-        public myAdapter(Context context, List<listContext> listcontext){
+        public myAdapter(Context context, List<listContext> listcontext) {
             mInflater = LayoutInflater.from(context);
             mdatas = listcontext;
         }
@@ -582,27 +572,27 @@ public class DrawActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             // set holder
             ViewHolder holder = null;
-            if(convertView==null){
-                convertView = mInflater.inflate(R.layout.imgitem,null);
-                holder = new ViewHolder((ImageView)convertView.findViewById(R.id.imgImgDraw),
-                        (TextView)convertView.findViewById(R.id.txtImgName));
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.imgitem, null);
+                holder = new ViewHolder((ImageView) convertView.findViewById(R.id.imgImgDraw),
+                        (TextView) convertView.findViewById(R.id.txtImgName));
                 convertView.setTag(holder);
-            }
-            else{
+            } else {
                 holder = (ViewHolder) convertView.getTag();
             }
             // set convertview with holder
-            listContext context = (listContext)getItem(position);
+            listContext context = (listContext) getItem(position);
             holder.imgImgDraw.setImageBitmap(context.getImage());
             holder.txtImgName.setText(context.getName());
             return convertView;
         }
 
         // holder structure
-        private class ViewHolder{
+        private class ViewHolder {
             ImageView imgImgDraw;
             TextView txtImgName;
-            public ViewHolder(ImageView imgImgDraw, TextView txtImgName){
+
+            public ViewHolder(ImageView imgImgDraw, TextView txtImgName) {
                 this.imgImgDraw = imgImgDraw;
                 this.txtImgName = txtImgName;
             }
@@ -628,7 +618,7 @@ public class DrawActivity extends AppCompatActivity {
     // intercept back
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             // no action
             return true;
         }
