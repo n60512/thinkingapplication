@@ -17,6 +17,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,9 +35,23 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 public class ExpandActivity extends AppCompatActivity {
 
@@ -167,11 +183,20 @@ public class ExpandActivity extends AppCompatActivity {
                                 Thread thread = new Thread(){
                                     public void run(){
                                         int count = adapter.getCount();
+                                        // create datalist and upload data to server
                                         ConnServer[] conn = new ConnServer[count];
                                         for(int index=0; index<count; index++){
+                                            // get adapter info.
                                             String content = adapter.getItem(index).getName();
+                                            Bitmap uploadimg = adapter.getItem(index).getImage();
+                                            // connect to Server
                                             conn[index] = new ConnServer("drawingmult",content,"test01");
+                                            // get return id
                                             String imgID = conn[index].getImageID();
+                                            // encode img to base64
+                                            String base64img = toBase64(uploadimg);
+                                            // upload img
+                                            uploadImg(imgID,base64img);
                                         }
                                     }
                                 };
@@ -390,6 +415,7 @@ public class ExpandActivity extends AppCompatActivity {
         }
     }
 
+    // resize image
     public Bitmap resizeImage(Bitmap bitmap, int w, int h) {
         Bitmap BitmapOrg = bitmap;
         int width = BitmapOrg.getWidth();
@@ -404,6 +430,52 @@ public class ExpandActivity extends AppCompatActivity {
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width, height, matrix, true);
         return resizedBitmap;
+    }
+
+    // convert bitmap to base64
+    public String toBase64(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    // post image to server
+    public void uploadImg(String name, String image){
+
+        String webRequest = null;
+
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/drawingmult/uploadImg.php");
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+        params.add(new BasicNameValuePair("imgName", name));
+        params.add(new BasicNameValuePair("imgbase64", image));
+
+        try {
+            request.setEntity(new UrlEncodedFormEntity(params,"UTF-8"));    //  set post params
+            HttpResponse response = client.execute(request);        //  get web response
+            HttpEntity resEntity = response.getEntity();
+            webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
+
+            Log.d("webRequest", webRequest);
+
+            JSONObject obj = new JSONObject(webRequest);  // parse web request
+            int responseCode = Integer.parseInt(obj.getString("responseCode"));
+            String result = obj.getString("response");
+            if (responseCode == 1) {
+                Log.d("response_Success",result);
+            } else {
+                Log.d("response_Fail",result);
+            }
+
+
+        } catch (java.io.IOException e) {
+            Log.d("IOException", e.getMessage());
+        } catch (org.json.JSONException e) {
+            Log.d("JSON Error", e.getMessage());
+        }
     }
 
     // intercept back
