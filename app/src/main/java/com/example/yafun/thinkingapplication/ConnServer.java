@@ -159,7 +159,7 @@ public class ConnServer {
         params.add(new BasicNameValuePair("crtuser", crtuser));
 
         try {
-            request.setEntity(new UrlEncodedFormEntity(params));    //  set post params
+            request.setEntity(new UrlEncodedFormEntity(params,"UTF-8"));    //  set post params
             HttpResponse response = client.execute(request);        //  get web response
             HttpEntity resEntity = response.getEntity();
             webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST

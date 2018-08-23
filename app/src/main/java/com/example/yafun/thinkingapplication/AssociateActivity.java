@@ -5,10 +5,12 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.CountDownTimer;
+import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +27,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -43,11 +54,10 @@ public class AssociateActivity extends AppCompatActivity {
     private Button btnOk, btnClr;
     private TextView txtAssociateTimer;
     private CountDownTimer timer;
-
-    private int imgA_number;
-    private ImageView photoA;
-
+    private ImageView imgAssociate;
     private ListView lvAssociate;
+
+    private ArrayAdapter<String> arrayAdapter;
 
     //timer cont
     private final long TIME = 481*1000L;
@@ -64,56 +74,36 @@ public class AssociateActivity extends AppCompatActivity {
         setContentView(R.layout.drawerlayout_associate);
         setTitle("簡圖聯想遊戲");
 
-        while(true){
-            try {
-                imgA_number = (int)(Math.random()*100+1);
-                java.net.URL urlA = new java.net.URL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgA_number +".jpg");
-                java.net.HttpURLConnection ucA = (java.net.HttpURLConnection) urlA
-                        .openConnection();
-                ucA.setRequestProperty("User-agent", "IE/6.0");
-                ucA.setReadTimeout(30000);
-                ucA.connect();
-
-                int statusA = ucA.getResponseCode();
-
-                if(statusA == 404){
-                    continue;
-                }
-                else{
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final Bitmap mBitmap = getBitmapFormURL("http://140.122.91.218/thinkingapp/associationrulestest/image/" + imgA_number + ".jpg");
-
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    photoA = (ImageView)findViewById(R.id.imgAssociate);
-                                    photoA.setImageBitmap (mBitmap);
-                                }}
-                            );
-                        }}).start();
-                    break;
-                }
-            }catch (java.net.MalformedURLException e) {
-                e.printStackTrace();
-            } catch (java.io.IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
         // set variable value
         edtName = (EditText)findViewById(R.id.edtAssociateName);
         btnOk = (Button)findViewById(R.id.btnAssociateOk);
         btnClr = (Button)findViewById(R.id.btnAssociateClr);
         txtAssociateTimer = (TextView)findViewById(R.id.txtAssociateTimer);
 
+        imgAssociate = (ImageView)findViewById(R.id.imgAssociate);
+        // set random image
+        Thread thread = new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                try{
+                    String random_image = randomSetImage();
+                    if(random_image != null) Log.d("thread_try","Successed");
+                    else Log.d("thread_catch","Failed");
+                    Log.d("image_number",random_image);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/oneimagetest/image/"+random_image+".png").into(imgAssociate);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.run();
+
         lvAssociate = (ListView)findViewById(R.id.lvAssociate);
         // new string list with title
         final List<String> listData = new ArrayList<String>(Arrays.asList("名稱"));
         // array adapter with string list
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,listData);
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,listData);
         lvAssociate.setAdapter(arrayAdapter);
 
         // start timer
@@ -166,6 +156,18 @@ public class AssociateActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 timer = null;
+                                Thread thread = new Thread(){
+                                    public void run(){
+                                        int count = arrayAdapter.getCount()-1;
+                                        ConnServer[] conn = new ConnServer[count];
+                                        for(int index=0; index<count; index++){
+                                            String content = arrayAdapter.getItem(index+1);
+                                            Log.d("oneimageName",content);
+                                            conn[index] = new ConnServer("oneimage",content,"test01");
+                                        }
+                                    }
+                                };
+                                thread.start();
                                 finish();
                             }
                         })
@@ -268,20 +270,37 @@ public class AssociateActivity extends AppCompatActivity {
         }
         return false;
     }
-    public static Bitmap getBitmapFormURL(String src){
-        try{
-            URL url = new URL(src);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.connect();
 
-            InputStream input = conn.getInputStream();
-            Bitmap mBitmap = BitmapFactory.decodeStream(input);
-            return mBitmap;
-        }catch (IOException e){
-            e.printStackTrace();
-            return null;
+    // post random image number
+    private String randomSetImage() {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        String webRequest = null;
+        String random_image;
+
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/oneimagetest/fileCount.php");
+
+        try {
+            HttpResponse response = client.execute(request);
+            HttpEntity resEntity = response.getEntity();
+            webRequest = EntityUtils.toString(resEntity);
+            Log.d("webRequest", webRequest);
+
+            JSONObject obj = new JSONObject(webRequest);  // parse web request
+            random_image = obj.getString("random1");
+            Log.d("random_number",random_image);
+            return random_image;
+
+        } catch (java.io.IOException e) {
+            Log.d("IOException", e.getMessage());
         }
-        //return null;
+        catch (org.json.JSONException e) {
+            Log.d("JSON Error", e.getMessage());
+        }
+        return null;
     }
 
 }

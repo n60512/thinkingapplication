@@ -54,8 +54,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 
-import static com.example.yafun.thinkingapplication.AssociateActivity.getBitmapFormURL;
-
 public class AttributeActivity extends AppCompatActivity {
 
     // declare variable
