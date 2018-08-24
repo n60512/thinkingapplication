@@ -80,35 +80,8 @@ public class AssociateActivity extends AppCompatActivity {
         setContentView(R.layout.drawerlayout_associate);
         setTitle("簡圖聯想遊戲");
 
-        // get whether guideSet is set
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if(extras!=null) guideSet = extras.getBoolean("guideSet");
-        this.setResult(RESULT_OK,intent);
-
-        // if first time, show the guide
-        if(guideSet==false){
-            // set guide dialog view
-            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
-            dialog.setContentView(R.layout.dialog_guide);
-            // animation start
-            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
-            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
-            animationStart(iv_click,iv_drawable);
-            // end dialog view
-            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
-            iv_gotit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // start timer
-                    startTimer();
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-        }
-        // else only start the timer
-        else startTimer();
+        // check guide dialog then start timer
+        guideView();
 
         // set variable value
         edtName = (EditText)findViewById(R.id.edtAssociateName);
@@ -292,6 +265,39 @@ public class AssociateActivity extends AppCompatActivity {
                     }).setCancelable(false).show();
             // submit the sheet
         }
+    }
+
+    // guide dialog view
+    private void guideView(){
+        // get whether guideSet is set
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if(extras!=null) guideSet = extras.getBoolean("guideSet");
+        this.setResult(RESULT_OK,intent);
+
+        // if first time, show the guide
+        if(guideSet==false){
+            // set guide dialog view
+            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
+            dialog.setContentView(R.layout.dialog_guide);
+            // animation start
+            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
+            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
+            animationStart(iv_click,iv_drawable);
+            // end dialog view
+            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
+            iv_gotit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // start timer
+                    startTimer();
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+        // else only start the timer
+        else startTimer();
     }
 
     // start animation
