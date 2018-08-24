@@ -1,9 +1,7 @@
 package com.example.yafun.thinkingapplication;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -59,8 +57,6 @@ import java.util.Map;
 
 public class ExpandActivity extends AppCompatActivity {
 
-    private Boolean guideSet;
-
     // declare variable
     private EditText edtName;
     private Button btnOk, btnClr;
@@ -93,37 +89,6 @@ public class ExpandActivity extends AppCompatActivity {
         // set view set title
         setContentView(R.layout.drawerlayout_expand);
         setTitle("圖繪展開遊戲");
-
-        // get whether guideSet is set
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if(extras!=null) guideSet = extras.getBoolean("guideSet");
-        this.setResult(RESULT_OK,intent);
-
-        // if first time, show the guide
-        if(guideSet==false){
-            // set guide dialog view
-            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
-            dialog.setContentView(R.layout.dialog_guide);
-            // animation start
-            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
-            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
-            animationStart(iv_click,iv_drawable);
-            // end dialog view
-            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
-            iv_gotit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // start timer
-                    startTimer();
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-        }
-        // else only start the timer
-        else startTimer();
-
 
         // set variable value
         edtName = (EditText) findViewById(R.id.edtExpandName);
@@ -396,7 +361,7 @@ public class ExpandActivity extends AppCompatActivity {
         // data context list
         private List<listContext> mdatas;
 
-        public myAdapter(Context context, List<listContext> listcontext){
+        public myAdapter(Context context, List<listContext> listcontext) {
             mInflater = LayoutInflater.from(context);
             this.mdatas = listcontext;
         }
@@ -464,24 +429,6 @@ public class ExpandActivity extends AppCompatActivity {
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width, height, matrix, true);
         return resizedBitmap;
-    }
-
-    // start animation
-    private void animationStart(ImageView iv_click, ImageView iv_drawable){
-        // animation route
-        Animation am_click = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-0.95f,Animation.RELATIVE_TO_SELF,3f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
-        am_click.setDuration(2500);
-        am_click.setRepeatCount(-1);
-        am_click.setStartOffset(500);
-        iv_click.setAnimation(am_click);
-        am_click.start();
-
-        Animation am_drawable = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-1f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
-        am_drawable.setDuration(2000);
-        am_drawable.setRepeatCount(-1);
-        am_drawable.setStartOffset(1000);
-        iv_drawable.setAnimation(am_drawable);
-        am_drawable.start();
     }
 
     // intercept back
