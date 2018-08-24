@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     // declare variable
     private  Boolean loggedin = false;
+    private Boolean guideSet = false;
     private Button btnDraw,btnAttribute,btnAssociate,btnExpand;
     private TextView txtName;
 
@@ -53,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Intent intent = new Intent(MainActivity.this,DrawActivity.class);
-                                    startActivity(intent);
+                                    intent.putExtra("guideSet",guideSet);
+                                    startActivityForResult(intent,123);
                                 }
                             }).show();
                 }
@@ -77,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Intent intent = new Intent(MainActivity.this,AttributeActivity.class);
-                                    startActivity(intent);
+                                    intent.putExtra("guideSet",guideSet);
+                                    startActivityForResult(intent,123);
                                 }
                             }).show();
                 }
@@ -100,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Intent intent = new Intent(MainActivity.this,AssociateActivity.class);
-                                    startActivity(intent);
+                                    intent.putExtra("guideSet",guideSet);
+                                    startActivityForResult(intent,123);
                                 }
                             }).show();
                 }
@@ -123,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Intent intent = new Intent(MainActivity.this,ExpandActivity.class);
-                                    startActivity(intent);
+                                    intent.putExtra("guideSet",guideSet);
+                                    startActivityForResult(intent,123);
                                 }
                             }).show();
                 }
@@ -167,6 +173,9 @@ public class MainActivity extends AppCompatActivity {
                 // get data and set
                 String name = data.getStringExtra("username");
                 txtName.setText("Hi, " + name + " 同學");
+        }
+        else if(requestCode==123 && resultCode==RESULT_OK){
+            guideSet = true;
         }
     }
 }
