@@ -169,7 +169,9 @@ public class AssociateActivity extends AppCompatActivity {
                                         for(int index=0; index<count; index++){
                                             String content = arrayAdapter.getItem(index+1);
                                             Log.d("oneimageName",content);
-                                            conn[index] = new ConnServer("oneimage",content,"test01");
+
+                                            String imageID ="0";    //  圖片流水號;目前測試用
+                                            conn[index] = new ConnServer("oneimage",content,"test01",imageID);
                                         }
                                     }
                                 };

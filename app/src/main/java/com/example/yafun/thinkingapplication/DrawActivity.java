@@ -372,8 +372,8 @@ public class DrawActivity extends AppCompatActivity {
                                         ConnServer[] conn = new ConnServer[count];
                                         for (int index = 0; index < count; index++) {
                                             String content = adapter.getItem(index).getName();
-                                            conn[index] = new ConnServer("drawing", content, "test01");
-                                            imgID = conn[index].getImageID();
+                                            //conn[index] = new ConnServer("drawing", content, "test01");
+                                            //imgID = conn[index].getImageID();
                                         }
                                     }
                                 };
