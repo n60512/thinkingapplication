@@ -192,7 +192,6 @@ public class ExpandActivity extends AppCompatActivity {
                                             Bitmap uploadimg = adapter.getItem(index).getImage();
                                             // connect to Server
                                             conn[index] = new ConnServer("drawingmult", content, "test01", uploadimg);
-
                                         }
                                     }
                                 };
@@ -285,6 +284,22 @@ public class ExpandActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false).show();
             // submit the sheet
+            // commit content to database
+            Thread thread = new Thread() {
+                public void run() {
+                    int count = adapter.getCount();
+                    // create datalist and upload data to server
+                    ConnServer[] conn = new ConnServer[count];
+                    for (int index = 0; index < count; index++) {
+                        // get adapter info.
+                        String content = adapter.getItem(index).getName();
+                        Bitmap uploadimg = adapter.getItem(index).getImage();
+                        // connect to Server
+                        conn[index] = new ConnServer("drawingmult", content, "test01", uploadimg);
+                    }
+                }
+            };
+            thread.start();
         }
     }
 
