@@ -18,6 +18,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     // declare variable
+    private Boolean againConnect = false;
     private Boolean loggedin = false;
     private Boolean guideSet = false;
     private Button btnDraw, btnAttribute, btnAssociate, btnExpand;
@@ -44,9 +45,6 @@ public class MainActivity extends AppCompatActivity {
         btnExpand = (Button) findViewById(R.id.btnExpand);
         txtName = (TextView) findViewById(R.id.txtName);
 
-
-
-
         // if btnDraw click
         btnDraw.setOnClickListener(new View.OnClickListener() {
 
@@ -63,9 +61,12 @@ public class MainActivity extends AppCompatActivity {
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    Intent intent = new Intent(MainActivity.this, DrawActivity.class);
-                                    intent.putExtra("guideSet", guideSet);
-                                    startActivityForResult(intent, 123);
+                                    Boolean connected = networkCheck();
+                                    if(connected==true){
+                                        Intent intent = new Intent(MainActivity.this, DrawActivity.class);
+                                        intent.putExtra("guideSet", guideSet);
+                                        startActivityForResult(intent, 123);
+                                    }
                                 }
                             }).show();
                 }
@@ -88,9 +89,12 @@ public class MainActivity extends AppCompatActivity {
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    Intent intent = new Intent(MainActivity.this, AttributeActivity.class);
-                                    intent.putExtra("guideSet", guideSet);
-                                    startActivityForResult(intent, 123);
+                                    Boolean connected = networkCheck();
+                                    if(connected==true){
+                                        Intent intent = new Intent(MainActivity.this, AttributeActivity.class);
+                                        intent.putExtra("guideSet", guideSet);
+                                        startActivityForResult(intent, 123);
+                                    }
                                 }
                             }).show();
                 }
@@ -112,9 +116,12 @@ public class MainActivity extends AppCompatActivity {
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    Intent intent = new Intent(MainActivity.this, AssociateActivity.class);
-                                    intent.putExtra("guideSet", guideSet);
-                                    startActivityForResult(intent, 123);
+                                    Boolean connected = networkCheck();
+                                    if(connected==true){
+                                        Intent intent = new Intent(MainActivity.this, AssociateActivity.class);
+                                        intent.putExtra("guideSet", guideSet);
+                                        startActivityForResult(intent, 123);
+                                    }
                                 }
                             }).show();
                 }
@@ -136,9 +143,12 @@ public class MainActivity extends AppCompatActivity {
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    Intent intent = new Intent(MainActivity.this, ExpandActivity.class);
-                                    intent.putExtra("guideSet", guideSet);
-                                    startActivityForResult(intent, 123);
+                                    Boolean connected = networkCheck();
+                                    if(connected==true){
+                                        Intent intent = new Intent(MainActivity.this, ExpandActivity.class);
+                                        intent.putExtra("guideSet", guideSet);
+                                        startActivityForResult(intent, 123);
+                                    }
                                 }
                             }).show();
                 }
@@ -171,11 +181,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void networkCheck(){
+    private Boolean networkCheck(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
         if (ni != null && ni.isConnected()) {
+            return true;
         } else if (ni == null) {
+            againConnect = false;
             // set alertdialog
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
             alertDialog.setTitle("連線失敗");
@@ -193,11 +205,14 @@ public class MainActivity extends AppCompatActivity {
                     ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo ni = cm.getActiveNetworkInfo();
                     if (ni != null && ni.isConnected()) {
+                        againConnect = true;
                         alert.dismiss();
                     }
                 }
             });
         }
+        if(againConnect==true) return true;
+        else return false;
     }
 
     // get activity result
