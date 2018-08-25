@@ -18,17 +18,26 @@ import android.widget.Toast;
 public class LoginActivity extends AppCompatActivity {
 
     // declare variable
-    private Boolean againConnect = false;
+    private Boolean againConnect;
     private EditText edtId,edtPwd;
     private Button btnSignIn;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // check whether connect to network
-        networkCheck();
+        // get whether network is connect
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if(extras!=null) againConnect = extras.getBoolean("connNetwork");
+
+        if(againConnect==false){
+            againConnect = networkCheck();
+            intent.putExtra("connNetwork",againConnect);
+        }
 
         // set variable value
         edtId = (EditText)findViewById((R.id.edtId));
@@ -66,12 +75,16 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    // check whether connected to network
     private Boolean networkCheck(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
+        // if connected to network
         if (ni != null && ni.isConnected()) {
             return true;
-        } else if (ni == null) {
+        }
+        // else can't connect
+        else if (ni == null) {
             againConnect = false;
             // set alertdialog
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(LoginActivity.this);
@@ -90,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                     ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo ni = cm.getActiveNetworkInfo();
                     if (ni != null && ni.isConnected()) {
+                        // if already connected to network
                         againConnect = true;
                         alert.dismiss();
                     }

@@ -29,13 +29,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // check whether connect to network
-        networkCheck();
-
         // if not logged in, start login activity
         if (!loggedin) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.putExtra("connNetwork",againConnect);
             startActivityForResult(intent, 111);
+        }
+        // else only check network
+        else{
+            // check whether connect to network
+            againConnect = networkCheck();
         }
 
         // set variable value
@@ -171,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 loggedin = false;
                 if (!loggedin) {
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.putExtra("connNetwork",againConnect);
                     startActivityForResult(intent, 111);
                 }
                 break;
@@ -181,12 +185,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    // check whether connected to network
     private Boolean networkCheck(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
+        // if connected to network
         if (ni != null && ni.isConnected()) {
             return true;
-        } else if (ni == null) {
+        }
+        // else can't connect
+        else if (ni == null) {
             againConnect = false;
             // set alertdialog
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
@@ -205,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
                     ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo ni = cm.getActiveNetworkInfo();
                     if (ni != null && ni.isConnected()) {
+                        // if already connected to network
                         againConnect = true;
                         alert.dismiss();
                     }
@@ -226,7 +235,11 @@ public class MainActivity extends AppCompatActivity {
             String name = data.getStringExtra("username");
             txtName.setText("Hi, " + name + " 同學");
             loggedin = true;
+            // get whether connected to network
+            againConnect = data.getExtras().getBoolean("connNetwork");
+            if(againConnect==false) againConnect = networkCheck();
         } else if (requestCode == 123 && resultCode == RESULT_OK) {
+            // set already show the guide dialog
             guideSet = true;
         }
     }
