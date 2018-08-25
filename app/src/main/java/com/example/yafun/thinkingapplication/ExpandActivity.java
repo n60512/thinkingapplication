@@ -1,9 +1,7 @@
 package com.example.yafun.thinkingapplication;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -59,8 +57,6 @@ import java.util.Map;
 
 public class ExpandActivity extends AppCompatActivity {
 
-    private Boolean guideSet;
-
     // declare variable
     private EditText edtName;
     private Button btnOk, btnClr;
@@ -80,7 +76,7 @@ public class ExpandActivity extends AppCompatActivity {
     private myAdapter adapter;
 
     // timer count
-    private final long TIME = 1201*1000L;
+    private final long TIME = 1201 * 1000L;
     private final long INTERVAL = 1000L;
 
     // timer state
@@ -94,24 +90,24 @@ public class ExpandActivity extends AppCompatActivity {
         setContentView(R.layout.drawerlayout_expand);
         setTitle("圖繪展開遊戲");
 
-        // check guide dialog then start timer
-        guideView();
-
         // set variable value
-        edtName = (EditText)findViewById(R.id.edtExpandName);
-        btnOk = (Button)findViewById(R.id.btnExpandOk);
-        btnClr = (Button)findViewById(R.id.btnExpandClr);
-        txtExpandTimer = (TextView)findViewById(R.id.txtExpandTimer);
-        imgvExpand = (ImageView)findViewById(R.id.imgvExpand);
+        edtName = (EditText) findViewById(R.id.edtExpandName);
+        btnOk = (Button) findViewById(R.id.btnExpandOk);
+        btnClr = (Button) findViewById(R.id.btnExpandClr);
+        txtExpandTimer = (TextView) findViewById(R.id.txtExpandTimer);
+        imgvExpand = (ImageView) findViewById(R.id.imgvExpand);
 
-        imgImgDraw = (ImageView)findViewById(R.id.imgImgDraw);
-        txtImgName = (TextView)findViewById(R.id.txtImgName);
-        llImg = (LinearLayout)findViewById(R.id.llImg);
-        lvExpand = (ListView)findViewById(R.id.lvExpand);
+        imgImgDraw = (ImageView) findViewById(R.id.imgImgDraw);
+        txtImgName = (TextView) findViewById(R.id.txtImgName);
+        llImg = (LinearLayout) findViewById(R.id.llImg);
+        lvExpand = (ListView) findViewById(R.id.lvExpand);
 
         // new adapter with context and set
-        adapter = new myAdapter(ExpandActivity.this,mlist);
+        adapter = new myAdapter(ExpandActivity.this, mlist);
         lvExpand.setAdapter(adapter);
+
+        // start timer
+        startTimer();
 
         // paint initialize
         paint = new Paint();
@@ -119,23 +115,22 @@ public class ExpandActivity extends AppCompatActivity {
         paint.setColor(Color.GRAY);
         imgvExpand.setOnTouchListener(touch);
 
-        btnOk.setOnClickListener(new Button.OnClickListener(){
+        btnOk.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(baseBitmap==null){
-                    Toast.makeText(ExpandActivity.this,"請完成作畫",Toast.LENGTH_SHORT).show();
-                }
-                else if(edtName.getText().toString().equals("")){
-                    Toast.makeText(ExpandActivity.this,"請輸入作品名稱",Toast.LENGTH_SHORT).show();
+                if (baseBitmap == null) {
+                    Toast.makeText(ExpandActivity.this, "請完成作畫", Toast.LENGTH_SHORT).show();
+                } else if (edtName.getText().toString().equals("")) {
+                    Toast.makeText(ExpandActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
                 }
                 // clear all
-                else if(baseBitmap!=null&&!TextUtils.isEmpty(edtName.getText().toString())){
+                else if (baseBitmap != null && !TextUtils.isEmpty(edtName.getText().toString())) {
                     mlist.add(new listContext(baseBitmap, edtName.getText().toString()));
                     adapter.notifyDataSetChanged();
 
                     edtName.setText("");
-                    baseBitmap = Bitmap.createBitmap(imgvExpand.getWidth(),imgvExpand.getHeight(),Bitmap.Config.ARGB_8888);
-                    baseBitmap = resizeImage(baseBitmap,320,360);
+                    baseBitmap = Bitmap.createBitmap(imgvExpand.getWidth(), imgvExpand.getHeight(), Bitmap.Config.ARGB_8888);
+                    baseBitmap = resizeImage(baseBitmap, 320, 360);
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvExpand.setImageBitmap(baseBitmap);
@@ -145,14 +140,14 @@ public class ExpandActivity extends AppCompatActivity {
         });
 
         // btnClr click
-        btnClr.setOnClickListener(new Button.OnClickListener(){
+        btnClr.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 edtName.setText("");
-                if(baseBitmap!=null){
-                    baseBitmap = Bitmap.createBitmap(imgvExpand.getWidth(),imgvExpand.getHeight(),Bitmap.Config.ARGB_8888);
-                    baseBitmap = resizeImage(baseBitmap,320,360);
+                if (baseBitmap != null) {
+                    baseBitmap = Bitmap.createBitmap(imgvExpand.getWidth(), imgvExpand.getHeight(), Bitmap.Config.ARGB_8888);
+                    baseBitmap = resizeImage(baseBitmap, 320, 360);
                     canvas = new Canvas(baseBitmap);
                     canvas.drawColor(0xfffffff0);
                     imgvExpand.setImageBitmap(baseBitmap);
@@ -165,14 +160,14 @@ public class ExpandActivity extends AppCompatActivity {
     // create menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu,menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     // set menu's function
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             // btnSubmit click
             case R.id.btnSubmit:
                 // timer pause and show alert dialog
@@ -186,23 +181,17 @@ public class ExpandActivity extends AppCompatActivity {
                                 timer.cancel();
                                 timer = null;
                                 // commit content to database
-                                Thread thread = new Thread(){
-                                    public void run(){
+                                Thread thread = new Thread() {
+                                    public void run() {
                                         int count = adapter.getCount();
                                         // create datalist and upload data to server
                                         ConnServer[] conn = new ConnServer[count];
-                                        for(int index=0; index<count; index++){
+                                        for (int index = 0; index < count; index++) {
                                             // get adapter info.
                                             String content = adapter.getItem(index).getName();
                                             Bitmap uploadimg = adapter.getItem(index).getImage();
                                             // connect to Server
-                                            conn[index] = new ConnServer("drawingmult",content,"test01");
-                                            // get return id
-                                            String imgID = conn[index].getImageID();
-                                            // encode img to base64
-                                            String base64img = toBase64(uploadimg);
-                                            // upload img
-                                            uploadImg(imgID,base64img);
+                                            conn[index] = new ConnServer("drawingmult", content, "test01", uploadimg);
                                         }
                                     }
                                 };
@@ -245,7 +234,7 @@ public class ExpandActivity extends AppCompatActivity {
                                                 }).setCancelable(false).show();
                                     }
                                 }.start();
-                             }
+                            }
                         }).setCancelable(false).show();
                 break;
             default:
@@ -255,16 +244,16 @@ public class ExpandActivity extends AppCompatActivity {
     }
 
     // timer start function
-    private void startTimer(){
-        if(timer==null){
-            timer = new ExpandActivity.MyCountDownTimer(TIME,INTERVAL);
+    private void startTimer() {
+        if (timer == null) {
+            timer = new ExpandActivity.MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
     }
 
     // CountDownTimer function
     public class MyCountDownTimer extends CountDownTimer {
-        public MyCountDownTimer(long millisInFuture, long countDownInterval){
+        public MyCountDownTimer(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
         }
 
@@ -272,12 +261,11 @@ public class ExpandActivity extends AppCompatActivity {
         @Override
         public void onTick(long l) {
             long time = l / 1000;
-            if(isPaused){
+            if (isPaused) {
                 timer.cancel();
-            }
-            else{
-                txtExpandTimer.setText(String.format("%02d 分 %02d 秒",time/60,time%60));
-                timeRemaining = l-1000;
+            } else {
+                txtExpandTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
+                timeRemaining = l - 1000;
             }
         }
 
@@ -296,6 +284,22 @@ public class ExpandActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false).show();
             // submit the sheet
+            // commit content to database
+            Thread thread = new Thread() {
+                public void run() {
+                    int count = adapter.getCount();
+                    // create datalist and upload data to server
+                    ConnServer[] conn = new ConnServer[count];
+                    for (int index = 0; index < count; index++) {
+                        // get adapter info.
+                        String content = adapter.getItem(index).getName();
+                        Bitmap uploadimg = adapter.getItem(index).getImage();
+                        // connect to Server
+                        conn[index] = new ConnServer("drawingmult", content, "test01", uploadimg);
+                    }
+                }
+            };
+            thread.start();
         }
     }
 
@@ -303,13 +307,14 @@ public class ExpandActivity extends AppCompatActivity {
     private View.OnTouchListener touch = new View.OnTouchListener() {
         float startX;
         float startY;
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()){
+            switch (event.getAction()) {
 
                 case MotionEvent.ACTION_DOWN:
-                    if(baseBitmap == null){
-                        baseBitmap = Bitmap.createBitmap(imgvExpand.getWidth(),imgvExpand.getHeight(),Bitmap.Config.ARGB_8888);
+                    if (baseBitmap == null) {
+                        baseBitmap = Bitmap.createBitmap(imgvExpand.getWidth(), imgvExpand.getHeight(), Bitmap.Config.ARGB_8888);
                         canvas = new Canvas(baseBitmap);
                         canvas.drawColor(0xfffffff0);
                     }
@@ -320,7 +325,7 @@ public class ExpandActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_MOVE:
                     float stopX = event.getX();
                     float stopY = event.getY();
-                    canvas.drawLine(startX,startY,stopX,stopY,paint);
+                    canvas.drawLine(startX, startY, stopX, stopY, paint);
                     startX = event.getX();
                     startY = event.getY();
                     imgvExpand.setImageBitmap(baseBitmap);
@@ -336,15 +341,16 @@ public class ExpandActivity extends AppCompatActivity {
     };
 
     // list context class
-    public class listContext{
+    public class listContext {
         private Bitmap image;
         private String name;
-        public listContext(Bitmap image,String name){
+
+        public listContext(Bitmap image, String name) {
             this.image = image;
             this.name = name;
         }
 
-        public void setImage(Bitmap image){
+        public void setImage(Bitmap image) {
             this.image = image;
         }
 
@@ -352,7 +358,7 @@ public class ExpandActivity extends AppCompatActivity {
             this.name = name;
         }
 
-        public Bitmap getImage(){
+        public Bitmap getImage() {
             return image;
         }
 
@@ -370,7 +376,7 @@ public class ExpandActivity extends AppCompatActivity {
         // data context list
         private List<listContext> mdatas;
 
-        public myAdapter(Context context, List<listContext> listcontext){
+        public myAdapter(Context context, List<listContext> listcontext) {
             mInflater = LayoutInflater.from(context);
             this.mdatas = listcontext;
         }
@@ -394,27 +400,29 @@ public class ExpandActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             // set holder
             ViewHolder holder = null;
-            if(convertView==null){
-                convertView = mInflater.inflate(R.layout.imgitem,null);
-                holder = new ViewHolder((ImageView)convertView.findViewById(R.id.imgImgDraw),
-                        (TextView)convertView.findViewById(R.id.txtImgName));
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.imgitem, null);
+                holder = new ViewHolder(
+                        (ImageView) convertView.findViewById(R.id.imgImgDraw),
+                        (TextView) convertView.findViewById(R.id.txtImgName)
+                );
                 convertView.setTag(holder);
-            }
-            else{
+            } else {
                 holder = (ViewHolder) convertView.getTag();
             }
             // set convertview with holder
-            listContext context = (listContext)getItem(position);
+            listContext context = (listContext) getItem(position);
             holder.imgImgDraw.setImageBitmap(context.getImage());
             holder.txtImgName.setText(context.getName());
             return convertView;
         }
 
         // holder structure
-        private class ViewHolder{
+        private class ViewHolder {
             ImageView imgImgDraw;
             TextView txtImgName;
-            public ViewHolder(ImageView imgImgDraw, TextView txtImgName){
+
+            public ViewHolder(ImageView imgImgDraw, TextView txtImgName) {
                 this.imgImgDraw = imgImgDraw;
                 this.txtImgName = txtImgName;
             }
@@ -438,107 +446,10 @@ public class ExpandActivity extends AppCompatActivity {
         return resizedBitmap;
     }
 
-    // convert bitmap to base64
-    public String toBase64(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream .toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
-    // post image to server
-    public void uploadImg(String name, String image){
-
-        String webRequest = null;
-
-        HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/drawingmult/uploadImg.php");
-
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-
-        params.add(new BasicNameValuePair("imgName", name));
-        params.add(new BasicNameValuePair("imgbase64", image));
-
-        try {
-            request.setEntity(new UrlEncodedFormEntity(params,"UTF-8"));    //  set post params
-            HttpResponse response = client.execute(request);        //  get web response
-            HttpEntity resEntity = response.getEntity();
-            webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
-
-            Log.d("webRequest", webRequest);
-
-            JSONObject obj = new JSONObject(webRequest);  // parse web request
-            int responseCode = Integer.parseInt(obj.getString("responseCode"));
-            String result = obj.getString("response");
-            if (responseCode == 1) {
-                Log.d("response_Success",result);
-            } else {
-                Log.d("response_Fail",result);
-            }
-
-
-        } catch (java.io.IOException e) {
-            Log.d("IOException", e.getMessage());
-        } catch (org.json.JSONException e) {
-            Log.d("JSON Error", e.getMessage());
-        }
-    }
-
-    // guide dialog view
-    private void guideView(){
-        // get whether guideSet is set
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if(extras!=null) guideSet = extras.getBoolean("guideSet");
-        this.setResult(RESULT_OK,intent);
-
-        // if first time, show the guide
-        if(guideSet==false){
-            // set guide dialog view
-            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
-            dialog.setContentView(R.layout.dialog_guide);
-            // animation start
-            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
-            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
-            animationStart(iv_click,iv_drawable);
-            // end dialog view
-            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
-            iv_gotit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // start timer
-                    startTimer();
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-        }
-        // else only start the timer
-        else startTimer();
-    }
-
-    // start animation
-    private void animationStart(ImageView iv_click, ImageView iv_drawable){
-        // animation route
-        Animation am_click = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-0.95f,Animation.RELATIVE_TO_SELF,3f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
-        am_click.setDuration(2500);
-        am_click.setRepeatCount(-1);
-        am_click.setStartOffset(500);
-        iv_click.setAnimation(am_click);
-        am_click.start();
-
-        Animation am_drawable = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-1f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
-        am_drawable.setDuration(2000);
-        am_drawable.setRepeatCount(-1);
-        am_drawable.setStartOffset(1000);
-        iv_drawable.setAnimation(am_drawable);
-        am_drawable.start();
-    }
-
     // intercept back
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             // no action
             return true;
         }
