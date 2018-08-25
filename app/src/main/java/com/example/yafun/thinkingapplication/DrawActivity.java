@@ -100,9 +100,6 @@ public class DrawActivity extends AppCompatActivity {
         adapter = new myAdapter(DrawActivity.this, mlist);
         lvDraw.setAdapter(adapter);
 
-        // start timer
-        startTimer();
-
         // paint initialize
         paint = new Paint();
         paint.setStrokeWidth(6);
@@ -232,6 +229,20 @@ public class DrawActivity extends AppCompatActivity {
                                                         finish();
                                                     }
                                                 }).setCancelable(false).show();
+                                        // commit content to database
+                                        Thread thread = new Thread() {
+                                            public void run() {
+                                                int count = adapter.getCount();
+                                                ConnServer[] conn = new ConnServer[count];
+                                                for (int index = 0; index < count; index++) {
+                                                    String content = adapter.getItem(index).getName();
+                                                    Bitmap uploadimg = adapter.getItem(index).getImage();
+                                                    // connect to Server
+                                                    conn[index] = new ConnServer("drawing", content, "test01", uploadimg);
+                                                }
+                                            }
+                                        };
+                                        thread.start();
                                     }
                                 }.start();
                             }

@@ -334,7 +334,6 @@ public class AttributeActivity extends AppCompatActivity {
                                                 chosenImgID[idIndex] = value;
                                                 Log.d("chosenID",value);
                                             }
-
                                             conn[index] = new ConnServer("association",content,chosenImgID,"test01");
                                         }
                                     }
@@ -376,6 +375,25 @@ public class AttributeActivity extends AppCompatActivity {
                                                         finish();
                                                     }
                                                 }).setCancelable(false).show();
+                                        Thread thread = new Thread(){
+                                            public void run(){
+                                                int count = adapter.getCount()-1;
+                                                ConnServer[] conn = new ConnServer[count];
+                                                for(int index=0; index<count; index++){
+                                                    String content = adapter.getItem(index+1).getName();
+                                                    ArrayList<String> select = adapter.getItem(index+1).getSelect();
+                                                    String[] chosenImgID = new String[select.size()];
+                                                    for(int idIndex = 0; idIndex<select.size(); idIndex++){
+                                                        String key = select.get(idIndex);
+                                                        String value = ""+dict.get(key);
+                                                        chosenImgID[idIndex] = value;
+                                                        Log.d("chosenID",value);
+                                                    }
+                                                    conn[index] = new ConnServer("association",content,chosenImgID,"test01");
+                                                }
+                                            }
+                                        };
+                                        thread.start();
                                     }
                                 }.start();
                             }
@@ -429,6 +447,25 @@ public class AttributeActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false).show();
             // submit the sheet
+            Thread thread = new Thread(){
+                public void run(){
+                    int count = adapter.getCount()-1;
+                    ConnServer[] conn = new ConnServer[count];
+                    for(int index=0; index<count; index++){
+                        String content = adapter.getItem(index+1).getName();
+                        ArrayList<String> select = adapter.getItem(index+1).getSelect();
+                        String[] chosenImgID = new String[select.size()];
+                        for(int idIndex = 0; idIndex<select.size(); idIndex++){
+                            String key = select.get(idIndex);
+                            String value = ""+dict.get(key);
+                            chosenImgID[idIndex] = value;
+                            Log.d("chosenID",value);
+                        }
+                        conn[index] = new ConnServer("association",content,chosenImgID,"test01");
+                    }
+                }
+            };
+            thread.start();
         }
     }
 

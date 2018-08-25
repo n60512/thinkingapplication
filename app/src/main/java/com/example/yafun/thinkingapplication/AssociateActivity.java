@@ -212,6 +212,20 @@ public class AssociateActivity extends AppCompatActivity {
                                                         finish();
                                                     }
                                                 }).setCancelable(false).show();
+                                        Thread thread = new Thread(){
+                                            public void run(){
+                                                int count = arrayAdapter.getCount()-1;
+                                                ConnServer[] conn = new ConnServer[count];
+                                                for(int index=0; index<count; index++){
+                                                    String content = arrayAdapter.getItem(index+1);
+                                                    Log.d("oneimageName",content);
+
+                                                    String imageID ="0";    //  圖片流水號;目前測試用
+                                                    conn[index] = new ConnServer("oneimage",content,"test01",imageID);
+                                                }
+                                            }
+                                        };
+                                        thread.start();
                                     }
                                 }.start();
                             }
@@ -266,6 +280,20 @@ public class AssociateActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false).show();
             // submit the sheet
+            Thread thread = new Thread(){
+                public void run(){
+                    int count = arrayAdapter.getCount()-1;
+                    ConnServer[] conn = new ConnServer[count];
+                    for(int index=0; index<count; index++){
+                        String content = arrayAdapter.getItem(index+1);
+                        Log.d("oneimageName",content);
+
+                        String imageID ="0";    //  圖片流水號;目前測試用
+                        conn[index] = new ConnServer("oneimage",content,"test01",imageID);
+                    }
+                }
+            };
+            thread.start();
         }
     }
 
