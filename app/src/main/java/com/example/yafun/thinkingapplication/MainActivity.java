@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("一筆畫遊戲作答說明")
                             .setMessage("【 作答時間 : 8 分鐘 】\n" +
-                                    "圖像作答需一筆畫完成，並且在下方為圖片輸入名稱。\n" +
+                                    "圖像作答需一筆畫完成，\n並且在下方為圖片輸入名稱。\n" +
                                     "時間內可連續作答，作答紀錄均會在左側的作答歷程中顯示。\n")
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
@@ -138,8 +138,8 @@ public class MainActivity extends AppCompatActivity {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("圖繪展開遊戲作答說明")
                             .setMessage("【 測驗時間 : 20 分鐘 】\n" +
-                                    "完成圖像的作答，並且在下方為圖像輸入作品名稱。\n" +
-                                    "作答時間之內可連續作答，\n每次的作答紀錄均會在左側的作答歷程中顯示。\n")
+                                    "完成圖像的作答，\n並且在下方為圖像輸入作品名稱。\n" +
+                                    "作答時間之內可連續作答，每次的作答紀錄均會在左側的作答歷程中顯示。\n")
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {

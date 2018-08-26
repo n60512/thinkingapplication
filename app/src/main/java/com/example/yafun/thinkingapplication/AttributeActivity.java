@@ -357,7 +357,8 @@ public class AttributeActivity extends AppCompatActivity {
                                     public void onTick(long l) {
                                         long time = l / 1000;
                                         if (isPaused) {
-                                            timer.cancel();
+                                            //timer.cancel();
+                                            timer = null;
                                         } else {
                                             txtAttributeTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
                                             timeRemaining = l - 1000;
@@ -372,7 +373,7 @@ public class AttributeActivity extends AppCompatActivity {
                                                 .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                                        timer.cancel();
+                                                        //timer.cancel();
                                                         timer = null;
                                                         finish();
                                                     }
@@ -427,7 +428,8 @@ public class AttributeActivity extends AppCompatActivity {
         public void onTick(long l) {
             long time = l / 1000;
             if (isPaused) {
-                timer.cancel();
+                //timer.cancel();
+                timer = null;
             } else {
                 txtAttributeTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
                 timeRemaining = l - 1000;
@@ -443,7 +445,7 @@ public class AttributeActivity extends AppCompatActivity {
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            timer.cancel();
+                            //timer.cancel();
                             timer = null;
                             finish();
                         }
