@@ -16,9 +16,6 @@ import org.json.*;
 
 import java.util.Iterator;
 
-import org.json.JSONArray;
-
-//import org.json.simple.JSONArray;
 
 public class LoginActivity extends AppCompatActivity {
 
