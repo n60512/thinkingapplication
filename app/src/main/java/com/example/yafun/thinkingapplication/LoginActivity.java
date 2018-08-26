@@ -72,6 +72,8 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("login result", "successful");
 
                 member = getSharedPreferences("member", MODE_PRIVATE);
+                //member.edit().remove().commit();
+
                 String content = conn.getMemberInf();               //  Get member information , type:String
 
                 try {
@@ -89,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d("JSONException", e.getLocalizedMessage());
                 } finally {
                     Log.d("test",
-                            getSharedPreferences("pref", MODE_PRIVATE).getString("birth_date", "null")
+                            getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
                     );
                 }
 

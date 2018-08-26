@@ -188,7 +188,12 @@ public class DrawActivity extends AppCompatActivity {
                                             String content = adapter.getItem(index).getName();
                                             Bitmap uploadimg = adapter.getItem(index).getImage();
                                             // connect to Server
-                                            conn[index] = new ConnServer("drawing", content, "test01", uploadimg);
+                                            conn[index] = new ConnServer(
+                                                    "drawing",
+                                                    content,
+                                                    getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                                    uploadimg
+                                            );
                                         }
                                     }
                                 };
@@ -238,7 +243,12 @@ public class DrawActivity extends AppCompatActivity {
                                                     String content = adapter.getItem(index).getName();
                                                     Bitmap uploadimg = adapter.getItem(index).getImage();
                                                     // connect to Server
-                                                    conn[index] = new ConnServer("drawing", content, "test01", uploadimg);
+                                                    conn[index] = new ConnServer(
+                                                            "drawing",
+                                                            content,
+                                                            getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                                            uploadimg
+                                                    );
                                                 }
                                             }
                                         };
@@ -305,7 +315,12 @@ public class DrawActivity extends AppCompatActivity {
                         String content = adapter.getItem(index).getName();
                         Bitmap uploadimg = adapter.getItem(index).getImage();
                         // connect to Server
-                        conn[index] = new ConnServer("drawing", content, "test01", uploadimg);
+                        conn[index] = new ConnServer(
+                                "drawing",
+                                content,
+                                getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                uploadimg
+                        );
                     }
                 }
             };
@@ -317,6 +332,7 @@ public class DrawActivity extends AppCompatActivity {
     private View.OnTouchListener touch = new View.OnTouchListener() {
         float startX;
         float startY;
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
@@ -453,24 +469,24 @@ public class DrawActivity extends AppCompatActivity {
     }
 
     // guide dialog view
-    private void guideView(){
+    private void guideView() {
         // get whether guideSet is set
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        if(extras!=null) guideSet = extras.getBoolean("guideSet");
-        this.setResult(RESULT_OK,intent);
+        if (extras != null) guideSet = extras.getBoolean("guideSet");
+        this.setResult(RESULT_OK, intent);
 
         // if first time, show the guide
-        if(guideSet==false){
+        if (guideSet == false) {
             // set guide dialog view
-            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
+            final Dialog dialog = new Dialog(this, R.style.Dialog_Fullscreen);
             dialog.setContentView(R.layout.dialog_guide);
             // animation start
-            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
-            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
-            animationStart(iv_click,iv_drawable);
+            ImageView iv_click = (ImageView) dialog.findViewById(R.id.iv_click);
+            ImageView iv_drawable = (ImageView) dialog.findViewById(R.id.iv_drawable);
+            animationStart(iv_click, iv_drawable);
             // end dialog view
-            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
+            ImageView iv_gotit = (ImageView) dialog.findViewById(R.id.iv_gotit);
             iv_gotit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -486,16 +502,16 @@ public class DrawActivity extends AppCompatActivity {
     }
 
     // start animation
-    private void animationStart(ImageView iv_click, ImageView iv_drawable){
+    private void animationStart(ImageView iv_click, ImageView iv_drawable) {
         // animation route
-        Animation am_click = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-0.95f,Animation.RELATIVE_TO_SELF,3f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
+        Animation am_click = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -0.95f, Animation.RELATIVE_TO_SELF, 3f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         am_click.setDuration(2500);
         am_click.setRepeatCount(-1);
         am_click.setStartOffset(500);
         iv_click.setAnimation(am_click);
         am_click.start();
 
-        Animation am_drawable = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-1f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
+        Animation am_drawable = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         am_drawable.setDuration(2000);
         am_drawable.setRepeatCount(-1);
         am_drawable.setStartOffset(1000);

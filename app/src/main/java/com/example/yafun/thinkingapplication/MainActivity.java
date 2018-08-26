@@ -32,11 +32,11 @@ public class MainActivity extends AppCompatActivity {
         // if not logged in, start login activity
         if (!loggedin) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            intent.putExtra("connNetwork",againConnect);
+            intent.putExtra("connNetwork", againConnect);
             startActivityForResult(intent, 111);
         }
         // else only check network
-        else{
+        else {
             // check whether connect to network
             againConnect = networkCheck();
         }
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Boolean connected = networkCheck();
-                                    if(connected==true){
+                                    if (connected == true) {
                                         Intent intent = new Intent(MainActivity.this, DrawActivity.class);
                                         intent.putExtra("guideSet", guideSet);
                                         startActivityForResult(intent, 123);
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Boolean connected = networkCheck();
-                                    if(connected==true){
+                                    if (connected == true) {
                                         Intent intent = new Intent(MainActivity.this, AttributeActivity.class);
                                         intent.putExtra("guideSet", guideSet);
                                         startActivityForResult(intent, 123);
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Boolean connected = networkCheck();
-                                    if(connected==true){
+                                    if (connected == true) {
                                         Intent intent = new Intent(MainActivity.this, AssociateActivity.class);
                                         intent.putExtra("guideSet", guideSet);
                                         startActivityForResult(intent, 123);
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Boolean connected = networkCheck();
-                                    if(connected==true){
+                                    if (connected == true) {
                                         Intent intent = new Intent(MainActivity.this, ExpandActivity.class);
                                         intent.putExtra("guideSet", guideSet);
                                         startActivityForResult(intent, 123);
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 loggedin = false;
                 if (!loggedin) {
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    intent.putExtra("connNetwork",againConnect);
+                    intent.putExtra("connNetwork", againConnect);
                     startActivityForResult(intent, 111);
                 }
                 break;
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     // check whether connected to network
-    private Boolean networkCheck(){
+    private Boolean networkCheck() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
         // if connected to network
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-        if(againConnect==true) return true;
+        if (againConnect == true) return true;
         else return false;
     }
 
@@ -232,12 +232,14 @@ public class MainActivity extends AppCompatActivity {
         // check request&result code
         if (requestCode == 111 && resultCode == RESULT_OK) {
             // get data and set
-            String name = data.getStringExtra("username");
-            txtName.setText("Hi, " + name + " 同學");
+            //String name = data.getStringExtra("username");
+            txtName.setText("Hi, " + getSharedPreferences("member", MODE_PRIVATE).getString("id", "null") + " 同學");
+
+
             loggedin = true;
             // get whether connected to network
             againConnect = data.getExtras().getBoolean("connNetwork");
-            if(againConnect==false) againConnect = networkCheck();
+            if (againConnect == false) againConnect = networkCheck();
         } else if (requestCode == 123 && resultCode == RESULT_OK) {
             // set already show the guide dialog
             guideSet = true;

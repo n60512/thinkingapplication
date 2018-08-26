@@ -195,7 +195,12 @@ public class ExpandActivity extends AppCompatActivity {
                                             String content = adapter.getItem(index).getName();
                                             Bitmap uploadimg = adapter.getItem(index).getImage();
                                             // connect to Server
-                                            conn[index] = new ConnServer("drawingmult", content, "test01", uploadimg);
+                                            conn[index] = new ConnServer(
+                                                    "drawingmult",
+                                                    content,
+                                                    getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                                    uploadimg
+                                            );
                                         }
                                     }
                                 };
@@ -246,7 +251,12 @@ public class ExpandActivity extends AppCompatActivity {
                                                     String content = adapter.getItem(index).getName();
                                                     Bitmap uploadimg = adapter.getItem(index).getImage();
                                                     // connect to Server
-                                                    conn[index] = new ConnServer("drawingmult", content, "test01", uploadimg);
+                                                    conn[index] = new ConnServer(
+                                                            "drawingmult",
+                                                            content,
+                                                            getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                                            uploadimg
+                                                    );
                                                 }
                                             }
                                         };
@@ -313,7 +323,12 @@ public class ExpandActivity extends AppCompatActivity {
                         String content = adapter.getItem(index).getName();
                         Bitmap uploadimg = adapter.getItem(index).getImage();
                         // connect to Server
-                        conn[index] = new ConnServer("drawingmult", content, "test01", uploadimg);
+                        conn[index] = new ConnServer(
+                                "drawingmult",
+                                content,
+                                getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                uploadimg
+                        );
                     }
                 }
             };

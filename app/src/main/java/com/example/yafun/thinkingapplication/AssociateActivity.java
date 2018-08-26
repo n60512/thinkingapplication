@@ -62,11 +62,12 @@ public class AssociateActivity extends AppCompatActivity {
     private CountDownTimer timer;
     private ImageView imgAssociate;
     private ListView lvAssociate;
+    private String imageID = null;
 
     private ArrayAdapter<String> arrayAdapter;
 
     //timer cont
-    private final long TIME = 481*1000L;
+    private final long TIME = 481 * 1000L;
     private final long INTERVAL = 1000L;
 
     // timer state
@@ -84,54 +85,54 @@ public class AssociateActivity extends AppCompatActivity {
         guideView();
 
         // set variable value
-        edtName = (EditText)findViewById(R.id.edtAssociateName);
-        btnOk = (Button)findViewById(R.id.btnAssociateOk);
-        btnClr = (Button)findViewById(R.id.btnAssociateClr);
-        txtAssociateTimer = (TextView)findViewById(R.id.txtAssociateTimer);
+        edtName = (EditText) findViewById(R.id.edtAssociateName);
+        btnOk = (Button) findViewById(R.id.btnAssociateOk);
+        btnClr = (Button) findViewById(R.id.btnAssociateClr);
+        txtAssociateTimer = (TextView) findViewById(R.id.txtAssociateTimer);
 
-        imgAssociate = (ImageView)findViewById(R.id.imgAssociate);
+        imgAssociate = (ImageView) findViewById(R.id.imgAssociate);
         // set random image
-        Thread thread = new Thread(new Runnable(){
+        Thread thread = new Thread(new Runnable() {
 
             @Override
             public void run() {
-                try{
-                    String random_image = randomSetImage();
-                    if(random_image != null) Log.d("thread_try","Successed");
-                    else Log.d("thread_catch","Failed");
-                    Log.d("image_number",random_image);
-                    Picasso.get().load("http://140.122.91.218/thinkingapp/oneimagetest/image/"+random_image+".png").into(imgAssociate);
-                } catch (Exception e){
+                try {
+                    imageID = randomSetImage();
+                    if (imageID != null) Log.d("thread_try", "Successed");
+                    else Log.d("thread_catch", "Failed");
+                    Log.d("image_number", imageID);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/oneimagetest/image/" + imageID + ".png").into(imgAssociate);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
         thread.run();
 
-        lvAssociate = (ListView)findViewById(R.id.lvAssociate);
+
+        lvAssociate = (ListView) findViewById(R.id.lvAssociate);
         // new string list with title
         final List<String> listData = new ArrayList<String>(Arrays.asList("名稱"));
         // array adapter with string list
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,listData);
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listData);
         lvAssociate.setAdapter(arrayAdapter);
 
-        btnOk.setOnClickListener(new Button.OnClickListener(){
+        btnOk.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // add string when click
-                if(!TextUtils.isEmpty(edtName.getText().toString())){
+                if (!TextUtils.isEmpty(edtName.getText().toString())) {
                     listData.add(edtName.getText().toString());
                     arrayAdapter.notifyDataSetChanged();
                     edtName.setText("");
-                }
-                else{
-                    Toast.makeText(AssociateActivity.this,"請輸入作品名稱",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AssociateActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         // btnClr click
-        btnClr.setOnClickListener(new Button.OnClickListener(){
+        btnClr.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -143,14 +144,14 @@ public class AssociateActivity extends AppCompatActivity {
     // create menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu,menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     // set menu's function
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             // btnSubmit click
             case R.id.btnSubmit:
                 // timer pause and show alert dialog
@@ -162,16 +163,15 @@ public class AssociateActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 timer = null;
-                                Thread thread = new Thread(){
-                                    public void run(){
-                                        int count = arrayAdapter.getCount()-1;
+                                Thread thread = new Thread() {
+                                    public void run() {
+                                        int count = arrayAdapter.getCount() - 1;
                                         ConnServer[] conn = new ConnServer[count];
-                                        for(int index=0; index<count; index++){
-                                            String content = arrayAdapter.getItem(index+1);
-                                            Log.d("oneimageName",content);
+                                        for (int index = 0; index < count; index++) {
+                                            String content = arrayAdapter.getItem(index + 1);
+                                            Log.d("oneimageName", content);
 
-                                            String imageID ="0";    //  圖片流水號;目前測試用
-                                            conn[index] = new ConnServer("oneimage",content,"test01",imageID);
+                                            conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), imageID);
                                         }
                                     }
                                 };
@@ -212,16 +212,15 @@ public class AssociateActivity extends AppCompatActivity {
                                                         finish();
                                                     }
                                                 }).setCancelable(false).show();
-                                        Thread thread = new Thread(){
-                                            public void run(){
-                                                int count = arrayAdapter.getCount()-1;
+                                        Thread thread = new Thread() {
+                                            public void run() {
+                                                int count = arrayAdapter.getCount() - 1;
                                                 ConnServer[] conn = new ConnServer[count];
-                                                for(int index=0; index<count; index++){
-                                                    String content = arrayAdapter.getItem(index+1);
-                                                    Log.d("oneimageName",content);
+                                                for (int index = 0; index < count; index++) {
+                                                    String content = arrayAdapter.getItem(index + 1);
+                                                    Log.d("oneimageName", content);
 
-                                                    String imageID ="0";    //  圖片流水號;目前測試用
-                                                    conn[index] = new ConnServer("oneimage",content,"test01",imageID);
+                                                    conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), imageID);
                                                 }
                                             }
                                         };
@@ -238,17 +237,17 @@ public class AssociateActivity extends AppCompatActivity {
     }
 
     // timer start function
-    private void startTimer(){
-        if(timer==null){
+    private void startTimer() {
+        if (timer == null) {
             // use MyCountDownTimer set myself context
-            timer = new AssociateActivity.MyCountDownTimer(TIME,INTERVAL);
+            timer = new AssociateActivity.MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
     }
 
     // CountDownTimer function
     public class MyCountDownTimer extends CountDownTimer {
-        public MyCountDownTimer(long millisInFuture, long countDownInterval){
+        public MyCountDownTimer(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
         }
 
@@ -256,12 +255,11 @@ public class AssociateActivity extends AppCompatActivity {
         @Override
         public void onTick(long l) {
             long time = l / 1000;
-            if(isPaused){
+            if (isPaused) {
                 timer.cancel();
-            }
-            else{
-                txtAssociateTimer.setText(String.format("%02d 分 %02d 秒",time/60,time%60));
-                timeRemaining = l-1000;
+            } else {
+                txtAssociateTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
+                timeRemaining = l - 1000;
             }
         }
 
@@ -280,16 +278,14 @@ public class AssociateActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false).show();
             // submit the sheet
-            Thread thread = new Thread(){
-                public void run(){
-                    int count = arrayAdapter.getCount()-1;
+            Thread thread = new Thread() {
+                public void run() {
+                    int count = arrayAdapter.getCount() - 1;
                     ConnServer[] conn = new ConnServer[count];
-                    for(int index=0; index<count; index++){
-                        String content = arrayAdapter.getItem(index+1);
-                        Log.d("oneimageName",content);
-
-                        String imageID ="0";    //  圖片流水號;目前測試用
-                        conn[index] = new ConnServer("oneimage",content,"test01",imageID);
+                    for (int index = 0; index < count; index++) {
+                        String content = arrayAdapter.getItem(index + 1);
+                        Log.d("oneimageName", content);
+                        conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), imageID);
                     }
                 }
             };
@@ -298,24 +294,24 @@ public class AssociateActivity extends AppCompatActivity {
     }
 
     // guide dialog view
-    private void guideView(){
+    private void guideView() {
         // get whether guideSet is set
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        if(extras!=null) guideSet = extras.getBoolean("guideSet");
-        this.setResult(RESULT_OK,intent);
+        if (extras != null) guideSet = extras.getBoolean("guideSet");
+        this.setResult(RESULT_OK, intent);
 
         // if first time, show the guide
-        if(guideSet==false){
+        if (guideSet == false) {
             // set guide dialog view
-            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
+            final Dialog dialog = new Dialog(this, R.style.Dialog_Fullscreen);
             dialog.setContentView(R.layout.dialog_guide);
             // animation start
-            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
-            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
-            animationStart(iv_click,iv_drawable);
+            ImageView iv_click = (ImageView) dialog.findViewById(R.id.iv_click);
+            ImageView iv_drawable = (ImageView) dialog.findViewById(R.id.iv_drawable);
+            animationStart(iv_click, iv_drawable);
             // end dialog view
-            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
+            ImageView iv_gotit = (ImageView) dialog.findViewById(R.id.iv_gotit);
             iv_gotit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -331,16 +327,16 @@ public class AssociateActivity extends AppCompatActivity {
     }
 
     // start animation
-    private void animationStart(ImageView iv_click, ImageView iv_drawable){
+    private void animationStart(ImageView iv_click, ImageView iv_drawable) {
         // animation route
-        Animation am_click = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-0.95f,Animation.RELATIVE_TO_SELF,3f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
+        Animation am_click = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -0.95f, Animation.RELATIVE_TO_SELF, 3f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         am_click.setDuration(2500);
         am_click.setRepeatCount(-1);
         am_click.setStartOffset(500);
         iv_click.setAnimation(am_click);
         am_click.start();
 
-        Animation am_drawable = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-1f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
+        Animation am_drawable = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         am_drawable.setDuration(2000);
         am_drawable.setRepeatCount(-1);
         am_drawable.setStartOffset(1000);
@@ -351,7 +347,7 @@ public class AssociateActivity extends AppCompatActivity {
     // intercept back
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             // no action
             return true;
         }
@@ -378,13 +374,12 @@ public class AssociateActivity extends AppCompatActivity {
 
             JSONObject obj = new JSONObject(webRequest);  // parse web request
             random_image = obj.getString("random1");
-            Log.d("random_number",random_image);
+            Log.d("random_number", random_image);
             return random_image;
 
         } catch (java.io.IOException e) {
             Log.d("IOException", e.getMessage());
-        }
-        catch (org.json.JSONException e) {
+        } catch (org.json.JSONException e) {
             Log.d("JSON Error", e.getMessage());
         }
         return null;

@@ -118,25 +118,25 @@ public class AttributeActivity extends AppCompatActivity {
         lLayoutE = (LinearLayout) findViewById(R.id.lLayoutE);
 
         // set random image
-        Thread thread = new Thread(new Runnable(){
+        Thread thread = new Thread(new Runnable() {
 
             @Override
             public void run() {
-                try{
+                try {
                     ArrayList<String> random_list = randomSetImage();
-                    if(random_list != null) Log.d("thread_try","Successed");
-                    else Log.d("thread_catch","Failed");
-                    dict.put("A",random_list.get(0));
-                    dict.put("B",random_list.get(1));
-                    dict.put("C",random_list.get(2));
-                    dict.put("D",random_list.get(3));
-                    dict.put("E",random_list.get(4));
-                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/"+dict.get("A")+".png").into(imgvA);
-                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/"+dict.get("B")+".png").into(imgvB);
-                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/"+dict.get("C")+".png").into(imgvC);
-                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/"+dict.get("D")+".png").into(imgvD);
-                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/"+dict.get("E")+".png").into(imgvE);
-                } catch (Exception e){
+                    if (random_list != null) Log.d("thread_try", "Successed");
+                    else Log.d("thread_catch", "Failed");
+                    dict.put("A", random_list.get(0));
+                    dict.put("B", random_list.get(1));
+                    dict.put("C", random_list.get(2));
+                    dict.put("D", random_list.get(3));
+                    dict.put("E", random_list.get(4));
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("A") + ".png").into(imgvA);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("B") + ".png").into(imgvB);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("C") + ".png").into(imgvC);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("D") + ".png").into(imgvD);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("E") + ".png").into(imgvE);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -149,7 +149,9 @@ public class AttributeActivity extends AppCompatActivity {
         llList = (LinearLayout) findViewById(R.id.llList);
         lvAttribute = (ListView) findViewById(R.id.lvAttribute);
         // add title to mlist
-        ArrayList<String> initial = new ArrayList<String>(){{add("選擇");}};
+        ArrayList<String> initial = new ArrayList<String>() {{
+            add("選擇");
+        }};
         mlist.add(new listContext("名稱", initial));
         // new adapter with context and set
         adapter = new myAdapter(AttributeActivity.this, mlist);
@@ -252,7 +254,7 @@ public class AttributeActivity extends AppCompatActivity {
                     if (clickD == true) choose_list.add("D"); //choose = choose + "D";
                     if (clickE == true) choose_list.add("E"); //choose = choose + "E";
                     //for(String chosen:choose_list)
-                        //choose += chosen;
+                    //choose += chosen;
                     //Log.d("chosen string",choose);
                     mlist.add(new listContext(edtName.getText().toString(), choose_list));
 
@@ -320,21 +322,21 @@ public class AttributeActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 timer = null;
-                                Thread thread = new Thread(){
-                                    public void run(){
-                                        int count = adapter.getCount()-1;
+                                Thread thread = new Thread() {
+                                    public void run() {
+                                        int count = adapter.getCount() - 1;
                                         ConnServer[] conn = new ConnServer[count];
-                                        for(int index=0; index<count; index++){
-                                            String content = adapter.getItem(index+1).getName();
-                                            ArrayList<String> select = adapter.getItem(index+1).getSelect();
+                                        for (int index = 0; index < count; index++) {
+                                            String content = adapter.getItem(index + 1).getName();
+                                            ArrayList<String> select = adapter.getItem(index + 1).getSelect();
                                             String[] chosenImgID = new String[select.size()];
-                                            for(int idIndex = 0; idIndex<select.size(); idIndex++){
+                                            for (int idIndex = 0; idIndex < select.size(); idIndex++) {
                                                 String key = select.get(idIndex);
-                                                String value = ""+dict.get(key);
+                                                String value = "" + dict.get(key);
                                                 chosenImgID[idIndex] = value;
-                                                Log.d("chosenID",value);
+                                                Log.d("chosenID", value);
                                             }
-                                            conn[index] = new ConnServer("association",content,chosenImgID,"test01");
+                                            conn[index] = new ConnServer("association", content, chosenImgID, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
                                         }
                                     }
                                 };
@@ -375,21 +377,21 @@ public class AttributeActivity extends AppCompatActivity {
                                                         finish();
                                                     }
                                                 }).setCancelable(false).show();
-                                        Thread thread = new Thread(){
-                                            public void run(){
-                                                int count = adapter.getCount()-1;
+                                        Thread thread = new Thread() {
+                                            public void run() {
+                                                int count = adapter.getCount() - 1;
                                                 ConnServer[] conn = new ConnServer[count];
-                                                for(int index=0; index<count; index++){
-                                                    String content = adapter.getItem(index+1).getName();
-                                                    ArrayList<String> select = adapter.getItem(index+1).getSelect();
+                                                for (int index = 0; index < count; index++) {
+                                                    String content = adapter.getItem(index + 1).getName();
+                                                    ArrayList<String> select = adapter.getItem(index + 1).getSelect();
                                                     String[] chosenImgID = new String[select.size()];
-                                                    for(int idIndex = 0; idIndex<select.size(); idIndex++){
+                                                    for (int idIndex = 0; idIndex < select.size(); idIndex++) {
                                                         String key = select.get(idIndex);
-                                                        String value = ""+dict.get(key);
+                                                        String value = "" + dict.get(key);
                                                         chosenImgID[idIndex] = value;
-                                                        Log.d("chosenID",value);
+                                                        Log.d("chosenID", value);
                                                     }
-                                                    conn[index] = new ConnServer("association",content,chosenImgID,"test01");
+                                                    conn[index] = new ConnServer("association", content, chosenImgID, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
                                                 }
                                             }
                                         };
@@ -447,21 +449,21 @@ public class AttributeActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false).show();
             // submit the sheet
-            Thread thread = new Thread(){
-                public void run(){
-                    int count = adapter.getCount()-1;
+            Thread thread = new Thread() {
+                public void run() {
+                    int count = adapter.getCount() - 1;
                     ConnServer[] conn = new ConnServer[count];
-                    for(int index=0; index<count; index++){
-                        String content = adapter.getItem(index+1).getName();
-                        ArrayList<String> select = adapter.getItem(index+1).getSelect();
+                    for (int index = 0; index < count; index++) {
+                        String content = adapter.getItem(index + 1).getName();
+                        ArrayList<String> select = adapter.getItem(index + 1).getSelect();
                         String[] chosenImgID = new String[select.size()];
-                        for(int idIndex = 0; idIndex<select.size(); idIndex++){
+                        for (int idIndex = 0; idIndex < select.size(); idIndex++) {
                             String key = select.get(idIndex);
-                            String value = ""+dict.get(key);
+                            String value = "" + dict.get(key);
                             chosenImgID[idIndex] = value;
-                            Log.d("chosenID",value);
+                            Log.d("chosenID", value);
                         }
-                        conn[index] = new ConnServer("association",content,chosenImgID,"test01");
+                        conn[index] = new ConnServer("association", content, chosenImgID, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
                     }
                 }
             };
@@ -540,8 +542,8 @@ public class AttributeActivity extends AppCompatActivity {
             listContext context = (listContext) getItem(position);
             holder.txtListName.setText(context.getName());
             String temp = "";
-            for(String str_sel:context.getSelect())
-                temp+=str_sel;
+            for (String str_sel : context.getSelect())
+                temp += str_sel;
             holder.txtListSelect.setText(temp);
             return convertView;
         }
@@ -559,24 +561,24 @@ public class AttributeActivity extends AppCompatActivity {
     }
 
     // guide dialog view
-    private void guideView(){
+    private void guideView() {
         // get whether guideSet is set
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        if(extras!=null) guideSet = extras.getBoolean("guideSet");
-        this.setResult(RESULT_OK,intent);
+        if (extras != null) guideSet = extras.getBoolean("guideSet");
+        this.setResult(RESULT_OK, intent);
 
         // if first time, show the guide
-        if(guideSet==false){
+        if (guideSet == false) {
             // set guide dialog view
-            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
+            final Dialog dialog = new Dialog(this, R.style.Dialog_Fullscreen);
             dialog.setContentView(R.layout.dialog_guide);
             // animation start
-            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
-            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
-            animationStart(iv_click,iv_drawable);
+            ImageView iv_click = (ImageView) dialog.findViewById(R.id.iv_click);
+            ImageView iv_drawable = (ImageView) dialog.findViewById(R.id.iv_drawable);
+            animationStart(iv_click, iv_drawable);
             // end dialog view
-            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
+            ImageView iv_gotit = (ImageView) dialog.findViewById(R.id.iv_gotit);
             iv_gotit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -592,16 +594,16 @@ public class AttributeActivity extends AppCompatActivity {
     }
 
     // start animation
-    private void animationStart(ImageView iv_click, ImageView iv_drawable){
+    private void animationStart(ImageView iv_click, ImageView iv_drawable) {
         // animation route
-        Animation am_click = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-0.95f,Animation.RELATIVE_TO_SELF,3f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
+        Animation am_click = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -0.95f, Animation.RELATIVE_TO_SELF, 3f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         am_click.setDuration(2500);
         am_click.setRepeatCount(-1);
         am_click.setStartOffset(500);
         iv_click.setAnimation(am_click);
         am_click.start();
 
-        Animation am_drawable = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-1f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
+        Animation am_drawable = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f);
         am_drawable.setDuration(2000);
         am_drawable.setRepeatCount(-1);
         am_drawable.setStartOffset(1000);
@@ -638,15 +640,14 @@ public class AttributeActivity extends AppCompatActivity {
             Log.d("webRequest", webRequest);
 
             JSONObject obj = new JSONObject(webRequest);  // parse web request
-            for(int i=1;i<=5;i++){
-                num_list.add(obj.getString("random"+i));
+            for (int i = 1; i <= 5; i++) {
+                num_list.add(obj.getString("random" + i));
             }
             return num_list;
 
         } catch (java.io.IOException e) {
             Log.d("IOException", e.getMessage());
-        }
-        catch (org.json.JSONException e) {
+        } catch (org.json.JSONException e) {
             Log.d("JSON Error", e.getMessage());
         }
         return null;

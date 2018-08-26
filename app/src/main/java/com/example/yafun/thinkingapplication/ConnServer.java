@@ -167,6 +167,8 @@ public class ConnServer {
         params.add(new BasicNameValuePair("imageID", imageID));
         params.add(new BasicNameValuePair("crtuser", crtuser));
 
+
+        showMessage("oneimage imageID", imageID);
         try {
 
             request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params
@@ -175,7 +177,7 @@ public class ConnServer {
             HttpEntity resEntity = response.getEntity();
             webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
 
-            //showMessage("webRequest", webRequest);
+            showMessage("webRequest", webRequest);
 
             obj = new JSONObject(this.webRequest);  // parse web request
             String webResponse = obj.getJSONObject(this.database).getString("response");
