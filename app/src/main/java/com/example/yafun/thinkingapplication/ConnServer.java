@@ -25,6 +25,21 @@ public class ConnServer {
     private String database = null;
     private String webRequest = null;      //  web request;type:json
 
+    private String account = null;
+    private String password = null;
+    private String memberInf = null;
+
+    /**
+     * Loging
+     *
+     * @param useraccount
+     * @param userpasswd
+     */
+    public ConnServer(String useraccount, String userpasswd) {
+        this.account = useraccount;
+        this.password = userpasswd;
+    }
+
     /**
      * 處理遊戲 drawing,drawingmult 建構子
      *
@@ -205,6 +220,54 @@ public class ConnServer {
     }
 
     /**
+     * Check user login
+     *
+     * @return
+     */
+    public boolean checkLogin() {
+
+        JSONObject obj;
+        String webResponse = null;
+
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/login.php");
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+        params.add(new BasicNameValuePair("account", this.account));
+        params.add(new BasicNameValuePair("password", this.password));
+
+
+        try {
+
+            request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params
+            HttpResponse response = client.execute(request);        //  get web response
+
+            HttpEntity resEntity = response.getEntity();
+            this.webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
+
+            obj = new JSONObject(this.webRequest);            // parse web request
+            webResponse = obj.getString("response");    // store webResponse
+            this.memberInf = obj.getString("member");   // store member information
+
+            showMessage("memberInf", this.memberInf);
+            //showMessage("login", webResponse);
+
+        } catch (java.io.IOException e) {
+            showMessage("IOException", e.getMessage());
+        } catch (org.json.JSONException e) {
+            showMessage("JSON Error", e.getMessage());
+        } finally {
+
+            if (webResponse.equals("successful"))
+                return true;
+            else
+                return false;
+            
+        }
+    }
+
+    /**
      * convert bitmap to base64
      *
      * @param bitmap
@@ -219,6 +282,14 @@ public class ConnServer {
         bitmap.recycle();   //  recycle resource
 
         return android.util.Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    /**
+     * getMemberInf
+     * @return memberInf
+     */
+    public String getMemberInf() {
+        return memberInf;
     }
 
     private void showMessage(String title, String content) {
