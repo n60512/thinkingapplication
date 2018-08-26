@@ -80,35 +80,8 @@ public class AssociateActivity extends AppCompatActivity {
         setContentView(R.layout.drawerlayout_associate);
         setTitle("簡圖聯想遊戲");
 
-        // get whether guideSet is set
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if(extras!=null) guideSet = extras.getBoolean("guideSet");
-        this.setResult(RESULT_OK,intent);
-
-        // if first time, show the guide
-        if(guideSet==false){
-            // set guide dialog view
-            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
-            dialog.setContentView(R.layout.dialog_guide);
-            // animation start
-            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
-            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
-            animationStart(iv_click,iv_drawable);
-            // end dialog view
-            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
-            iv_gotit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // start timer
-                    startTimer();
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-        }
-        // else only start the timer
-        else startTimer();
+        // check guide dialog then start timer
+        guideView();
 
         // set variable value
         edtName = (EditText)findViewById(R.id.edtAssociateName);
@@ -239,6 +212,20 @@ public class AssociateActivity extends AppCompatActivity {
                                                         finish();
                                                     }
                                                 }).setCancelable(false).show();
+                                        Thread thread = new Thread(){
+                                            public void run(){
+                                                int count = arrayAdapter.getCount()-1;
+                                                ConnServer[] conn = new ConnServer[count];
+                                                for(int index=0; index<count; index++){
+                                                    String content = arrayAdapter.getItem(index+1);
+                                                    Log.d("oneimageName",content);
+
+                                                    String imageID ="0";    //  圖片流水號;目前測試用
+                                                    conn[index] = new ConnServer("oneimage",content,"test01",imageID);
+                                                }
+                                            }
+                                        };
+                                        thread.start();
                                     }
                                 }.start();
                             }
@@ -293,7 +280,54 @@ public class AssociateActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false).show();
             // submit the sheet
+            Thread thread = new Thread(){
+                public void run(){
+                    int count = arrayAdapter.getCount()-1;
+                    ConnServer[] conn = new ConnServer[count];
+                    for(int index=0; index<count; index++){
+                        String content = arrayAdapter.getItem(index+1);
+                        Log.d("oneimageName",content);
+
+                        String imageID ="0";    //  圖片流水號;目前測試用
+                        conn[index] = new ConnServer("oneimage",content,"test01",imageID);
+                    }
+                }
+            };
+            thread.start();
         }
+    }
+
+    // guide dialog view
+    private void guideView(){
+        // get whether guideSet is set
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if(extras!=null) guideSet = extras.getBoolean("guideSet");
+        this.setResult(RESULT_OK,intent);
+
+        // if first time, show the guide
+        if(guideSet==false){
+            // set guide dialog view
+            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
+            dialog.setContentView(R.layout.dialog_guide);
+            // animation start
+            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
+            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
+            animationStart(iv_click,iv_drawable);
+            // end dialog view
+            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
+            iv_gotit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // start timer
+                    startTimer();
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+        // else only start the timer
+        else startTimer();
     }
 
     // start animation

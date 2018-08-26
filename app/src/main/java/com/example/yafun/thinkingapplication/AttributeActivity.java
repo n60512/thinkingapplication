@@ -97,35 +97,8 @@ public class AttributeActivity extends AppCompatActivity {
         setContentView(R.layout.drawerlayout_attribute);
         setTitle("屬性聯想遊戲");
 
-        // get whether guideSet is set
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if(extras!=null) guideSet = extras.getBoolean("guideSet");
-        this.setResult(RESULT_OK,intent);
-
-        // if first time, show the guide
-        if(guideSet==false){
-            // set guide dialog view
-            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
-            dialog.setContentView(R.layout.dialog_guide);
-            // animation start
-            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
-            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
-            animationStart(iv_click,iv_drawable);
-            // end dialog view
-            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
-            iv_gotit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // start timer
-                    startTimer();
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-        }
-        // else only start the timer
-        else startTimer();
+        // check guide dialog then start timer
+        guideView();
 
         // set variable value
         edtName = (EditText) findViewById(R.id.edtAttributeName);
@@ -361,7 +334,6 @@ public class AttributeActivity extends AppCompatActivity {
                                                 chosenImgID[idIndex] = value;
                                                 Log.d("chosenID",value);
                                             }
-
                                             conn[index] = new ConnServer("association",content,chosenImgID,"test01");
                                         }
                                     }
@@ -403,6 +375,25 @@ public class AttributeActivity extends AppCompatActivity {
                                                         finish();
                                                     }
                                                 }).setCancelable(false).show();
+                                        Thread thread = new Thread(){
+                                            public void run(){
+                                                int count = adapter.getCount()-1;
+                                                ConnServer[] conn = new ConnServer[count];
+                                                for(int index=0; index<count; index++){
+                                                    String content = adapter.getItem(index+1).getName();
+                                                    ArrayList<String> select = adapter.getItem(index+1).getSelect();
+                                                    String[] chosenImgID = new String[select.size()];
+                                                    for(int idIndex = 0; idIndex<select.size(); idIndex++){
+                                                        String key = select.get(idIndex);
+                                                        String value = ""+dict.get(key);
+                                                        chosenImgID[idIndex] = value;
+                                                        Log.d("chosenID",value);
+                                                    }
+                                                    conn[index] = new ConnServer("association",content,chosenImgID,"test01");
+                                                }
+                                            }
+                                        };
+                                        thread.start();
                                     }
                                 }.start();
                             }
@@ -456,6 +447,25 @@ public class AttributeActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false).show();
             // submit the sheet
+            Thread thread = new Thread(){
+                public void run(){
+                    int count = adapter.getCount()-1;
+                    ConnServer[] conn = new ConnServer[count];
+                    for(int index=0; index<count; index++){
+                        String content = adapter.getItem(index+1).getName();
+                        ArrayList<String> select = adapter.getItem(index+1).getSelect();
+                        String[] chosenImgID = new String[select.size()];
+                        for(int idIndex = 0; idIndex<select.size(); idIndex++){
+                            String key = select.get(idIndex);
+                            String value = ""+dict.get(key);
+                            chosenImgID[idIndex] = value;
+                            Log.d("chosenID",value);
+                        }
+                        conn[index] = new ConnServer("association",content,chosenImgID,"test01");
+                    }
+                }
+            };
+            thread.start();
         }
     }
 
@@ -546,6 +556,39 @@ public class AttributeActivity extends AppCompatActivity {
                 this.txtListSelect = txtListSelect;
             }
         }
+    }
+
+    // guide dialog view
+    private void guideView(){
+        // get whether guideSet is set
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if(extras!=null) guideSet = extras.getBoolean("guideSet");
+        this.setResult(RESULT_OK,intent);
+
+        // if first time, show the guide
+        if(guideSet==false){
+            // set guide dialog view
+            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
+            dialog.setContentView(R.layout.dialog_guide);
+            // animation start
+            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
+            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
+            animationStart(iv_click,iv_drawable);
+            // end dialog view
+            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
+            iv_gotit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // start timer
+                    startTimer();
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+        // else only start the timer
+        else startTimer();
     }
 
     // start animation

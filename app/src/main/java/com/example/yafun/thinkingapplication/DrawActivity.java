@@ -1,5 +1,6 @@
 package com.example.yafun.thinkingapplication;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +29,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,29 +40,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.FileEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class DrawActivity extends AppCompatActivity {
+
+    private Boolean guideSet;
 
     // declare variable
     private EditText edtName;
@@ -88,19 +74,15 @@ public class DrawActivity extends AppCompatActivity {
     private boolean isPaused = false;
     private long timeRemaining = 0;
 
-    //pic
-    private int serverResponseCode = 0;
-    private String upLoadServerUri = null;
-    private String imagepath = "http://140.122.91.218/thinkingapp/connDB/upload_file.php";
-    Intent data;
-    String imgID;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // set view set title
         setContentView(R.layout.drawerlayout_draw);
         setTitle("一筆畫遊戲");
+
+        // check guide dialog then start timer
+        guideView();
 
         // set variable value
         edtName = (EditText) findViewById(R.id.edtDrawName);
@@ -117,9 +99,6 @@ public class DrawActivity extends AppCompatActivity {
         // new adapter with context and set
         adapter = new myAdapter(DrawActivity.this, mlist);
         lvDraw.setAdapter(adapter);
-
-        // start timer
-        startTimer();
 
         // paint initialize
         paint = new Paint();
@@ -141,14 +120,7 @@ public class DrawActivity extends AppCompatActivity {
                 else if (baseBitmap != null && !TextUtils.isEmpty(edtName.getText().toString())) {
                     mlist.add(new listContext(baseBitmap, edtName.getText().toString()));
                     adapter.notifyDataSetChanged();
-                    //upload
-                    saveImage(baseBitmap);
-                    Uri selectedImageUri = getImageUri(imgvDraw.getContext(), baseBitmap);
-                    Log.e("Uri", selectedImageUri + "");
-                    imagepath = getPath(selectedImageUri);
-                    Log.e("imagepath", imagepath);
-                    Bitmap bitmap = BitmapFactory.decodeFile(imagepath);
-                    uploadFile(imagepath);
+
                     //clear
                     edtName.setText("");
                     baseBitmap = Bitmap.createBitmap(imgvDraw.getWidth(), imgvDraw.getHeight(), Bitmap.Config.ARGB_8888);
@@ -183,164 +155,6 @@ public class DrawActivity extends AppCompatActivity {
 
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-//        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-//        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        Log.e("getContentResolver", inContext.getContentResolver() + "");
-        Log.e("inImage", inImage + "");
-        String path = MediaStore.Images.Media.insertImage(DrawActivity.this.getContentResolver(), inImage, edtName.getText().toString(), null);
-        Log.e("pathpath", path + "");
-        return Uri.parse(path);
-    }
-
-    public String getPath(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-    }
-
-    public void saveImage(Bitmap bitmap) {
-        FileOutputStream fOut;
-        try {
-            File dir = new File("/sdcard/thinkingTest/");
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-
-            String tmp = "/sdcard/thinkingTest/" + imgID + ".jpg";
-            fOut = new FileOutputStream(tmp);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
-
-            try {
-                fOut.flush();
-                fOut.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public int uploadFile(String sourceFileUri) {
-
-        String fileName = sourceFileUri;
-
-        HttpURLConnection conn = null;
-        DataOutputStream dos = null;
-        String lineEnd = "\r\n";
-        String twoHyphens = "--";
-        String boundary = "*****";
-        int bytesRead, bytesAvailable, bufferSize;
-        byte[] buffer;
-        int maxBufferSize = 1 * 1024 * 1024;
-        File sourceFile = new File(sourceFileUri);
-
-        if (!sourceFile.isFile()) {
-
-            Log.e("uploadFile", "Source File not exist :" + imagepath);
-
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    Log.e("Source File not exist :" + imagepath, "");
-                }
-            });
-
-            return 0;
-        } else {
-            try {
-                // open a URL connection to the Servlet
-                FileInputStream fileInputStream = new FileInputStream(sourceFile);
-                URL url = new URL(upLoadServerUri);
-
-                // Open a HTTP  connection to  the URL
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setDoInput(true); // Allow Inputs
-                conn.setDoOutput(true); // Allow Outputs
-                conn.setUseCaches(false); // Don't use a Cached Copy
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Connection", "Keep-Alive");
-                conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-                conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                conn.setRequestProperty("uploaded_file", fileName);
-
-                dos = new DataOutputStream(conn.getOutputStream());
-
-                dos.writeBytes(twoHyphens + boundary + lineEnd);
-                dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
-                        + fileName + "\"" + lineEnd);
-                dos.writeBytes(lineEnd);
-
-                // create a buffer of  maximum size
-                bytesAvailable = fileInputStream.available();
-
-                bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                buffer = new byte[bufferSize];
-
-                // read file and write it into form...
-                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
-                while (bytesRead > 0) {
-                    dos.write(buffer, 0, bufferSize);
-                    bytesAvailable = fileInputStream.available();
-                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-                }
-
-                // send multipart form data necesssary after file data...
-                dos.writeBytes(lineEnd);
-                dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-
-                // Responses from the server (code and message)
-                serverResponseCode = conn.getResponseCode();
-                String serverResponseMessage = conn.getResponseMessage();
-
-                Log.i("uploadFile", "HTTP Response is : "
-                        + serverResponseMessage + ": " + serverResponseCode);
-
-                if (serverResponseCode == 200) {
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            String msg = "File Upload Completed.\n\n See uploaded file your server. \n\n";
-                            //messageText.setText(msg);
-                            Toast.makeText(DrawActivity.this, "File Upload Complete.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-
-                //close the streams //
-                fileInputStream.close();
-                dos.flush();
-                dos.close();
-            } catch (MalformedURLException ex) {
-                //dialog.dismiss();
-                ex.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Log.e("MalformedURLcheckscript", "");
-                        Toast.makeText(DrawActivity.this, "MalformedURLException", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                Log.e("Upload file to server", "error: " + ex.getMessage(), ex);
-            } catch (Exception e) {
-                //dialog.dismiss();
-                e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Log.e("GotExceptionseelogcat ", "");
-                        Toast.makeText(DrawActivity.this, "Got Exception : see logcat ", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                Log.e("UpfiletoserverException", "Exception : " + e.getMessage(), e);
-            }
-            //dialog.dismiss();
-            return serverResponseCode;
-        } // End else block
-    }
-
     // create menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -372,13 +186,13 @@ public class DrawActivity extends AppCompatActivity {
                                         ConnServer[] conn = new ConnServer[count];
                                         for (int index = 0; index < count; index++) {
                                             String content = adapter.getItem(index).getName();
-                                            //conn[index] = new ConnServer("drawing", content, "test01");
-                                            //imgID = conn[index].getImageID();
+                                            Bitmap uploadimg = adapter.getItem(index).getImage();
+                                            // connect to Server
+                                            conn[index] = new ConnServer("drawing", content, "test01", uploadimg);
                                         }
                                     }
                                 };
                                 thread.start();
-
                                 finish();
                             }
                         })
@@ -415,6 +229,20 @@ public class DrawActivity extends AppCompatActivity {
                                                         finish();
                                                     }
                                                 }).setCancelable(false).show();
+                                        // commit content to database
+                                        Thread thread = new Thread() {
+                                            public void run() {
+                                                int count = adapter.getCount();
+                                                ConnServer[] conn = new ConnServer[count];
+                                                for (int index = 0; index < count; index++) {
+                                                    String content = adapter.getItem(index).getName();
+                                                    Bitmap uploadimg = adapter.getItem(index).getImage();
+                                                    // connect to Server
+                                                    conn[index] = new ConnServer("drawing", content, "test01", uploadimg);
+                                                }
+                                            }
+                                        };
+                                        thread.start();
                                     }
                                 }.start();
                             }
@@ -468,18 +296,29 @@ public class DrawActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false).show();
             // submit the sheet
+            // commit content to database
+            Thread thread = new Thread() {
+                public void run() {
+                    int count = adapter.getCount();
+                    ConnServer[] conn = new ConnServer[count];
+                    for (int index = 0; index < count; index++) {
+                        String content = adapter.getItem(index).getName();
+                        Bitmap uploadimg = adapter.getItem(index).getImage();
+                        // connect to Server
+                        conn[index] = new ConnServer("drawing", content, "test01", uploadimg);
+                    }
+                }
+            };
+            thread.start();
         }
     }
 
     // draw of touch event
     private View.OnTouchListener touch = new View.OnTouchListener() {
-
         float startX;
         float startY;
-
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (baseBitmap == null) {
@@ -490,7 +329,6 @@ public class DrawActivity extends AppCompatActivity {
                     startX = event.getX();
                     startY = event.getY();
                     break;
-
                 case MotionEvent.ACTION_MOVE:
                     if (isTouch != true) {
                         float stopX = event.getX();
@@ -501,7 +339,6 @@ public class DrawActivity extends AppCompatActivity {
                         imgvDraw.setImageBitmap(baseBitmap);
                     }
                     break;
-
                 case MotionEvent.ACTION_UP:
                     isTouch = true;
                     break;
@@ -613,6 +450,57 @@ public class DrawActivity extends AppCompatActivity {
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width, height, matrix, true);
         return resizedBitmap;
+    }
+
+    // guide dialog view
+    private void guideView(){
+        // get whether guideSet is set
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if(extras!=null) guideSet = extras.getBoolean("guideSet");
+        this.setResult(RESULT_OK,intent);
+
+        // if first time, show the guide
+        if(guideSet==false){
+            // set guide dialog view
+            final Dialog dialog = new Dialog(this,R.style.Dialog_Fullscreen);
+            dialog.setContentView(R.layout.dialog_guide);
+            // animation start
+            ImageView iv_click = (ImageView)dialog.findViewById(R.id.iv_click);
+            ImageView iv_drawable = (ImageView)dialog.findViewById(R.id.iv_drawable);
+            animationStart(iv_click,iv_drawable);
+            // end dialog view
+            ImageView iv_gotit = (ImageView)dialog.findViewById(R.id.iv_gotit);
+            iv_gotit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // start timer
+                    startTimer();
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+        // else only start the timer
+        else startTimer();
+    }
+
+    // start animation
+    private void animationStart(ImageView iv_click, ImageView iv_drawable){
+        // animation route
+        Animation am_click = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-0.95f,Animation.RELATIVE_TO_SELF,3f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
+        am_click.setDuration(2500);
+        am_click.setRepeatCount(-1);
+        am_click.setStartOffset(500);
+        iv_click.setAnimation(am_click);
+        am_click.start();
+
+        Animation am_drawable = new TranslateAnimation(Animation.RELATIVE_TO_SELF,-1f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f);
+        am_drawable.setDuration(2000);
+        am_drawable.setRepeatCount(-1);
+        am_drawable.setStartOffset(1000);
+        iv_drawable.setAnimation(am_drawable);
+        am_drawable.start();
     }
 
     // intercept back
