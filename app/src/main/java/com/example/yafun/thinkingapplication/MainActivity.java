@@ -58,9 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("一筆畫遊戲作答說明")
                             .setMessage("【 作答時間 : 8 分鐘 】\n" +
-                                    "圖像作答需一筆畫完成，並且為圖片輸入作品名稱。\n" +
-                                    "作答完成可在頁面上按送出按鍵繳交作答，並繼續作畫。\n" +
-                                    "在作答時間內可連續作答，每次的作答紀錄均會在左側的作答歷程中顯示。\n")
+                                    "圖像作答需一筆畫完成，並且在下方為圖片輸入名稱。\n" +
+                                    "時間內可連續作答，作答紀錄均會在左側的作答歷程中顯示。\n")
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -85,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("屬性聯想遊戲作答說明")
                             .setMessage("【 作答時間 : 10 分鐘 】\n" +
-                                    "選出兩張(含)以上相關連性質的圖片，在下方輸入相關的文字敘述，作答完按下送出按鍵繳交作答。\n" +
-                                    "例如 : 選出【衣服】和【雞蛋】，聯想到\"顏色間具有相同性質\"\n" +
-                                    "就可以在下方輸入【白色】，並按下送出鍵送出作答。\n" +
-                                    "作答時間之內可連續作答，每次的作答紀錄均會在左側的作答歷程中顯示。\n")
+                                    "選出兩張(含)以上相關連性質的圖片，並輸入相關的文字敘述。\n" +
+                                    "例如 : 選出【衣服】和【雞蛋】，聯想到\"顏色間具有相同性質\"，" +
+                                    "即可輸入【白色】，並送出作答。\n" +
+                                    "時間內可連續作答，作答紀錄均會在左側的作答歷程中顯示。\n")
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -113,9 +112,8 @@ public class MainActivity extends AppCompatActivity {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("簡圖聯想遊戲作答說明")
                             .setMessage("【 作答時間 : 8 分鐘 】 \n" +
-                                    "針對題目給予的圖片輸入文字作答\n" +
-                                    "在作答時間之內可連續作答，每次的作答紀錄均會在左側的作答歷程中顯示。\n" +
-                                    "若提早結束作答可在頁面上按\"提早交卷\"繳交作答。")
+                                    "針對題目給予的圖片輸入文字敘述，\n" +
+                                    "在時間內可連續作答，每次的作答紀錄均會在左側的作答歷程中顯示。\n")
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -140,9 +138,8 @@ public class MainActivity extends AppCompatActivity {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("圖繪展開遊戲作答說明")
                             .setMessage("【 測驗時間 : 20 分鐘 】\n" +
-                                    "完成圖像的作答，並且在下方為圖片輸入作品名稱。\n" +
-                                    "作答時間之內可連續作答，每次的作答紀錄均會在左側的作答歷程中顯示。\n" +
-                                    "結束作答可在頁面上按\"送出\"按鍵繳交作答，繼續作畫。")
+                                    "完成圖像的作答，並且在下方為圖像輸入作品名稱。\n" +
+                                    "作答時間之內可連續作答，\n每次的作答紀錄均會在左側的作答歷程中顯示。\n")
                             .setPositiveButton("開始測驗", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -234,8 +231,6 @@ public class MainActivity extends AppCompatActivity {
             // get data and set
             //String name = data.getStringExtra("username");
             txtName.setText("Hi, " + getSharedPreferences("member", MODE_PRIVATE).getString("id", "null") + " 同學");
-
-
             loggedin = true;
             // get whether connected to network
             againConnect = data.getExtras().getBoolean("connNetwork");
