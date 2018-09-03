@@ -177,7 +177,7 @@ public class DrawActivity extends AppCompatActivity {
                             // if yes stop the timer and submit the sheet
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                timer.cancel();
+                                //timer.cancel();
                                 timer = null;
                                 // commit content to database
                                 Thread thread = new Thread() {
@@ -214,7 +214,8 @@ public class DrawActivity extends AppCompatActivity {
                                     public void onTick(long l) {
                                         long time = l / 1000;
                                         if (isPaused) {
-                                            timer.cancel();
+                                            //timer.cancel();
+                                            timer = null;
                                         } else {
                                             txtDrawTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
                                             timeRemaining = l - 1000;
@@ -229,7 +230,7 @@ public class DrawActivity extends AppCompatActivity {
                                                 .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                                        timer.cancel();
+                                                        //timer.cancel();
                                                         timer = null;
                                                         finish();
                                                     }
@@ -284,7 +285,8 @@ public class DrawActivity extends AppCompatActivity {
         public void onTick(long l) {
             long time = l / 1000;
             if (isPaused) {
-                timer.cancel();
+                //timer.cancel();
+                timer = null;
             } else {
                 txtDrawTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
                 timeRemaining = l - 1000;
@@ -300,7 +302,7 @@ public class DrawActivity extends AppCompatActivity {
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            timer.cancel();
+                            //timer.cancel();
                             timer = null;
                             finish();
                         }
