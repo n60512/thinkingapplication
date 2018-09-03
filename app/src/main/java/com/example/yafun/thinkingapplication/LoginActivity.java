@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                 //member.edit().remove().commit();
 
                 String content = conn.getMemberInf();               //  Get member information , type:String
-
+                Log.d("getMemberInf",content);
                 try {
                     JSONObject jsonObj = new JSONObject(content);   // JSONObject
                     Iterator<String> keys = jsonObj.keys();         // Iterator

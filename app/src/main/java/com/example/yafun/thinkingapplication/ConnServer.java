@@ -265,7 +265,7 @@ public class ConnServer {
                 return true;
             else
                 return false;
-            
+
         }
     }
 
@@ -288,11 +288,53 @@ public class ConnServer {
 
     /**
      * getMemberInf
+     *
      * @return memberInf
      */
     public String getMemberInf() {
         return memberInf;
     }
+
+    /**
+     * update anwser time
+     *
+     * @param game
+     * @param currentTime
+     */
+    public void updateAnwsertime(String game, String currentTime, String userID) {
+
+        JSONObject obj;
+
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/update_answertime.php");
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+        params.add(new BasicNameValuePair("game", game));
+        params.add(new BasicNameValuePair("currentTime", currentTime));
+        params.add(new BasicNameValuePair("userID", userID));
+
+        try {
+
+            request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params
+            HttpResponse response = client.execute(request);        //  get web response
+
+            HttpEntity resEntity = response.getEntity();
+            webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
+
+            showMessage("webRequest", webRequest);
+
+            obj = new JSONObject(this.webRequest);  // parse web request
+            String webResponse = obj.getString("response");    // store webResponse
+            showMessage("updateRes", webResponse);
+
+        } catch (java.io.IOException e) {
+            showMessage("IOException", e.getMessage());
+        } catch (org.json.JSONException e) {
+            showMessage("JSON Error", e.getMessage());
+        }
+    }
+
 
     private void showMessage(String title, String content) {
         Log.d(title, content);
