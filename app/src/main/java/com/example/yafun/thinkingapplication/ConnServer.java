@@ -296,7 +296,7 @@ public class ConnServer {
     }
 
     /**
-     * update anwser time
+     * update anwser time 上傳並更新當前使用者的紀錄時間
      *
      * @param game
      * @param currentTime
@@ -334,6 +334,47 @@ public class ConnServer {
             showMessage("JSON Error", e.getMessage());
         }
     }
+
+    /**
+     *  select 個人作答紀錄(圖)
+     * @param database
+     * @param crtuser
+     */
+    public void PersonalRecord(String database, String crtuser) {
+
+        JSONObject obj;
+        String webResponse = null;
+
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/select_personalRecord.php");
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+        params.add(new BasicNameValuePair("database", database));
+        params.add(new BasicNameValuePair("crtuser", crtuser));
+
+        try {
+
+            request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params
+            HttpResponse response = client.execute(request);        //  get web response
+
+            HttpEntity resEntity = response.getEntity();
+            this.webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
+
+            obj = new JSONObject(this.webRequest);            // parse web request
+            webResponse = obj.getString("response");    // store webResponse
+            String answerRecord = obj.getString("AnswerRecord");   // store member information
+
+            showMessage("AnswerRecord", answerRecord);
+
+
+        } catch (java.io.IOException e) {
+            showMessage("IOException", e.getMessage());
+        } catch (org.json.JSONException e) {
+            showMessage("JSON Error", e.getMessage());
+        }
+    }
+
 
 
     private void showMessage(String title, String content) {
