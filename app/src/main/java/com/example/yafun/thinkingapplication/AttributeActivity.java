@@ -83,19 +83,23 @@ public class AttributeActivity extends AppCompatActivity {
     private myAdapter adapter;
 
     //timer count
-    private final long TIME = 601 * 1000L;
+    private long TIME = 601 * 1000L;
     private final long INTERVAL = 1000L;
 
     // timer state
     private boolean isPaused = false;
     private long timeRemaining = 0;
 
+
+    private ConnServer connUpdate = new ConnServer();
+    private int RecordLength = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // set view set title
         setContentView(R.layout.drawerlayout_attribute);
-        setTitle("屬性聯想遊戲");
+        setTitle("屬性聯想遊戲"); //associationrulestest
 
         // check guide dialog then start timer
         guideView();
@@ -126,11 +130,18 @@ public class AttributeActivity extends AppCompatActivity {
                     ArrayList<String> random_list = randomSetImage();
                     if (random_list != null) Log.d("thread_try", "Successed");
                     else Log.d("thread_catch", "Failed");
-                    dict.put("A", random_list.get(0));
-                    dict.put("B", random_list.get(1));
-                    dict.put("C", random_list.get(2));
-                    dict.put("D", random_list.get(3));
-                    dict.put("E", random_list.get(4));
+                    dict.put("A", "1");
+                    dict.put("B", "2");
+                    dict.put("C", "3");
+                    dict.put("D", "4");
+                    dict.put("E", "5");
+
+                    /*Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("A") + ".png").into(imgvA);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("B") + ".png").into(imgvB);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("C") + ".png").into(imgvC);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("D") + ".png").into(imgvD);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("E") + ".png").into(imgvE);*/
+
                     Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("A") + ".png").into(imgvA);
                     Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("B") + ".png").into(imgvB);
                     Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("C") + ".png").into(imgvC);
@@ -156,6 +167,55 @@ public class AttributeActivity extends AppCompatActivity {
         // new adapter with context and set
         adapter = new myAdapter(AttributeActivity.this, mlist);
         lvAttribute.setAdapter(adapter);
+
+
+        String tmpString[] = this.connUpdate.PersonalRecord("associationrulestest", getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
+        if (tmpString != null) {
+            this.RecordLength = tmpString.length;
+
+            for (int i = 0; i < tmpString.length; i++) {
+
+                ArrayList<String> choose_list = new ArrayList<String>();
+                Log.d("record_testing", tmpString[i]);    //testing
+
+                String test = tmpString[i].replace("[", "").replace("]", "").replace("\"", "");
+                String[] test2 = test.split(",");
+                for (int k = 0; k < test2.length; k++) {
+                    Log.d("record_testing", test2[k]);    //testing
+
+                    if (k > 0) {
+                        String tmpStr = "";
+                        switch (test2[k]) {
+                            case "1":
+                                tmpStr = "A";
+                                break;
+                            case "2":
+                                tmpStr = "B";
+                                break;
+                            case "3":
+                                tmpStr = "C";
+                                break;
+                            case "4":
+                                tmpStr = "D";
+                                break;
+                            case "5":
+                                tmpStr = "E";
+                                break;
+                            default:
+                                ;
+                        }
+                        //choose_list.add(test2[k]);
+                        choose_list.add(tmpStr);
+                    }
+                }
+                mlist.add(new listContext(test2[0], choose_list));
+
+
+                //listData.add(tmpString[i]);
+                //arrayAdapter.notifyDataSetChanged();
+            }
+        }
+
 
         // img click action
         imgvA.setOnClickListener(new View.OnClickListener() {
@@ -321,12 +381,29 @@ public class AttributeActivity extends AppCompatActivity {
                             // if yes stop the timer and submit the sheet
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+
+                                ///1001
+                                Long currentTimer = timeRemaining / 1000;
+                                Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                connUpdate.updateAnwsertime(
+                                        "associationrules",
+                                        currentTimer.toString(),
+                                        getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                );
+
+                                Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                getSharedPreferences("member", MODE_PRIVATE)
+                                        .edit()
+                                        .putString("associationrules",currentTimer.toString())
+                                        .commit();
+
+
                                 timer = null;
                                 Thread thread = new Thread() {
                                     public void run() {
                                         int count = adapter.getCount() - 1;
                                         ConnServer[] conn = new ConnServer[count];
-                                        for (int index = 0; index < count; index++) {
+                                        for (int index = RecordLength; index < count; index++) {
                                             String content = adapter.getItem(index + 1).getName();
                                             ArrayList<String> select = adapter.getItem(index + 1).getSelect();
                                             String[] chosenImgID = new String[select.size()];
@@ -373,6 +450,27 @@ public class AttributeActivity extends AppCompatActivity {
                                                 .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                        /// Thread for timer update
+                                                        Thread timerthread = new Thread() {
+                                                            public void run() {
+                                                                Long currentTimer = timeRemaining / 1000;
+                                                                Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                                                connUpdate.updateAnwsertime(
+                                                                        "association",
+                                                                        currentTimer.toString(),
+                                                                        getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                                                );
+
+                                                                Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                                                getSharedPreferences("member", MODE_PRIVATE)
+                                                                        .edit()
+                                                                        .putString("association",currentTimer.toString())
+                                                                        .commit();
+                                                            }
+                                                        };
+                                                        timerthread.start();
+
                                                         //timer.cancel();
                                                         timer = null;
                                                         finish();
@@ -382,7 +480,7 @@ public class AttributeActivity extends AppCompatActivity {
                                             public void run() {
                                                 int count = adapter.getCount() - 1;
                                                 ConnServer[] conn = new ConnServer[count];
-                                                for (int index = 0; index < count; index++) {
+                                                for (int index = RecordLength; index < count; index++) {
                                                     String content = adapter.getItem(index + 1).getName();
                                                     ArrayList<String> select = adapter.getItem(index + 1).getSelect();
                                                     String[] chosenImgID = new String[select.size()];
@@ -412,6 +510,12 @@ public class AttributeActivity extends AppCompatActivity {
     private void startTimer() {
         if (timer == null) {
             // use MyCountDownTimer set myself context
+
+            ///1001
+            Long ltest = Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("associationrules", "null"));
+            Log.d("關聯聯想遊戲_讀秒",ltest.toString());
+            TIME = (Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("associationrules", "null"))+1) * 1000L;
+
             timer = new AttributeActivity.MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
@@ -445,6 +549,27 @@ public class AttributeActivity extends AppCompatActivity {
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+
+                            /// Thread for timer update
+                            Thread timerthread = new Thread() {
+                                public void run() {
+                                    Long currentTimer = timeRemaining / 1000;
+                                    Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                    connUpdate.updateAnwsertime(
+                                            "association",
+                                            currentTimer.toString(),
+                                            getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                    );
+
+                                    Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                    getSharedPreferences("member", MODE_PRIVATE)
+                                            .edit()
+                                            .putString("associationrules",currentTimer.toString())
+                                            .commit();
+                                }
+                            };
+                            timerthread.start();
+
                             //timer.cancel();
                             timer = null;
                             finish();
@@ -455,7 +580,7 @@ public class AttributeActivity extends AppCompatActivity {
                 public void run() {
                     int count = adapter.getCount() - 1;
                     ConnServer[] conn = new ConnServer[count];
-                    for (int index = 0; index < count; index++) {
+                    for (int index = RecordLength; index < count; index++) {
                         String content = adapter.getItem(index + 1).getName();
                         ArrayList<String> select = adapter.getItem(index + 1).getSelect();
                         String[] chosenImgID = new String[select.size()];

@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         // if not logged in, start login activity
         if (!loggedin) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);

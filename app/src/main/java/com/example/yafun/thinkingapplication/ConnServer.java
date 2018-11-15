@@ -29,6 +29,10 @@ public class ConnServer {
     private String password = null;
     private String memberInf = null;
 
+
+    public ConnServer(){
+    }
+
     /**
      * Loging
      *
@@ -92,11 +96,20 @@ public class ConnServer {
 
         int index = 0;
         String tmpText = "";
-        for (String option : chosenList)
-            tmpText = tmpText + "'chosen" + Integer.toString(index = index + 1) + "','" + option + "',";
 
+        //1001更改
+        /*for (String option : chosenList)
+            tmpText = tmpText + "'chosen" + Integer.toString(index = index + 1) + "','" + option + "',";
         String chosenContent = "column_create(" + tmpText.substring(0, tmpText.length() - 1) + ")";     // column_create('chosen1','0','chosen2','0' ...)
-        //showMessage("test", tmpText); for test
+            */
+
+        //1001更改格式
+        for (String option : chosenList)
+            tmpText = tmpText + option + ",";
+
+        String chosenContent = tmpText.substring(0, tmpText.length() - 1) ;     // column_create('chosen1','0','chosen2','0' ...)
+
+        showMessage("chosenContent_test", chosenContent); //for test
 
         if (this.database.equals("association")) {
             association(description, chosenContent, crtuser);
@@ -281,7 +294,7 @@ public class ConnServer {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
 
         byte[] byteArray = byteArrayOutputStream.toByteArray();
-        bitmap.recycle();   //  recycle resource
+        //bitmap.recycle();   //  recycle resource
 
         return android.util.Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
@@ -340,11 +353,11 @@ public class ConnServer {
      * @param database
      * @param crtuser
      */
-    public void PersonalRecord(String database, String crtuser) {
+    public String[] PersonalRecord(String database, String crtuser) {
 
         JSONObject obj;
         String webResponse = null;
-
+        String answerRecord[] = null;
         HttpClient client = new DefaultHttpClient();
         HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/select_personalRecord.php");
 
@@ -360,18 +373,60 @@ public class ConnServer {
 
             HttpEntity resEntity = response.getEntity();
             this.webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
+            showMessage("webRequest", this.webRequest);
 
             obj = new JSONObject(this.webRequest);            // parse web request
-            webResponse = obj.getString("response");    // store webResponse
-            String answerRecord = obj.getString("AnswerRecord");   // store member information
+            //webResponse = obj.getString("response");    // store webResponse
 
-            showMessage("AnswerRecord", answerRecord);
+            String answerRecordo = obj.getString("AnswerRecord");   // store member information
+            showMessage("AnswerRecord", answerRecordo);
 
+            JSONArray data = obj.getJSONArray("AnswerRecord");
+
+            answerRecord = new String[data.length()];
+            for(int i = 0; i < data.length(); i++) {
+                answerRecord[i] = data.get(i).toString();
+                //showMessage("i_"+i, data.get(i).toString());
+            }
 
         } catch (java.io.IOException e) {
             showMessage("IOException", e.getMessage());
         } catch (org.json.JSONException e) {
             showMessage("JSON Error", e.getMessage());
+        }finally {
+            return answerRecord;
+        }
+    }
+
+
+    public String[] test(String database, String crtuser) {
+        showMessage("test", "1");
+        JSONObject obj;
+        String webResponse = null;
+        String answerRecord[] = null;
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/select_personalRecord.php");
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+        params.add(new BasicNameValuePair("database", database));
+        params.add(new BasicNameValuePair("crtuser", crtuser));
+        showMessage("test", "2");
+        try {
+            showMessage("test", "3");
+            request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params
+            HttpResponse response = client.execute(request);        //  get web response
+            showMessage("test", "4");
+            HttpEntity resEntity = response.getEntity();
+            this.webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
+            showMessage("webRequest", this.webRequest);
+            showMessage("test", "5");
+
+
+        } catch (java.io.IOException e) {
+            showMessage("IOException", e.getMessage());
+        }finally {
+            return answerRecord;
         }
     }
 

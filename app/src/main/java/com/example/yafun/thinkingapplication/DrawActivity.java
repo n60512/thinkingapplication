@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -40,8 +42,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DrawActivity extends AppCompatActivity {
 
@@ -67,12 +72,16 @@ public class DrawActivity extends AppCompatActivity {
     private myAdapter adapter;
 
     // timer count
-    private final long TIME = 481 * 1000L;
+    private long TIME = 481 * 1000L;
     private final long INTERVAL = 1000L;
 
     // timer state
     private boolean isPaused = false;
     private long timeRemaining = 0;
+
+    SharedPreferences drawing_record;
+    private ConnServer connUpdate = new ConnServer();
+    private int RecordLength = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +114,23 @@ public class DrawActivity extends AppCompatActivity {
         paint.setStrokeWidth(6);
         paint.setColor(Color.GRAY);
         imgvDraw.setOnTouchListener(touch);
+
+
+        drawing_record = getSharedPreferences("drawing_record", MODE_PRIVATE);
+        Map<String,?> keys = drawing_record.getAll();
+
+        for(Map.Entry<String,?> entry : keys.entrySet()){
+            //Log.d("map values",entry.getKey() + ": " + entry.getValue().toString());
+            Log.d("DataName", entry.getKey());
+
+            byte[] decodedString = Base64.decode(entry.getValue().toString(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+            mlist.add(new listContext(decodedByte,entry.getKey().toString()));//add to list
+        }
+        Log.d("MapSize", Integer.toString(keys.size()));
+        RecordLength = (keys.size());//依據作答紀錄設置list起始位置
+
 
         // btnOk click
         btnOk.setOnClickListener(new Button.OnClickListener() {
@@ -177,6 +203,28 @@ public class DrawActivity extends AppCompatActivity {
                             // if yes stop the timer and submit the sheet
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+
+                                /// Thread for timer update
+                                Thread timerthread = new Thread() {
+                                    public void run() {
+                                        Long currentTimer = timeRemaining / 1000;
+                                        Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                        connUpdate.updateAnwsertime(
+                                                "drawing",
+                                                currentTimer.toString(),
+                                                getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                        );
+
+                                        Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                        getSharedPreferences("member", MODE_PRIVATE)
+                                                .edit()
+                                                .putString("drawing",currentTimer.toString())
+                                                .commit();
+                                    }
+                                };
+                                timerthread.start();
+
+
                                 //timer.cancel();
                                 timer = null;
                                 // commit content to database
@@ -184,16 +232,26 @@ public class DrawActivity extends AppCompatActivity {
                                     public void run() {
                                         int count = adapter.getCount();
                                         ConnServer[] conn = new ConnServer[count];
-                                        for (int index = 0; index < count; index++) {
+                                        for (int index = RecordLength; index < count; index++) {
                                             String content = adapter.getItem(index).getName();
                                             Bitmap uploadimg = adapter.getItem(index).getImage();
-                                            // connect to Server
+
+                                            // connect to Server and upload
                                             conn[index] = new ConnServer(
                                                     "drawing",
                                                     content,
                                                     getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
                                                     uploadimg
                                             );
+
+                                            drawing_record
+                                                    .edit()
+                                                    .putString(content,conn[index].toBase64(uploadimg))
+                                                    .commit();
+
+                                            uploadimg.recycle();   //  recycle resource
+
+
                                         }
                                     }
                                 };
@@ -240,7 +298,7 @@ public class DrawActivity extends AppCompatActivity {
                                             public void run() {
                                                 int count = adapter.getCount();
                                                 ConnServer[] conn = new ConnServer[count];
-                                                for (int index = 0; index < count; index++) {
+                                                for (int index = RecordLength; index < count; index++) {
                                                     String content = adapter.getItem(index).getName();
                                                     Bitmap uploadimg = adapter.getItem(index).getImage();
                                                     // connect to Server
@@ -250,6 +308,12 @@ public class DrawActivity extends AppCompatActivity {
                                                             getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
                                                             uploadimg
                                                     );
+                                                    drawing_record
+                                                            .edit()
+                                                            .putString(content,conn[index].toBase64(uploadimg))
+                                                            .commit();
+
+                                                    uploadimg.recycle();   //  recycle resource
                                                 }
                                             }
                                         };
@@ -269,6 +333,10 @@ public class DrawActivity extends AppCompatActivity {
     private void startTimer() {
         if (timer == null) {
             // use MyCountDownTimer set myself context
+            Long ltest = Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("drawing", "null"));
+            Log.d("一筆畫遊戲_讀秒",ltest.toString());
+
+            TIME = (Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("drawing", "null"))+1) * 1000L;
             timer = new MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
@@ -302,6 +370,27 @@ public class DrawActivity extends AppCompatActivity {
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+
+                            /// Thread for timer update
+                            Thread timerthread = new Thread() {
+                                public void run() {
+                                    Long currentTimer = timeRemaining / 1000;
+                                    Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                    connUpdate.updateAnwsertime(
+                                            "drawing",
+                                            currentTimer.toString(),
+                                            getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                    );
+
+                                    Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                    getSharedPreferences("member", MODE_PRIVATE)
+                                            .edit()
+                                            .putString("drawing",currentTimer.toString())
+                                            .commit();
+                                }
+                            };
+                            timerthread.start();
+
                             //timer.cancel();
                             timer = null;
                             finish();
@@ -313,7 +402,7 @@ public class DrawActivity extends AppCompatActivity {
                 public void run() {
                     int count = adapter.getCount();
                     ConnServer[] conn = new ConnServer[count];
-                    for (int index = 0; index < count; index++) {
+                    for (int index = RecordLength; index < count; index++) {
                         String content = adapter.getItem(index).getName();
                         Bitmap uploadimg = adapter.getItem(index).getImage();
                         // connect to Server
@@ -323,6 +412,12 @@ public class DrawActivity extends AppCompatActivity {
                                 getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
                                 uploadimg
                         );
+                        drawing_record
+                                .edit()
+                                .putString(content,conn[index].toBase64(uploadimg))
+                                .commit();
+
+                        uploadimg.recycle();   //  recycle resource
                     }
                 }
             };

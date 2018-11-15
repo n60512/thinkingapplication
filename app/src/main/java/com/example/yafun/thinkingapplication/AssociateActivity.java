@@ -67,22 +67,28 @@ public class AssociateActivity extends AppCompatActivity {
     private ArrayAdapter<String> arrayAdapter;
 
     //timer cont
-    private final long TIME = 481 * 1000L;
+    private long TIME = 481 * 1000L;
     private final long INTERVAL = 1000L;
 
     // timer state
     private boolean isPaused = false;
     private long timeRemaining = 0;
 
+
+    private ConnServer connUpdate = new ConnServer();
+    private int RecordLength = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // set view set title
         setContentView(R.layout.drawerlayout_associate);
-        setTitle("簡圖聯想遊戲");
+        setTitle("簡圖聯想遊戲"); //對應 oneimage
 
         // check guide dialog then start timer
         guideView();
+
 
         // set variable value
         edtName = (EditText) findViewById(R.id.edtAssociateName);
@@ -101,7 +107,7 @@ public class AssociateActivity extends AppCompatActivity {
                     if (imageID != null) Log.d("thread_try", "Successed");
                     else Log.d("thread_catch", "Failed");
                     Log.d("image_number", imageID);
-                    Picasso.get().load("http://140.122.91.218/thinkingapp/oneimagetest/image/" + imageID + ".png").into(imgAssociate);
+                    Picasso.get().load("http://140.122.91.218/thinkingapp/oneimagetest/image/" + imageID + ".png?1").into(imgAssociate);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -116,6 +122,18 @@ public class AssociateActivity extends AppCompatActivity {
         // array adapter with string list
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listData);
         lvAssociate.setAdapter(arrayAdapter);
+
+
+        ///1001
+        String tmpString[] = this.connUpdate.PersonalRecord("oneimagetest", getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
+        if (tmpString != null) {
+            this.RecordLength = tmpString.length;
+            for (int i = 0; i < tmpString.length; i++) {
+                //Log.d("record_testing", tmpString[i]);    //testing
+                listData.add(tmpString[i]);
+                arrayAdapter.notifyDataSetChanged();
+            }
+        }
 
         btnOk.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -162,14 +180,30 @@ public class AssociateActivity extends AppCompatActivity {
                             // if yes stop the timer and submit the sheet
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+
+                                Long currentTimer = timeRemaining / 1000;
+                                Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                connUpdate.updateAnwsertime(
+                                        "oneimage",
+                                        currentTimer.toString(),
+                                        getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                        );
+
+                                Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                getSharedPreferences("member", MODE_PRIVATE)
+                                        .edit()
+                                        .putString("oneimage",currentTimer.toString())
+                                        .commit();
+
+
                                 timer = null;
                                 Thread thread = new Thread() {
                                     public void run() {
                                         int count = arrayAdapter.getCount() - 1;
                                         ConnServer[] conn = new ConnServer[count];
-                                        for (int index = 0; index < count; index++) {
+                                        for (int index = RecordLength; index < count; index++) {
                                             String content = arrayAdapter.getItem(index + 1);
-                                            Log.d("oneimageName", content);
+                                            //Log.d("oneimageName", content);
 
                                             conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), imageID);
                                         }
@@ -208,6 +242,27 @@ public class AssociateActivity extends AppCompatActivity {
                                                 .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                        /// Thread for timer update
+                                                        Thread timerthread = new Thread() {
+                                                            public void run() {
+                                                                Long currentTimer = timeRemaining / 1000;
+                                                                Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                                                connUpdate.updateAnwsertime(
+                                                                        "oneimage",
+                                                                        currentTimer.toString(),
+                                                                        getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                                                );
+
+                                                                Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                                                getSharedPreferences("member", MODE_PRIVATE)
+                                                                        .edit()
+                                                                        .putString("oneimage",currentTimer.toString())
+                                                                        .commit();
+                                                            }
+                                                        };
+                                                        timerthread.start();
+
                                                         //timer.cancel();
                                                         timer = null;
                                                         finish();
@@ -217,9 +272,9 @@ public class AssociateActivity extends AppCompatActivity {
                                             public void run() {
                                                 int count = arrayAdapter.getCount() - 1;
                                                 ConnServer[] conn = new ConnServer[count];
-                                                for (int index = 0; index < count; index++) {
+                                                for (int index = RecordLength; index < count; index++) {
                                                     String content = arrayAdapter.getItem(index + 1);
-                                                    Log.d("oneimageName", content);
+                                                    //Log.d("oneimageName", content);
 
                                                     conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), imageID);
                                                 }
@@ -241,6 +296,12 @@ public class AssociateActivity extends AppCompatActivity {
     private void startTimer() {
         if (timer == null) {
             // use MyCountDownTimer set myself context
+
+
+            Long ltest = Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("oneimage", "null"));
+            Log.d("簡圖聯想遊戲_讀秒",ltest.toString());
+
+            TIME = (Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("oneimage", "null"))+1) * 1000L;
             timer = new AssociateActivity.MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
@@ -274,6 +335,27 @@ public class AssociateActivity extends AppCompatActivity {
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+
+                            /// Thread for timer update
+                            Thread timerthread = new Thread() {
+                                public void run() {
+                                    Long currentTimer = timeRemaining / 1000;
+                                    Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                    connUpdate.updateAnwsertime(
+                                            "oneimage",
+                                            currentTimer.toString(),
+                                            getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                    );
+
+                                    Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                    getSharedPreferences("member", MODE_PRIVATE)
+                                            .edit()
+                                            .putString("oneimage",currentTimer.toString())
+                                            .commit();
+                                }
+                            };
+                            timerthread.start();
+
                             //timer.cancel();
                             timer = null;
                             finish();

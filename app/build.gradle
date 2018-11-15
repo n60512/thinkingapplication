@@ -5,7 +5,7 @@ android {
     compileSdkVersion 25
     defaultConfig {
         applicationId "com.example.yafun.thinkingapplication"
-        minSdkVersion 23
+        minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"

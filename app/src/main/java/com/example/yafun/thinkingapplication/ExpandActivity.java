@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -80,12 +82,16 @@ public class ExpandActivity extends AppCompatActivity {
     private myAdapter adapter;
 
     // timer count
-    private final long TIME = 1201 * 1000L;
+    private long TIME = 1201 * 1000L;
     private final long INTERVAL = 1000L;
 
     // timer state
     private boolean isPaused = false;
     private long timeRemaining = 0;
+
+    SharedPreferences drawingmult_record;
+    private ConnServer connUpdate = new ConnServer();
+    private int RecordLength = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +124,23 @@ public class ExpandActivity extends AppCompatActivity {
         paint.setStrokeWidth(6);
         paint.setColor(Color.GRAY);
         imgvExpand.setOnTouchListener(touch);
+
+
+        drawingmult_record = getSharedPreferences("drawingmult_record", MODE_PRIVATE);
+        Map<String,?> keys = drawingmult_record.getAll();
+
+        for(Map.Entry<String,?> entry : keys.entrySet()){
+            //Log.d("map values",entry.getKey() + ": " + entry.getValue().toString());
+            Log.d("DataName", entry.getKey());
+
+            byte[] decodedString = Base64.decode(entry.getValue().toString(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+            mlist.add(new ExpandActivity.listContext(decodedByte,entry.getKey().toString()));//add to list
+        }
+        Log.d("MapSize", Integer.toString(keys.size()));
+        RecordLength = (keys.size());//依據作答紀錄設置list起始位置
+
 
         btnOk.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -182,6 +205,27 @@ public class ExpandActivity extends AppCompatActivity {
                             // if yes stop the timer and submit the sheet
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+
+                                /// Thread for timer update
+                                Thread timerthread = new Thread() {
+                                    public void run() {
+                                        Long currentTimer = timeRemaining / 1000;
+                                        Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                        connUpdate.updateAnwsertime(
+                                                "drawingmult",
+                                                currentTimer.toString(),
+                                                getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                        );
+
+                                        Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                        getSharedPreferences("member", MODE_PRIVATE)
+                                                .edit()
+                                                .putString("drawingmult",currentTimer.toString())
+                                                .commit();
+                                    }
+                                };
+                                timerthread.start();
+
                                 //timer.cancel();
                                 timer = null;
                                 // commit content to database
@@ -190,7 +234,7 @@ public class ExpandActivity extends AppCompatActivity {
                                         int count = adapter.getCount();
                                         // create datalist and upload data to server
                                         ConnServer[] conn = new ConnServer[count];
-                                        for (int index = 0; index < count; index++) {
+                                        for (int index = RecordLength; index < count; index++) {
                                             // get adapter info.
                                             String content = adapter.getItem(index).getName();
                                             Bitmap uploadimg = adapter.getItem(index).getImage();
@@ -201,7 +245,15 @@ public class ExpandActivity extends AppCompatActivity {
                                                     getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
                                                     uploadimg
                                             );
+
+                                            drawingmult_record
+                                                    .edit()
+                                                    .putString(content,conn[index].toBase64(uploadimg))
+                                                    .commit();
+
+                                            uploadimg.recycle();   //  recycle resource
                                         }
+
                                     }
                                 };
                                 thread.start();
@@ -237,6 +289,25 @@ public class ExpandActivity extends AppCompatActivity {
                                                 .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
+                                                        /// Thread for timer update
+                                                        Thread timerthread = new Thread() {
+                                                            public void run() {
+                                                                Long currentTimer = timeRemaining / 1000;
+                                                                Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                                                connUpdate.updateAnwsertime(
+                                                                        "drawingmult",
+                                                                        currentTimer.toString(),
+                                                                        getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                                                );
+
+                                                                Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                                                getSharedPreferences("member", MODE_PRIVATE)
+                                                                        .edit()
+                                                                        .putString("drawingmult",currentTimer.toString())
+                                                                        .commit();
+                                                            }
+                                                        };
+                                                        timerthread.start();
                                                         //timer.cancel();
                                                         timer = null;
                                                         finish();
@@ -247,7 +318,7 @@ public class ExpandActivity extends AppCompatActivity {
                                                 int count = adapter.getCount();
                                                 // create datalist and upload data to server
                                                 ConnServer[] conn = new ConnServer[count];
-                                                for (int index = 0; index < count; index++) {
+                                                for (int index = RecordLength; index < count; index++) {
                                                     // get adapter info.
                                                     String content = adapter.getItem(index).getName();
                                                     Bitmap uploadimg = adapter.getItem(index).getImage();
@@ -258,6 +329,13 @@ public class ExpandActivity extends AppCompatActivity {
                                                             getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
                                                             uploadimg
                                                     );
+
+                                                    drawingmult_record
+                                                            .edit()
+                                                            .putString(content,conn[index].toBase64(uploadimg))
+                                                            .commit();
+
+                                                    uploadimg.recycle();   //  recycle resource
                                                 }
                                             }
                                         };
@@ -276,6 +354,12 @@ public class ExpandActivity extends AppCompatActivity {
     // timer start function
     private void startTimer() {
         if (timer == null) {
+            // use MyCountDownTimer set myself context
+            Long ltest = Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("drawingmult", "null"));
+            Log.d("一筆畫遊戲_讀秒",ltest.toString());
+
+            TIME = (Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("drawingmult", "null"))+1) * 1000L;
+
             timer = new ExpandActivity.MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
@@ -309,6 +393,27 @@ public class ExpandActivity extends AppCompatActivity {
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+
+                            /// Thread for timer update
+                            Thread timerthread = new Thread() {
+                                public void run() {
+                                    Long currentTimer = timeRemaining / 1000;
+                                    Log.d("剩餘時間(秒數)",(currentTimer).toString());
+                                    connUpdate.updateAnwsertime(
+                                            "drawingmult",
+                                            currentTimer.toString(),
+                                            getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
+                                    );
+
+                                    Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                    getSharedPreferences("member", MODE_PRIVATE)
+                                            .edit()
+                                            .putString("drawingmult",currentTimer.toString())
+                                            .commit();
+                                }
+                            };
+                            timerthread.start();
+
                             //timer.cancel();
                             timer = null;
                             finish();
@@ -320,7 +425,7 @@ public class ExpandActivity extends AppCompatActivity {
                     int count = adapter.getCount();
                     // create datalist and upload data to server
                     ConnServer[] conn = new ConnServer[count];
-                    for (int index = 0; index < count; index++) {
+                    for (int index = RecordLength; index < count; index++) {
                         // get adapter info.
                         String content = adapter.getItem(index).getName();
                         Bitmap uploadimg = adapter.getItem(index).getImage();
@@ -331,6 +436,12 @@ public class ExpandActivity extends AppCompatActivity {
                                 getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
                                 uploadimg
                         );
+                        drawingmult_record
+                                .edit()
+                                .putString(content,conn[index].toBase64(uploadimg))
+                                .commit();
+
+                        uploadimg.recycle();   //  recycle resource
                     }
                 }
             };
