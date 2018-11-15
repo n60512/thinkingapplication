@@ -149,6 +149,7 @@ public class AttributeActivity extends AppCompatActivity {
                     Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("E") + ".png").into(imgvE);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    
                 }
 
             }
