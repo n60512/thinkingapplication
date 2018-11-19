@@ -28,6 +28,12 @@ public class ConnServer {
     private String account = null;
     private String password = null;
     private String memberInf = null;
+    private String classdata = null;
+    private String emailtext = null;
+    private String school = null;
+    private String sex = null;
+
+
 
 
     public ConnServer(){
@@ -42,6 +48,26 @@ public class ConnServer {
     public ConnServer(String useraccount, String userpasswd) {
         this.account = useraccount;
         this.password = userpasswd;
+    }
+
+    /**
+     * Sign up
+     *
+     * @param account
+     * @param password
+     * @param classdata
+     * @param emailtext
+     * @param school
+     * @param sex
+     *
+     */
+    public ConnServer(String account, String password, String classdata, String emailtext, String school, String sex) {
+        this.account = account;
+        this.password = password;
+        this.classdata = classdata;
+        this.emailtext = emailtext;
+        this.school = school;
+        this.sex = sex;
     }
 
     /**
@@ -266,6 +292,53 @@ public class ConnServer {
             this.memberInf = obj.getString("member");   // store member information
 
             showMessage("memberInf", this.memberInf);
+            //showMessage("login", webResponse);
+
+        } catch (java.io.IOException e) {
+            showMessage("IOException", e.getMessage());
+        } catch (org.json.JSONException e) {
+            showMessage("JSON Error", e.getMessage());
+        } finally {
+
+            if (webResponse.equals("successful"))
+                return true;
+            else
+                return false;
+
+        }
+    }
+    public boolean checkSignUp(){
+
+        JSONObject obj;
+        String webResponse = null;
+
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/signup.php");
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+        params.add(new BasicNameValuePair("account", this.account));
+        params.add(new BasicNameValuePair("password", this.password));
+        params.add(new BasicNameValuePair("classdata", this.classdata));
+        params.add(new BasicNameValuePair("emailtext", this.emailtext));
+        params.add(new BasicNameValuePair("school", this.school));
+        params.add(new BasicNameValuePair("sex", this.sex));
+
+
+        try {
+
+            request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params
+            HttpResponse response = client.execute(request);        //  get web response
+
+            HttpEntity resEntity = response.getEntity();
+            this.webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
+
+            obj = new JSONObject(this.webRequest);            // parse web request
+            webResponse = obj.getString("response");    // store webResponse
+
+            //this.memberInf = obj.getString("member");   // store member information
+
+            //showMessage("memberInf", this.memberInf);
             //showMessage("login", webResponse);
 
         } catch (java.io.IOException e) {
