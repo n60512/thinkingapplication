@@ -3,7 +3,16 @@
     <string name="username">Username : </string>
     <string name="password">Password : </string>
     <string name="sign_me_in">Sign in</string>
+    <string name="sign_me_up">Sign up</string>
     <string name="login">login</string>
+    <string name="signup">sign up</string>
+    <string name="register">summit</string>
+    <string name="male">male</string>
+    <string name="female">female</string>
+    <string name="sexuality">Sexuality :</string>
+    <string name="classdatano">Class data :</string>
+    <string name="email">Email :</string>
+    <string name="school">School :</string>
     <string name="sign_android_string_httperrorunsupportedscheme">Sign @android:string/httpErrorUnsupportedScheme</string>
     <string name="gameDraw">一筆畫遊戲</string>
     <string name="gameAttribute">屬性聯想遊戲</string>

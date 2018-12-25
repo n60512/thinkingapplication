@@ -25,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     // declare variable
     private EditText edtId, edtPwd;
     private Button btnSignIn;
+    private Button btnSignUp;
     private ConnServer conn,connRecord;
     private boolean permission = false;
     SharedPreferences member,imagetest;
@@ -38,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         edtId = (EditText) findViewById((R.id.edtId));
         edtPwd = (EditText) findViewById((R.id.edtPwd));
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
+        btnSignUp = (Button) findViewById(R.id.btnSignUp);
 
 
         SharedPreferences tmp;
@@ -60,6 +62,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Initialize  AsyncLogin() class with id and password
                 new AsyncLogin().execute(account, password);
+            }
+        });
+
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent toreg = new Intent(LoginActivity.this, SignUpActivity.class);
+                startActivity(toreg);
             }
         });
     }
