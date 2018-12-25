@@ -75,8 +75,16 @@ public class SignUpActivity extends AppCompatActivity {
                 }else{
                     sex="female";
                 }
-                // Initialize  AsyncLogin() class with param
-                new SignUpActivity.AsyncLogin().execute(account, password, classdata, emailtext, school,sex);
+
+                if (edtId.getText().toString().equals("") || edtPwd.getText().toString().equals("")
+                        || edClass.getText().toString().equals("")|| email.getText().toString().equals("")
+                        || edSchool.getText().toString().equals("")) {
+                    Toast.makeText(SignUpActivity.this, "尚有欄位未填寫", Toast.LENGTH_SHORT).show();
+                }else {
+
+                    // Initialize  AsyncLogin() class with param
+                    new SignUpActivity.AsyncLogin().execute(account, password, classdata, emailtext, school, sex);
+                }
 
 
             }
@@ -96,41 +104,7 @@ public class SignUpActivity extends AppCompatActivity {
             conn = new ConnServer(params[0], params[1], params[2] , params[3], params[4], params[5]);
             // 設定 permission;確認登入
             permission = conn.checkSignUp();
-
-
-            //1003 load data
-            /*connRecord = new ConnServer();//get Record
-            String[] tmparr = connRecord.PersonalRecord("drawing",params[0]);
-            imagetest = getSharedPreferences("drawing_record", MODE_PRIVATE);
-
-            for(int i = 0; i < tmparr.length; i++) {
-                try{
-                    JSONArray data = new JSONArray(tmparr[i]);
-                    //Log.d("JSONArray",data.get(1).toString());//data
-
-                    Log.d("JSONArray",data.get(0).toString());
-                    imagetest.edit()
-                            .putString(data.get(0).toString(), data.get(1).toString())
-                            .commit();
-
-                }catch (org.json.JSONException e){
-                    Log.d("Err","");
-                }
-            }*/
-
-
-
-           // writeShardPreferences("drawing",params[0]);
-           // writeShardPreferences("drawingmult",params[0]);
-
-            /*
-            Map<String,?> keys = imagetest.getAll();
-
-            for(Map.Entry<String,?> entry : keys.entrySet()){
-                Log.d("map values",entry.getKey() + ": " +
-                        entry.getValue().toString());
-            }*/
-
+            
             return null;
         }
 
@@ -141,8 +115,9 @@ public class SignUpActivity extends AppCompatActivity {
                 //toast message
                 Toast.makeText(SignUpActivity.this, "註冊成功", Toast.LENGTH_SHORT).show();
 
-                Intent backtologin = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(backtologin);
+                //Intent backtologin = new Intent(SignUpActivity.this, LoginActivity.class);
+                //startActivity(backtologin);
+                finish();
 //            }else{
 //                Toast.makeText(SignUpActivity.this, "註冊失敗", Toast.LENGTH_SHORT).show();
 //            }
