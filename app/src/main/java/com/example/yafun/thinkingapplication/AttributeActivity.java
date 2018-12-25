@@ -130,11 +130,11 @@ public class AttributeActivity extends AppCompatActivity {
                     ArrayList<String> random_list = randomSetImage();
                     if (random_list != null) Log.d("thread_try", "Successed");
                     else Log.d("thread_catch", "Failed");
-                    dict.put("A", "1");
-                    dict.put("B", "2");
-                    dict.put("C", "3");
-                    dict.put("D", "4");
-                    dict.put("E", "5");
+                    dict.put("A", "A");
+                    dict.put("B", "B");
+                    dict.put("C", "C");
+                    dict.put("D", "D");
+                    dict.put("E", "E");
 
                     /*Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("A") + ".png").into(imgvA);
                     Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("B") + ".png").into(imgvB);
@@ -149,7 +149,7 @@ public class AttributeActivity extends AppCompatActivity {
                     Picasso.get().load("http://140.122.91.218/thinkingapp/associationrulestest/image/" + dict.get("E") + ".png").into(imgvE);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    
+
                 }
 
             }
@@ -186,25 +186,7 @@ public class AttributeActivity extends AppCompatActivity {
 
                     if (k > 0) {
                         String tmpStr = "";
-                        switch (test2[k]) {
-                            case "1":
-                                tmpStr = "A";
-                                break;
-                            case "2":
-                                tmpStr = "B";
-                                break;
-                            case "3":
-                                tmpStr = "C";
-                                break;
-                            case "4":
-                                tmpStr = "D";
-                                break;
-                            case "5":
-                                tmpStr = "E";
-                                break;
-                            default:
-                                ;
-                        }
+                        tmpStr=test2[k];
                         //choose_list.add(test2[k]);
                         choose_list.add(tmpStr);
                     }
@@ -414,7 +396,8 @@ public class AttributeActivity extends AppCompatActivity {
                                                 chosenImgID[idIndex] = value;
                                                 Log.d("chosenID", value);
                                             }
-                                            conn[index] = new ConnServer("association", content, chosenImgID, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
+                                            conn[index] = new ConnServer("association", content, chosenImgID,
+                                                    getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
                                         }
                                     }
                                 };

@@ -67,17 +67,15 @@ public class ConnServer {
 
     /**
      * oneimage 建構子
-     *
      * @param database
      * @param content
      * @param crtuser
-     * @param imageID
      */
-    public ConnServer(String database, String content, String crtuser, String imageID) {
+    public ConnServer(String database, String content, String crtuser) {
         this.database = database;
 
         if (this.database.equals("oneimage")) {
-            oneimage(content, crtuser, imageID);
+            oneimage(content, crtuser);
         } else {
         }
 
@@ -104,7 +102,7 @@ public class ConnServer {
             */
 
         //1001更改格式
-        for (String option : chosenList)
+        /*for (String option : chosenList)
             tmpText = tmpText + option + ",";
 
         String chosenContent = tmpText.substring(0, tmpText.length() - 1) ;     // column_create('chosen1','0','chosen2','0' ...)
@@ -114,7 +112,23 @@ public class ConnServer {
         if (this.database.equals("association")) {
             association(description, chosenContent, crtuser);
         } else {
+        }*/
+
+
+        //1116 整合格式
+        for (String option : chosenList)
+            tmpText = tmpText + option;
+
+        //String chosenContent = tmpText.substring(0, tmpText.length() - 1) ;     // column_create('chosen1','0','chosen2','0' ...)
+        String chosenContent = tmpText;
+
+        showMessage("chosenContent_test", chosenContent); //for test
+
+        if (this.database.equals("association")) {
+            association(description, chosenContent, crtuser);
+        } else {
         }
+
     }
 
     /**
@@ -162,9 +176,9 @@ public class ConnServer {
      *
      * @param Data
      * @param crtuser
-     * @param imageID
+     * @param
      */
-    private void oneimage(String Data, String crtuser, String imageID) {
+    private void oneimage(String Data, String crtuser) {
 
         JSONObject obj;
         //Object jsonOb = null;
@@ -177,11 +191,11 @@ public class ConnServer {
 
         params.add(new BasicNameValuePair("database", this.database));
         params.add(new BasicNameValuePair("Data", Data));
-        params.add(new BasicNameValuePair("imageID", imageID));
+        //params.add(new BasicNameValuePair("imageID", imageID));
         params.add(new BasicNameValuePair("crtuser", crtuser));
 
 
-        showMessage("oneimage imageID", imageID);
+        //showMessage("oneimage imageID", imageID);
         try {
 
             request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params

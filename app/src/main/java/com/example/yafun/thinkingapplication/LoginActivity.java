@@ -174,24 +174,26 @@ public class LoginActivity extends AppCompatActivity {
         protected void onProgressUpdate(Void... values) {
         }
 
-        private void writeShardPreferences(String database,String account){
-            connRecord = new ConnServer();//get Record
-            String[] tmparr = connRecord.PersonalRecord(database,account);
-            imagetest = getSharedPreferences(database+"_record", MODE_PRIVATE);
-            Log.d(database+"_record","success");//data
-            if(tmparr!=null) {
-                for (int i = 0; i < tmparr.length; i++) {
-                    try {
-                        JSONArray data = new JSONArray(tmparr[i]);
-                        //Log.d("JSONArray",data.get(1).toString());//data
+        private void writeShardPreferences(String database,String account) {
+            if (permission) {
+                connRecord = new ConnServer();//get Record
+                String[] tmparr = connRecord.PersonalRecord(database, account);
+                imagetest = getSharedPreferences(database + "_record", MODE_PRIVATE);
+                Log.d(database + "_record", "success");//data
+                if (tmparr != null) {
+                    for (int i = 0; i < tmparr.length; i++) {
+                        try {
+                            JSONArray data = new JSONArray(tmparr[i]);
+                            //Log.d("JSONArray",data.get(1).toString());//data
 
-                        Log.d("JSONArray", data.get(0).toString());
-                        imagetest.edit()
-                                .putString(data.get(0).toString(), data.get(1).toString())
-                                .commit();
+                            Log.d("JSONArray", data.get(0).toString());
+                            imagetest.edit()
+                                    .putString(data.get(0).toString(), data.get(1).toString())
+                                    .commit();
 
-                    } catch (org.json.JSONException e) {
-                        Log.d("Err", "");
+                        } catch (org.json.JSONException e) {
+                            Log.d("Err", "");
+                        }
                     }
                 }
             }

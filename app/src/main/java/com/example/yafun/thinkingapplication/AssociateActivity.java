@@ -205,7 +205,7 @@ public class AssociateActivity extends AppCompatActivity {
                                             String content = arrayAdapter.getItem(index + 1);
                                             //Log.d("oneimageName", content);
 
-                                            conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), imageID);
+                                            conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
                                         }
                                     }
                                 };
@@ -276,7 +276,7 @@ public class AssociateActivity extends AppCompatActivity {
                                                     String content = arrayAdapter.getItem(index + 1);
                                                     //Log.d("oneimageName", content);
 
-                                                    conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), imageID);
+                                                    conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
                                                 }
                                             }
                                         };
@@ -369,7 +369,7 @@ public class AssociateActivity extends AppCompatActivity {
                     for (int index = 0; index < count; index++) {
                         String content = arrayAdapter.getItem(index + 1);
                         Log.d("oneimageName", content);
-                        conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), imageID);
+                        conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
                     }
                 }
             };
