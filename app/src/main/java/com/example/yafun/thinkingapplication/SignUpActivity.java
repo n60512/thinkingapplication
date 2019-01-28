@@ -104,7 +104,7 @@ public class SignUpActivity extends AppCompatActivity {
             conn = new ConnServer(params[0], params[1], params[2] , params[3], params[4], params[5]);
             // 設定 permission;確認登入
             permission = conn.checkSignUp();
-            
+
             return null;
         }
 
