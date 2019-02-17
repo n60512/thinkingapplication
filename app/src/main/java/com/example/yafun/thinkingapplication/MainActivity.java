@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    // declare variable
+    // declare variable 
     private Boolean againConnect = false;
     private Boolean loggedin = false;
     private Boolean guideSet = false;
