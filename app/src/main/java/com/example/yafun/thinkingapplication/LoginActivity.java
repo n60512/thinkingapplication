@@ -33,7 +33,6 @@ public class LoginActivity extends AppCompatActivity {
     private boolean permission = false;
     SharedPreferences member,imagetest;
     
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
