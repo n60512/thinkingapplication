@@ -32,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private ConnServer conn,connRecord;
     private boolean permission = false;
     SharedPreferences member,imagetest;
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
