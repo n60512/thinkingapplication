@@ -32,6 +32,9 @@ public class ConnServer {
     private String emailtext = null;
     private String school = null;
     private String sex = null;
+    private String age = null;
+    private String living = null;
+    private String religion = null;
 
 
 
@@ -59,15 +62,21 @@ public class ConnServer {
      * @param emailtext
      * @param school
      * @param sex
+     * @param age
+     * @param living
+     * @param religion
      *
      */
-    public ConnServer(String account, String password, String classdata, String emailtext, String school, String sex) {
+    public ConnServer(String account, String password, String classdata, String emailtext, String school, String sex,String age,String living,String religion) {
         this.account = account;
         this.password = password;
         this.classdata = classdata;
         this.emailtext = emailtext;
         this.school = school;
         this.sex = sex;
+        this.age = age;
+        this.living = living;
+        this.religion = religion;
     }
 
     /**
@@ -337,6 +346,10 @@ public class ConnServer {
         params.add(new BasicNameValuePair("emailtext", this.emailtext));
         params.add(new BasicNameValuePair("school", this.school));
         params.add(new BasicNameValuePair("sex", this.sex));
+        params.add(new BasicNameValuePair("age", this.age));
+        params.add(new BasicNameValuePair("living", this.living));
+        params.add(new BasicNameValuePair("religion", this.religion));
+        //Log.i("AsyncLogin", this.account + "," + this.password + "," + this.classdata + "," + this.emailtext+ "," + this.school + "," + this.sex+ "," + this.age+ "," + this.living+ "," + this.religion);
 
 
         try {
@@ -363,6 +376,8 @@ public class ConnServer {
 
             if (webResponse.equals("successful"))
                 return true;
+            else if (webResponse.equals("fail"))
+                return false;
             else
                 return false;
 

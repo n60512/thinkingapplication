@@ -1,18 +1,21 @@
 <resources>
     <string name="app_name">思考力遊戲平台</string>
-    <string name="username">Username : </string>
-    <string name="password">Password : </string>
-    <string name="sign_me_in">Sign in</string>
-    <string name="sign_me_up">Sign up</string>
-    <string name="login">login</string>
-    <string name="signup">sign up</string>
-    <string name="register">summit</string>
-    <string name="male">male</string>
-    <string name="female">female</string>
-    <string name="sexuality">Sexuality :</string>
-    <string name="classdatano">Class data :</string>
-    <string name="email">Email :</string>
-    <string name="school">School :</string>
+    <string name="username">帳號 : </string>
+    <string name="password">密碼 : </string>
+    <string name="sign_me_in">登入</string>
+    <string name="sign_me_up">註冊</string>
+    <string name="login">登入</string>
+    <string name="signup">註冊</string>
+    <string name="register">送出</string>
+    <string name="male">男性</string>
+    <string name="female">女性</string>
+    <string name="sexuality">性別 :</string>
+    <string name="classdatano">班級編號 :</string>
+    <string name="age">年齡 :</string>
+    <string name="reside">居住地 :</string>
+    <string name="religion">宗教信仰 :</string>
+    <string name="email">電子信箱 :</string>
+    <string name="school">學校 :</string>
     <string name="sign_android_string_httperrorunsupportedscheme">Sign @android:string/httpErrorUnsupportedScheme</string>
     <string name="gameDraw">一筆畫遊戲</string>
     <string name="gameAttribute">屬性聯想遊戲</string>
@@ -29,7 +32,31 @@
     <string name="AttributeTimer">10 分 00 秒</string>
     <string name="AssociateTimer">8 分 00 秒</string>
     <string name="ExpandTimer">20 分 00 秒</string>
+    <string name="privacyprotect">我同意《隱私權保護政策》中的內容</string>
     <string name="test1">test01</string>
     <string name="test2">test02</string>
     <string name="test3">test03</string>
+    <string-array name="spn_list">
+        <item>臺灣</item>
+        <item>中國華北</item>
+        <item>中國華東</item>
+        <item>中國華南</item>
+        <item>中國東北</item>
+        <item>中國西北</item>
+        <item>中國西南</item>
+        <item>香港</item>
+        <item>澳門</item>
+        <item>新加坡</item>
+        <item>馬來西亞</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="spn_list2">
+        <item>佛教</item>
+        <item>道教</item>
+        <item>基督教</item>
+        <item>天主教</item>
+        <item>伊斯蘭教</item>
+        <item>猶太教</item>
+        <item>其他信仰</item>
+    </string-array>
 </resources>

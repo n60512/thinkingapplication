@@ -8,10 +8,15 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -24,13 +29,16 @@ import java.util.Iterator;
 public class SignUpActivity extends AppCompatActivity {
 
     // declare variable
-    private EditText edtId, edtPwd, edClass, email, edSchool;
+    private EditText edtId, edtPwd, edClass, email, edSchool,edAge;
     private RadioGroup rg;
     private Button btnSignUp;
+    private Spinner spinreside,spinreligon;
     private ConnServer conn,connRecord;
     private boolean permission = false;
     SharedPreferences member,imagetest;
     private RadioButton male, female;
+    private CheckBox privacy;
+    private String livingplace, myreligion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +55,39 @@ public class SignUpActivity extends AppCompatActivity {
         btnSignUp = (Button) findViewById(R.id.btnSignUp);
         male = (RadioButton) findViewById(R.id.radioButton2);
         female = (RadioButton) findViewById(R.id.radioButton);
+        edAge = (EditText) findViewById((R.id.edAge));
+        privacy = (CheckBox) findViewById(R.id.checkBox);
+
+        String[] residelist = getResources().getStringArray(R.array.spn_list);
+        spinreside = (Spinner)findViewById(R.id.residespinner);
+        spinreside.setOnItemSelectedListener(spnOnItemSelected);
+        ArrayAdapter<String> _Adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, residelist);
+        spinreside.setAdapter(_Adapter);
+
+        String[] religonlist = getResources().getStringArray(R.array.spn_list2);
+        spinreligon = (Spinner)findViewById(R.id.religionspinner2);
+        spinreligon.setOnItemSelectedListener(spnOnItemSelected2);
+        ArrayAdapter<String> _Adapter2=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, religonlist);
+        spinreligon.setAdapter(_Adapter2);
+
+        privacy.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String showMsg = "《隱私權同意政策》\n同意收集個人資料，並用於學術研究";
+                if(isChecked)
+                {
+                    // Create an AlertDialog object.
+                    AlertDialog alertDialog = new AlertDialog.Builder(SignUpActivity.this).create();
+
+                    // Set prompt message.
+                    alertDialog.setMessage(showMsg);
+
+                    // Show the alert dialog.
+                    alertDialog.show();
+                }
+
+            }
+        });
 
 
 
@@ -69,6 +110,10 @@ public class SignUpActivity extends AppCompatActivity {
                 final String classdata = edClass.getText().toString();
                 final String emailtext= email.getText().toString();
                 final String school= edSchool.getText().toString();
+                final String age = edAge.getText().toString();
+                final String living = livingplace.toString();
+                final String religion = myreligion.toString();
+                //Toast.makeText(SignUpActivity.this, "你點選的是:"+livingplace+myreligion, Toast.LENGTH_SHORT).show();
                 final String sex;
                 if(male.isChecked()){
                     sex="male";
@@ -76,20 +121,48 @@ public class SignUpActivity extends AppCompatActivity {
                     sex="female";
                 }
 
-                if (edtId.getText().toString().equals("") || edtPwd.getText().toString().equals("")
-                        || edClass.getText().toString().equals("")|| email.getText().toString().equals("")
-                        || edSchool.getText().toString().equals("")) {
-                    Toast.makeText(SignUpActivity.this, "尚有欄位未填寫", Toast.LENGTH_SHORT).show();
+                if (edtId.getText().toString().equals("") || edtPwd.getText().toString().equals("")) {
+                    Toast.makeText(SignUpActivity.this, "帳號及密碼欄位為必填項目", Toast.LENGTH_SHORT).show();
                 }else {
 
                     // Initialize  AsyncLogin() class with param
-                    new SignUpActivity.AsyncLogin().execute(account, password, classdata, emailtext, school, sex);
+                    new SignUpActivity.AsyncLogin().execute(account, password, classdata, emailtext, school, sex,age,living,religion);
                 }
 
 
             }
         });
     }
+
+    private AdapterView.OnItemSelectedListener spnOnItemSelected = new AdapterView.OnItemSelectedListener()
+    {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view,
+                                   int position, long id) {
+            String str=parent.getItemAtPosition(position).toString();
+            livingplace = parent.getItemAtPosition(position).toString();
+            //Toast.makeText(SignUpActivity.this, "你點選的是:"+id, Toast.LENGTH_SHORT).show();
+        }
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            // TODO Auto-generated method stub
+        }
+    };
+
+    private AdapterView.OnItemSelectedListener spnOnItemSelected2 = new AdapterView.OnItemSelectedListener()
+    {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view,
+                                   int position, long id) {
+            String str=parent.getItemAtPosition(position).toString();
+            myreligion = parent.getItemAtPosition(position).toString();
+            //Toast.makeText(SignUpActivity.this, "你點選的是:"+id, Toast.LENGTH_SHORT).show();
+        }
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            // TODO Auto-generated method stub
+        }
+    };
 
     /**
      * AsyncLogin Class
@@ -98,10 +171,11 @@ public class SignUpActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            Log.d("Start AsyncLogin", params[0] + "," + params[1] + "," + params[2] + "," + params[3]+ "," + params[4] + "," + params[5]);
+            Log.i("Start AsyncLogin", params[0] + "," + params[1] + "," + params[2] + "," + params[3]+ "," + params[4] + "," + params[5]+ "," + params[6]+ "," + params[7]+ "," + params[8]);
 
             // Connect to database && check login information
-            conn = new ConnServer(params[0], params[1], params[2] , params[3], params[4], params[5]);
+            conn = new ConnServer(params[0], params[1], params[2] , params[3], params[4], params[5], params[6], params[7], params[8]);
+
             // 設定 permission;確認登入
             permission = conn.checkSignUp();
 
