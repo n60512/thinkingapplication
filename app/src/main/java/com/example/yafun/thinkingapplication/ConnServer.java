@@ -4,7 +4,6 @@ package com.example.yafun.thinkingapplication;
 import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
-
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -12,7 +11,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-
 import java.io.ByteArrayOutputStream;
 import java.util.*;
 
@@ -27,7 +25,7 @@ public class ConnServer {
 
     private String account = null;
     private String password = null;
-    private String memberInf = null;
+    private String memberData = null;
     private String classdata = null;
     private String emailtext = null;
     private String school = null;
@@ -35,9 +33,6 @@ public class ConnServer {
     private String age = null;
     private String living = null;
     private String religion = null;
-
-
-
 
     public ConnServer(){
     }
@@ -80,7 +75,7 @@ public class ConnServer {
     }
 
     /**
-     * 處理遊戲 drawing,drawingmult 建構子
+     * 處理遊戲 drawing , drawingmult 建構子
      *
      * @param database
      * @param content
@@ -284,50 +279,48 @@ public class ConnServer {
     }
 
     /**
-     * Check user login
+     * Check Login  (20190411)
      *
-     * @return
+     * @param userAccount
+     * @param userPasswd
+     * @return  boolean
      */
-    public boolean checkLogin() {
+    public boolean CheckLogin(String userAccount,String userPasswd) {
 
         JSONObject obj;
         String webResponse = null;
 
         HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/login.php");
+        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/login.php");  // Post request
 
+        /// Setting Params
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-
-        params.add(new BasicNameValuePair("account", this.account));
-        params.add(new BasicNameValuePair("password", this.password));
-
+        params.add(new BasicNameValuePair("account", userAccount));
+        params.add(new BasicNameValuePair("password", userPasswd));
 
         try {
+            request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  Setting post params
+            HttpResponse response = client.execute(request);
+            HttpEntity resEntity = response.getEntity();            //  Get web response
 
-            request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params
-            HttpResponse response = client.execute(request);        //  get web response
-
-            HttpEntity resEntity = response.getEntity();
             this.webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
 
             obj = new JSONObject(this.webRequest);            // parse web request
             webResponse = obj.getString("response");    // store webResponse
-            this.memberInf = obj.getString("member");   // store member information
+            this.memberData = obj.getString("member");   // store member information
 
-            showMessage("memberInf", this.memberInf);
-            //showMessage("login", webResponse);
+            showMessage("Response", webResponse);
+            showMessage("Member Data", this.memberData);
 
         } catch (java.io.IOException e) {
             showMessage("IOException", e.getMessage());
         } catch (org.json.JSONException e) {
             showMessage("JSON Error", e.getMessage());
         } finally {
-
             if (webResponse.equals("successful"))
                 return true;
             else
                 return false;
-
         }
     }
     public boolean checkSignUp(){
@@ -401,14 +394,6 @@ public class ConnServer {
         return android.util.Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
-    /**
-     * getMemberInf
-     *
-     * @return memberInf
-     */
-    public String getMemberInf() {
-        return memberInf;
-    }
 
     /**
      * update anwser time 上傳並更新當前使用者的紀錄時間
@@ -538,4 +523,14 @@ public class ConnServer {
         Log.d(title, content);
     }
 
+
+
+    /**
+     * getMemberInf
+     *
+     * @return memberInf
+     */
+    public String getMemberData() {
+        return memberData;
+    }
 }

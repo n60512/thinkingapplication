@@ -21,18 +21,17 @@ import android.content.Context;
 import org.json.*;
 import java.util.Iterator;
 
-
 public class LoginActivity extends AppCompatActivity {
-
-    // declare variable
+    // Declare Object Variable
     private TextView TextView2,TextView3;
     private EditText edtId, edtPwd;
     private Button btnSignIn;
     private Button btnSignUp;
+
     private ConnServer conn,connRecord;
-    private boolean permission = false;
+    private boolean PERMISSION = false;     //  是否登入
     SharedPreferences member,imagetest;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,32 +91,29 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-    public static float convertDpToPixel(float dp, Context context){
-        return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-    }
+
     public static float convertPixelsToDp(float px, Context context){
         return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+    public static float convertDpToPixel(float dp, Context context){
+        return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
     public static float getDPI(Context context){
         return ((float) context.getResources().getDisplayMetrics().densityDpi);
     }
-
     private class SettingLayout extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-
             return null;
         }
-
         @Override
         protected void onPostExecute(String result) {
         }
-
         @Override
         protected void onPreExecute() {
-            final  Point size = new Point();
+            final Point size = new Point();
             getWindowManager().getDefaultDisplay().getRealSize(size);
-            Log.d("手機尺寸為", size.x+"X"+size.y);
+            Log.d("此手機尺寸為", size.x+"X"+size.y);
 
             TextView2 = (TextView)findViewById(R.id.textView2);
             TextView3 = (TextView)findViewById(R.id.textView3);
@@ -126,31 +122,31 @@ public class LoginActivity extends AppCompatActivity {
             btnSignIn = (Button) findViewById(R.id.btnSignIn);
             btnSignUp = (Button) findViewById(R.id.btnSignUp);
 
-            final LayoutParams lp_tv2 = (LayoutParams) TextView2.getLayoutParams();
-            final LayoutParams lp_tv3 = (LayoutParams) TextView3.getLayoutParams();
-            final LayoutParams lp_btSig = (LayoutParams) btnSignIn.getLayoutParams();
-            final LayoutParams lp_btSup = (LayoutParams) btnSignUp.getLayoutParams();
-            final LayoutParams lp_edtId = (LayoutParams) edtId.getLayoutParams();
-            final LayoutParams lp_edPwd = (LayoutParams) edtPwd.getLayoutParams();
+            final LayoutParams TV2_LP = (LayoutParams) TextView2.getLayoutParams();
+            final LayoutParams TV3_LP = (LayoutParams) TextView3.getLayoutParams();
+            final LayoutParams SignInBtn_LP = (LayoutParams) btnSignIn.getLayoutParams();
+            final LayoutParams SignUpBtn_LP = (LayoutParams) btnSignUp.getLayoutParams();
+            final LayoutParams Edt_LP = (LayoutParams) edtId.getLayoutParams();
+            final LayoutParams Pwd_LP = (LayoutParams) edtPwd.getLayoutParams();
 
             // 此設 px
-            lp_tv2.topMargin = Math.round(
-                    getTransformPx(convertPixelsToDp(lp_tv2.topMargin,getApplicationContext()),size.x)
+            TV2_LP.topMargin = Math.round(
+                    getTransformPx(convertPixelsToDp(TV2_LP.topMargin,getApplicationContext()),size.x)
             );
-            lp_tv3.topMargin = Math.round(
-                    getTransformPx(convertPixelsToDp(lp_tv3.topMargin,getApplicationContext()),size.x)
+            TV3_LP.topMargin = Math.round(
+                    getTransformPx(convertPixelsToDp(TV3_LP.topMargin,getApplicationContext()),size.x)
             );
-            lp_btSig.topMargin = Math.round(
-                    getTransformPx(convertPixelsToDp(lp_btSig.topMargin,getApplicationContext()),size.x)
+            SignInBtn_LP.topMargin = Math.round(
+                    getTransformPx(convertPixelsToDp(SignInBtn_LP.topMargin,getApplicationContext()),size.x)
             );
-            lp_btSup.topMargin = Math.round(
-                    getTransformPx(convertPixelsToDp(lp_btSup.topMargin,getApplicationContext()),size.x)
+            SignUpBtn_LP.topMargin = Math.round(
+                    getTransformPx(convertPixelsToDp(SignUpBtn_LP.topMargin,getApplicationContext()),size.x)
             );
-            lp_edtId.topMargin = Math.round(
-                    getTransformPx(convertPixelsToDp(lp_edtId.topMargin,getApplicationContext()),size.x)
+            Edt_LP.topMargin = Math.round(
+                    getTransformPx(convertPixelsToDp(Edt_LP.topMargin,getApplicationContext()),size.x)
             );
-            lp_edPwd.topMargin = Math.round(
-                    getTransformPx(convertPixelsToDp(lp_edPwd.topMargin,getApplicationContext()),size.x)
+            Pwd_LP.topMargin = Math.round(
+                    getTransformPx(convertPixelsToDp(Pwd_LP.topMargin,getApplicationContext()),size.x)
             );
 
             // 此是設dp
@@ -185,37 +181,37 @@ public class LoginActivity extends AppCompatActivity {
                             ,getApplicationContext())
             ));
 
-
-
-            TextView2.setLayoutParams(lp_tv2);
-            TextView3.setLayoutParams(lp_tv3);
-            edtId.setLayoutParams(lp_edtId);
-            edtPwd.setLayoutParams(lp_edPwd);
-            btnSignUp.setLayoutParams(lp_btSup);
-            btnSignIn.setLayoutParams(lp_btSig);
+            TextView2.setLayoutParams(TV2_LP);
+            TextView3.setLayoutParams(TV3_LP);
+            edtId.setLayoutParams(Edt_LP);
+            edtPwd.setLayoutParams(Pwd_LP);
+            btnSignUp.setLayoutParams(SignUpBtn_LP);
+            btnSignIn.setLayoutParams(SignInBtn_LP);
         }
-
         @Override
         protected void onProgressUpdate(Void... values) {
         }
-
+        /**
+         *  getTransformPx
+         *  傳入當前物件DP與螢幕寬，回傳當前屏幕比的 DP 轉 PX
+         * @param currentDP     當前物件DP
+         * @param screenWidth   當前螢幕寬
+         * @return  Px_of_Current   回傳與預設屏幕比率的 PX
+         */
         private float getTransformPx(float currentDP,float screenWidth){
-            // 傳入當前物件DP與螢幕寬，回傳當前屏幕比的 DP 轉 PX
-            float rate = ((float)screenWidth/(float)1080);
-            float Px_of_1080 = currentDP * (float)(420.0/160.0);
-            float Px_of_Current = Px_of_1080*rate;
 
-            Log.d("rate",Float.toString((float)screenWidth/(float)1080));
-            Log.d("Px_of_1080",Float.toString(currentDP * (float)(420.0/160.0)));
-            Log.d("Px_of_Current",Float.toString(Px_of_Current));
-
-            //(float)(393.75* ((float)screenWidth/(float)1080))
-            return Px_of_Current;
-
+            float rate = screenWidth/(float)1080;
+            float DefaultPx = currentDP * (float)(420.0/160.0); // 420 dpi
+            float currentPx = DefaultPx * rate;
+            /*
+            //  Debug Console
+            Log.d("Rate",Float.toString(rate));
+            Log.d("DefaultPx",Float.toString(DefaultPx));
+            Log.d("Px_of_Current",Float.toString(currentPx));
+            */
+            return currentPx;
         }
     }
-
-
 
 
     /**
@@ -225,37 +221,30 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            Log.d("Start AsyncLogin", params[0] + "," + params[1]);
+            // Log.d("Start AsyncLogin", params[0] + "," + params[1]);
+            conn = new ConnServer();    //  Connect to database && check login information
+            PERMISSION = conn.CheckLogin(params[0], params[1]); // 設定 permission;確認登入
 
-            // Connect to database && check login information
-            conn = new ConnServer(params[0], params[1]);
-            // 設定 permission;確認登入
-            permission = conn.checkLogin();
-
-            writeShardPreferences("drawing",params[0]);
-            writeShardPreferences("drawingmult",params[0]);
-
+            writeShardPreferences("drawing",params[0]);         // 待修
+            writeShardPreferences("drawingmult",params[0]);     // 待修
             return null;
         }
 
         @Override
         protected void onPostExecute(String result) {
-
-            if (permission) {
-                Log.d("login result", "successful");
-
+            if (PERMISSION) {
                 member = getSharedPreferences("member", MODE_PRIVATE);
                 //member.edit().remove().commit();
-
-                String content = conn.getMemberInf();               //  Get member information , type:String
-                Log.d("getMemberInf",content);
+                String UserData = conn.getMemberData();               //  Get member information , type:String
+                Log.d("User Information",UserData);
                 try {
-                    JSONObject jsonObj = new JSONObject(content);   // JSONObject
-                    Iterator<String> keys = jsonObj.keys();         // Iterator
+                    JSONObject jsonObj = new JSONObject(UserData);      // JSONObject to parse user data
+                    Iterator<String> keys = jsonObj.keys();             // Iterator
 
                     while (keys.hasNext()) {
                         //Log.d(key,jsonObj.getString(key));
                         String key = (String) keys.next();
+                        /// Pust user dat (key,value pair into SharedPreferences)
                         member.edit()
                                 .putString(key, jsonObj.getString(key))
                                 .commit();
@@ -263,26 +252,20 @@ public class LoginActivity extends AppCompatActivity {
                 } catch (org.json.JSONException e) {
                     Log.d("JSONException", e.getLocalizedMessage());
                 } finally {
-                    Log.d("test",
+                    Log.d("[Testing]Userid",
                             getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
                     );
                 }
 
-
-                // toast message
-                Toast.makeText(LoginActivity.this, "登入成功", Toast.LENGTH_SHORT).show();
-
-                // get intent to put result value
-                Intent intent = LoginActivity.this.getIntent();
+                Toast.makeText(LoginActivity.this, "登入成功", Toast.LENGTH_SHORT).show();     // toast message
+                Intent intent = LoginActivity.this.getIntent();                                                 // get intent to put result value
                 intent.putExtra("username", edtId.getText().toString());
 
-                // return result to original activity
-                LoginActivity.this.setResult(RESULT_OK, intent);
-                LoginActivity.this.finish();
+                LoginActivity.this.setResult(RESULT_OK, intent);              // return result to original activity
+                LoginActivity.this.finish();                                    //  finish login activity
             }
-            // else show login fail
             else {
-                Log.d("login result", "fail");
+                /// Login Fail
                 new AlertDialog.Builder(LoginActivity.this)
                         .setMessage("登入失敗")
                         .setPositiveButton("OK", null)
@@ -292,7 +275,6 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-
         }
 
         @Override
@@ -300,8 +282,8 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         private void writeShardPreferences(String database,String account) {
-            if (permission) {
-                connRecord = new ConnServer();//get Record
+            if (PERMISSION) {
+                connRecord = new ConnServer();  //  get Record
                 String[] tmparr = connRecord.PersonalRecord(database, account);
                 imagetest = getSharedPreferences(database + "_record", MODE_PRIVATE);
                 Log.d(database + "_record", "success");//data
