@@ -442,6 +442,8 @@ public class ConnServer {
      */
     public String[] PersonalRecord(String database, String crtuser) {
 
+        showMessage("[Database]", database);
+
         JSONObject obj;
         String webResponse = null;
         String answerRecord[] = null;
@@ -473,7 +475,7 @@ public class ConnServer {
             answerRecord = new String[data.length()];
             for(int i = 0; i < data.length(); i++) {
                 answerRecord[i] = data.get(i).toString();
-                //showMessage("i_"+i, data.get(i).toString());
+                // showMessage("i_"+i, data.get(i).toString());
             }
 
         } catch (java.io.IOException e) {

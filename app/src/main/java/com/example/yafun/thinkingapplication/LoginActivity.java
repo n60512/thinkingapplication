@@ -19,6 +19,8 @@ import android.support.constraint.ConstraintLayout.LayoutParams;
 import android.content.Context;
 
 import org.json.*;
+
+import java.io.IOException;
 import java.util.Iterator;
 
 public class LoginActivity extends AppCompatActivity {
@@ -67,6 +69,8 @@ public class LoginActivity extends AppCompatActivity {
         userXML = getSharedPreferences("drawing_record", MODE_PRIVATE);
         userXML.edit().clear().commit();
         userXML = getSharedPreferences("drawingmult_record", MODE_PRIVATE);
+        userXML.edit().clear().commit();
+        userXML = getSharedPreferences("oneimagetest_record", MODE_PRIVATE);
         userXML.edit().clear().commit();
 
 
@@ -227,6 +231,7 @@ public class LoginActivity extends AppCompatActivity {
 
             writeShardPreferences("drawing",params[0]);         // 待修
             writeShardPreferences("drawingmult",params[0]);     // 待修
+            writeShardPreferences("oneimagetest",params[0]);     // 待修
             return null;
         }
 
@@ -290,25 +295,45 @@ public class LoginActivity extends AppCompatActivity {
         private void writeShardPreferences(String database,String account) {
             if (PERMISSION) {
                 connRecord = new ConnServer();  //  get Record
-                String[] tmparr = connRecord.PersonalRecord(database, account);
+                /**
+                             *  recordList
+                             *   drawing && drawingmult 時為 [ [data,imag],[data,imag],... ]
+                             *   oneimage 則為 [ data ,data,... ]
+                             */
+                String[] recordList = connRecord.PersonalRecord(database, account);
                 imagetest = getSharedPreferences(database + "_record", MODE_PRIVATE);       // Store historic answer into Shared Preference
-                Log.d(database + "_record", "success");//data
-                if (tmparr != null) {
-                    for (int i = 0; i < tmparr.length; i++) {
-                        try {
-                            JSONArray data = new JSONArray(tmparr[i]);
-                            //Log.d("JSONArray",data.get(1).toString());//data
 
-                            Log.d("JSONArray", data.get(0).toString());
-                            imagetest.edit()
-                                    .putString(data.get(0).toString(), data.get(1).toString())
-                                    .commit();
-
-                        } catch (org.json.JSONException e) {
-                            Log.d("Err", "");
+                if (recordList != null) {
+                    if (database.equals("drawingmult") || database.equals("drawing")){
+                        Log.d(database + "_record", "success"); //data
+                        for (int i = 0; i < recordList.length; i++) {
+                            try {
+                                JSONArray data = new JSONArray(recordList[i]);
+                                Log.d("JSONArray", data.get(0).toString());
+                                //Log.d("JSONArray",data.get(1).toString());    // image
+                                imagetest.edit()
+                                        .putString(data.get(0).toString(), data.get(1).toString())
+                                        .commit();
+                            } catch (org.json.JSONException e) {
+                                Log.d("Err", "");
+                            }
+                        }
+                    }
+                    else if (database.equals("oneimagetest")){
+                        Log.d(database + "_record", "success"); //data
+                        for (int i = 0; i < recordList.length; i++) {
+                            try {
+                                Log.d("One Image Array", recordList[i]);
+                                imagetest.edit()
+                                        .putString(Integer.toString(i),recordList[i])
+                                        .commit();
+                            } catch (Exception e) {
+                                Log.d("Err", "");
+                            }
                         }
                     }
                 }
+
             }
         }
     }
