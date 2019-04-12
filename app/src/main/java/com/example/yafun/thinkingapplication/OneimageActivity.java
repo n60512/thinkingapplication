@@ -1,11 +1,8 @@
 package com.example.yafun.thinkingapplication;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
@@ -14,19 +11,15 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,25 +33,19 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
-public class AssociateActivity extends AppCompatActivity {
+public class OneimageActivity extends AppCompatActivity {
 
     private Boolean guideSet;
 
-    // declare variable
+    /// Declare Variable
     private EditText edtName;
     private Button btnOk, btnClr;
-    private TextView txtAssociateTimer;
+    private TextView txtOneimageTimer;
     private CountDownTimer timer;
     private ImageView imgAssociate;
     private ListView lvAssociate;
@@ -66,46 +53,46 @@ public class AssociateActivity extends AppCompatActivity {
 
     private ArrayAdapter<String> arrayAdapter;
 
-    //timer cont
+    /// Timer Cont
     private long TIME = 481 * 1000L;
     private final long INTERVAL = 1000L;
 
-    // timer state
+    /// Timer State
     private boolean isPaused = false;
     private long timeRemaining = 0;
 
-
     private ConnServer connUpdate = new ConnServer();
     private int RecordLength = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // set view set title
         setContentView(R.layout.drawerlayout_associate);
-        setTitle("簡圖聯想遊戲"); //對應 oneimage
+        setTitle("簡圖聯想遊戲");     //對應 oneimage
 
-        // check guide dialog then start timer
-        guideView();
-
+        guideView();    // 教學 dialogS
 
         // set variable value
         edtName = (EditText) findViewById(R.id.edtAssociateName);
         btnOk = (Button) findViewById(R.id.btnAssociateOk);
         btnClr = (Button) findViewById(R.id.btnAssociateClr);
-        txtAssociateTimer = (TextView) findViewById(R.id.txtAssociateTimer);
+        txtOneimageTimer = (TextView) findViewById(R.id.txtAssociateTimer);
 
         imgAssociate = (ImageView) findViewById(R.id.imgAssociate);
-        // set random image
+
+
+        /**
+         *  Loaing image from Server
+         */
         Thread thread = new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    imageID = randomSetImage();
-                    if (imageID != null) Log.d("thread_try", "Successed");
-                    else Log.d("thread_catch", "Failed");
+                    imageID = "as2";
+                    if (imageID != null) Log.d("Load image thread", "Successed");
+                    else Log.d("Load image thread", "Failed");
                     Log.d("image_number", imageID);
                     Picasso.get().load("http://140.122.91.218/thinkingapp/oneimagetest/image/" + imageID + ".png?1").into(imgAssociate);
                 } catch (Exception e) {
@@ -116,9 +103,9 @@ public class AssociateActivity extends AppCompatActivity {
         thread.run();
 
 
+        /// 左側滑出作答紀錄
         lvAssociate = (ListView) findViewById(R.id.lvAssociate);
-        // new string list with title
-        final List<String> listData = new ArrayList<String>(Arrays.asList("名稱"));
+        final List<String> listData = new ArrayList<String>(Arrays.asList("名稱"));   // new string list with title
         // array adapter with string list
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listData);
         lvAssociate.setAdapter(arrayAdapter);
@@ -144,7 +131,7 @@ public class AssociateActivity extends AppCompatActivity {
                     arrayAdapter.notifyDataSetChanged();
                     edtName.setText("");
                 } else {
-                    Toast.makeText(AssociateActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OneimageActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -174,7 +161,7 @@ public class AssociateActivity extends AppCompatActivity {
             case R.id.btnSubmit:
                 // timer pause and show alert dialog
                 isPaused = true;
-                new AlertDialog.Builder(AssociateActivity.this)
+                new AlertDialog.Builder(OneimageActivity.this)
                         .setMessage("確定提早交卷嗎?")
                         .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                             // if yes stop the timer and submit the sheet
@@ -229,15 +216,15 @@ public class AssociateActivity extends AppCompatActivity {
                                             //timer.cancel();
                                             timer = null;
                                         } else {
-                                            txtAssociateTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
+                                            txtOneimageTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
                                             timeRemaining = l - 1000;
                                         }
                                     }
 
                                     @Override
                                     public void onFinish() {
-                                        txtAssociateTimer.setText(String.format("00 分 00 秒"));
-                                        new AlertDialog.Builder(AssociateActivity.this)
+                                        txtOneimageTimer.setText(String.format("00 分 00 秒"));
+                                        new AlertDialog.Builder(OneimageActivity.this)
                                                 .setMessage("時間結束。")
                                                 .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                                                     @Override
@@ -302,7 +289,7 @@ public class AssociateActivity extends AppCompatActivity {
             Log.d("簡圖聯想遊戲_讀秒",ltest.toString());
 
             TIME = (Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("oneimage", "null"))+1) * 1000L;
-            timer = new AssociateActivity.MyCountDownTimer(TIME, INTERVAL);
+            timer = new OneimageActivity.MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
     }
@@ -321,7 +308,7 @@ public class AssociateActivity extends AppCompatActivity {
                 //timer.cancel();
                 timer = null;
             } else {
-                txtAssociateTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
+                txtOneimageTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
                 timeRemaining = l - 1000;
             }
         }
@@ -329,8 +316,8 @@ public class AssociateActivity extends AppCompatActivity {
         // if timer finish
         @Override
         public void onFinish() {
-            txtAssociateTimer.setText(String.format("00 分 00 秒"));
-            new AlertDialog.Builder(AssociateActivity.this)
+            txtOneimageTimer.setText(String.format("00 分 00 秒"));
+            new AlertDialog.Builder(OneimageActivity.this)
                     .setMessage("時間結束。")
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override

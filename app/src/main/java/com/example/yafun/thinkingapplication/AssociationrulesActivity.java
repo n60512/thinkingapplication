@@ -4,10 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
@@ -22,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,29 +31,17 @@ import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Random;
 
-public class AttributeActivity extends AppCompatActivity {
+public class AssociationrulesActivity extends AppCompatActivity {
 
     private boolean guideSet;
 
@@ -166,7 +149,7 @@ public class AttributeActivity extends AppCompatActivity {
         }};
         mlist.add(new listContext("名稱", initial));
         // new adapter with context and set
-        adapter = new myAdapter(AttributeActivity.this, mlist);
+        adapter = new myAdapter(AssociationrulesActivity.this, mlist);
         lvAttribute.setAdapter(adapter);
 
 
@@ -284,9 +267,9 @@ public class AttributeActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (count < 2) {
-                    Toast.makeText(AttributeActivity.this, "請選擇兩張(含)以上圖片", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AssociationrulesActivity.this, "請選擇兩張(含)以上圖片", Toast.LENGTH_SHORT).show();
                 } else if (edtName.getText().toString().equals("")) {
-                    Toast.makeText(AttributeActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AssociationrulesActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
                 } else {
                     // click then add data to mlist and change adapter
                     ArrayList<String> choose_list = new ArrayList<String>();
@@ -358,7 +341,7 @@ public class AttributeActivity extends AppCompatActivity {
             case R.id.btnSubmit:
                 // timer pause and show alert dialog
                 isPaused = true;
-                new AlertDialog.Builder(AttributeActivity.this)
+                new AlertDialog.Builder(AssociationrulesActivity.this)
                         .setMessage("確定提早交卷嗎?")
                         .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                             // if yes stop the timer and submit the sheet
@@ -429,7 +412,7 @@ public class AttributeActivity extends AppCompatActivity {
                                     @Override
                                     public void onFinish() {
                                         txtAttributeTimer.setText(String.format("00 分 00 秒"));
-                                        new AlertDialog.Builder(AttributeActivity.this)
+                                        new AlertDialog.Builder(AssociationrulesActivity.this)
                                                 .setMessage("時間結束。")
                                                 .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                                                     @Override
@@ -500,7 +483,7 @@ public class AttributeActivity extends AppCompatActivity {
             Log.d("關聯聯想遊戲_讀秒",ltest.toString());
             TIME = (Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("associationrules", "null"))+1) * 1000L;
 
-            timer = new AttributeActivity.MyCountDownTimer(TIME, INTERVAL);
+            timer = new AssociationrulesActivity.MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
     }
@@ -528,7 +511,7 @@ public class AttributeActivity extends AppCompatActivity {
         @Override
         public void onFinish() {
             txtAttributeTimer.setText(String.format("00 分 00 秒"));
-            new AlertDialog.Builder(AttributeActivity.this)
+            new AlertDialog.Builder(AssociationrulesActivity.this)
                     .setMessage("時間結束。")
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override

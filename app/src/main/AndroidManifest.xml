@@ -21,9 +21,9 @@
         </activity>
         <activity android:name=".SignUpActivity" />
         <activity android:name=".DrawActivity" />
-        <activity android:name=".AttributeActivity" />
-        <activity android:name=".AssociateActivity" />
-        <activity android:name=".ExpandActivity"></activity>
+        <activity android:name=".AssociationrulesActivity" />
+        <activity android:name=".OneimageActivity" />
+        <activity android:name=".DrawingmultActivity"></activity>
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>

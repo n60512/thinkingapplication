@@ -8,7 +8,6 @@ import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Boolean connected = networkCheck();
                                     if (connected == true) {
-                                        Intent intent = new Intent(MainActivity.this, AttributeActivity.class);
+                                        Intent intent = new Intent(MainActivity.this, AssociationrulesActivity.class);
                                         intent.putExtra("guideSet", guideSet);
                                         startActivityForResult(intent, 123);
                                     }
@@ -121,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Boolean connected = networkCheck();
                                     if (connected == true) {
-                                        Intent intent = new Intent(MainActivity.this, AssociateActivity.class);
+                                        Intent intent = new Intent(MainActivity.this, OneimageActivity.class);
                                         intent.putExtra("guideSet", guideSet);
                                         startActivityForResult(intent, 123);
                                     }
@@ -147,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Boolean connected = networkCheck();
                                     if (connected == true) {
-                                        Intent intent = new Intent(MainActivity.this, ExpandActivity.class);
+                                        Intent intent = new Intent(MainActivity.this, DrawingmultActivity.class);
                                         intent.putExtra("guideSet", guideSet);
                                         startActivityForResult(intent, 123);
                                     }

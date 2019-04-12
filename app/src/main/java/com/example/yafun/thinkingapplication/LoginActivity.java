@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        // 全屏幕模式
+        /// 全屏幕模式
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -60,14 +60,14 @@ public class LoginActivity extends AppCompatActivity {
         btnSignUp = (Button) findViewById(R.id.btnSignUp);
 
 
-        SharedPreferences tmp;
-        tmp = getSharedPreferences("member", MODE_PRIVATE);
-        SharedPreferences.Editor editor = tmp.edit();
+        SharedPreferences userXML;
+        userXML = getSharedPreferences("member", MODE_PRIVATE);
+        SharedPreferences.Editor editor = userXML.edit();
         editor.clear().commit();
-        tmp = getSharedPreferences("drawing_record", MODE_PRIVATE);
-        tmp.edit().clear().commit();
-        tmp = getSharedPreferences("drawingmult_record", MODE_PRIVATE);
-        tmp.edit().clear().commit();
+        userXML = getSharedPreferences("drawing_record", MODE_PRIVATE);
+        userXML.edit().clear().commit();
+        userXML = getSharedPreferences("drawingmult_record", MODE_PRIVATE);
+        userXML.edit().clear().commit();
 
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
@@ -235,16 +235,16 @@ public class LoginActivity extends AppCompatActivity {
             if (PERMISSION) {
                 member = getSharedPreferences("member", MODE_PRIVATE);
                 //member.edit().remove().commit();
-                String UserData = conn.getMemberData();               //  Get member information , type:String
+                String UserData = conn.getMemberData();               //  Get member information , type:String [ 一組 JSON 序列]
                 Log.d("User Information",UserData);
                 try {
                     JSONObject jsonObj = new JSONObject(UserData);      // JSONObject to parse user data
                     Iterator<String> keys = jsonObj.keys();             // Iterator
 
                     while (keys.hasNext()) {
-                        //Log.d(key,jsonObj.getString(key));
+                        // Log.d(key,jsonObj.getString(key));
                         String key = (String) keys.next();
-                        /// Pust user dat (key,value pair into SharedPreferences)
+                        /// Put user data into SharedPreferences (key,value pair into SharedPreferences)
                         member.edit()
                                 .putString(key, jsonObj.getString(key))
                                 .commit();
@@ -252,7 +252,7 @@ public class LoginActivity extends AppCompatActivity {
                 } catch (org.json.JSONException e) {
                     Log.d("JSONException", e.getLocalizedMessage());
                 } finally {
-                    Log.d("[Testing]Userid",
+                    Log.d("[Testing] Userid",
                             getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
                     );
                 }
@@ -261,7 +261,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = LoginActivity.this.getIntent();                                                 // get intent to put result value
                 intent.putExtra("username", edtId.getText().toString());
 
-                LoginActivity.this.setResult(RESULT_OK, intent);              // return result to original activity
+                LoginActivity.this.setResult(RESULT_OK, intent);              //  return result to original activity
                 LoginActivity.this.finish();                                    //  finish login activity
             }
             else {
@@ -281,11 +281,17 @@ public class LoginActivity extends AppCompatActivity {
         protected void onProgressUpdate(Void... values) {
         }
 
+        /**
+         *  writeShardPreferences
+         *  將歷史作答紀錄寫入 ShardPreferences
+         * @param database
+         * @param account
+         */
         private void writeShardPreferences(String database,String account) {
             if (PERMISSION) {
                 connRecord = new ConnServer();  //  get Record
                 String[] tmparr = connRecord.PersonalRecord(database, account);
-                imagetest = getSharedPreferences(database + "_record", MODE_PRIVATE);
+                imagetest = getSharedPreferences(database + "_record", MODE_PRIVATE);       // Store historic answer into Shared Preference
                 Log.d(database + "_record", "success");//data
                 if (tmparr != null) {
                     for (int i = 0; i < tmparr.length; i++) {

@@ -437,8 +437,8 @@ public class ConnServer {
 
     /**
      *  select 個人作答紀錄(圖)
-     * @param database
-     * @param crtuser
+     * @param database  選擇的資料表
+     * @param crtuser   使用者名稱
      */
     public String[] PersonalRecord(String database, String crtuser) {
 
@@ -484,40 +484,6 @@ public class ConnServer {
             return answerRecord;
         }
     }
-
-
-    public String[] test(String database, String crtuser) {
-        showMessage("test", "1");
-        JSONObject obj;
-        String webResponse = null;
-        String answerRecord[] = null;
-        HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/select_personalRecord.php");
-
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-
-        params.add(new BasicNameValuePair("database", database));
-        params.add(new BasicNameValuePair("crtuser", crtuser));
-        showMessage("test", "2");
-        try {
-            showMessage("test", "3");
-            request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params
-            HttpResponse response = client.execute(request);        //  get web response
-            showMessage("test", "4");
-            HttpEntity resEntity = response.getEntity();
-            this.webRequest = EntityUtils.toString(resEntity);             //  取得網頁 REQUEST
-            showMessage("webRequest", this.webRequest);
-            showMessage("test", "5");
-
-
-        } catch (java.io.IOException e) {
-            showMessage("IOException", e.getMessage());
-        }finally {
-            return answerRecord;
-        }
-    }
-
-
 
     private void showMessage(String title, String content) {
         Log.d(title, content);

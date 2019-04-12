@@ -11,16 +11,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 import android.os.CountDownTimer;
-import android.provider.ContactsContract;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -41,25 +36,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-public class ExpandActivity extends AppCompatActivity {
+public class DrawingmultActivity extends AppCompatActivity {
 
     private Boolean guideSet;
 
@@ -116,7 +97,7 @@ public class ExpandActivity extends AppCompatActivity {
         lvExpand = (ListView) findViewById(R.id.lvExpand);
 
         // new adapter with context and set
-        adapter = new myAdapter(ExpandActivity.this, mlist);
+        adapter = new myAdapter(DrawingmultActivity.this, mlist);
         lvExpand.setAdapter(adapter);
 
         // paint initialize
@@ -136,7 +117,7 @@ public class ExpandActivity extends AppCompatActivity {
             byte[] decodedString = Base64.decode(entry.getValue().toString(), Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
-            mlist.add(new ExpandActivity.listContext(decodedByte,entry.getKey().toString()));//add to list
+            mlist.add(new DrawingmultActivity.listContext(decodedByte,entry.getKey().toString()));//add to list
         }
         Log.d("MapSize", Integer.toString(keys.size()));
         RecordLength = (keys.size());//依據作答紀錄設置list起始位置
@@ -146,9 +127,9 @@ public class ExpandActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (baseBitmap == null) {
-                    Toast.makeText(ExpandActivity.this, "請完成作畫", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DrawingmultActivity.this, "請完成作畫", Toast.LENGTH_SHORT).show();
                 } else if (edtName.getText().toString().equals("")) {
-                    Toast.makeText(ExpandActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DrawingmultActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
                 }
                 // clear all
                 else if (baseBitmap != null && !TextUtils.isEmpty(edtName.getText().toString())) {
@@ -199,7 +180,7 @@ public class ExpandActivity extends AppCompatActivity {
             case R.id.btnSubmit:
                 // timer pause and show alert dialog
                 isPaused = true;
-                new AlertDialog.Builder(ExpandActivity.this)
+                new AlertDialog.Builder(DrawingmultActivity.this)
                         .setMessage("確定提早交卷嗎?")
                         .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                             // if yes stop the timer and submit the sheet
@@ -284,7 +265,7 @@ public class ExpandActivity extends AppCompatActivity {
                                     @Override
                                     public void onFinish() {
                                         txtExpandTimer.setText(String.format("00 分 00 秒"));
-                                        new AlertDialog.Builder(ExpandActivity.this)
+                                        new AlertDialog.Builder(DrawingmultActivity.this)
                                                 .setMessage("時間結束。")
                                                 .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                                                     @Override
@@ -360,7 +341,7 @@ public class ExpandActivity extends AppCompatActivity {
 
             TIME = (Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("drawingmult", "null"))+1) * 1000L;
 
-            timer = new ExpandActivity.MyCountDownTimer(TIME, INTERVAL);
+            timer = new DrawingmultActivity.MyCountDownTimer(TIME, INTERVAL);
         }
         timer.start();
     }
@@ -388,7 +369,7 @@ public class ExpandActivity extends AppCompatActivity {
         @Override
         public void onFinish() {
             txtExpandTimer.setText(String.format("00 分 00 秒"));
-            new AlertDialog.Builder(ExpandActivity.this)
+            new AlertDialog.Builder(DrawingmultActivity.this)
                     .setMessage("時間結束。")
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
