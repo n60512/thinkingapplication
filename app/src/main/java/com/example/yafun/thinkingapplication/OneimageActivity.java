@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
@@ -65,6 +67,7 @@ public class OneimageActivity extends AppCompatActivity {
 
 
     SharedPreferences oneimagetest_record;
+    private int ChosenImgNum = 1;
 
     private ConnServer connUpdate = new ConnServer();
     private int RecordLength = 0;
@@ -76,20 +79,22 @@ public class OneimageActivity extends AppCompatActivity {
         setContentView(R.layout.drawerlayout_associate);
         setTitle("簡圖聯想遊戲");     //對應 oneimage
 
-        guideView();    // 教學 dialog
-
         // set variable value
         edtName = (EditText) findViewById(R.id.edtAssociateName);
         btnOk = (Button) findViewById(R.id.btnAssociateOk);
         btnClr = (Button) findViewById(R.id.btnAssociateClr);
         txtOneimageTimer = (TextView) findViewById(R.id.txtAssociateTimer);
-
         imgAssociate = (ImageView) findViewById(R.id.imgAssociate);
+        imgAssociate.setImageResource(R.drawable.oneimage_2);   // 預設
+
+        ChoseImage();
+        // guideView();    // 教學 dialog
+
 
 
         /**
          *  Loaing image from Server
-         */
+
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -105,6 +110,7 @@ public class OneimageActivity extends AppCompatActivity {
             }
         });
         thread.run();
+        */
 
 
         /// 左側滑出作答紀錄
@@ -211,6 +217,12 @@ public class OneimageActivity extends AppCompatActivity {
                                             String content = arrayAdapter.getItem(index + 1);
                                             //Log.d("oneimageName", content);
                                             conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
+
+                                            Log.d("One image 此次新增","["+Integer.toString(index)+"]"+content);
+                                            oneimagetest_record
+                                                    .edit()
+                                                    .putString(Integer.toString(index),content)
+                                                    .commit();
                                         }
                                     }
                                 };
@@ -282,6 +294,12 @@ public class OneimageActivity extends AppCompatActivity {
                                                     //Log.d("oneimageName", content);
 
                                                     conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
+
+                                                    Log.d("One image 此次新增","["+Integer.toString(index)+"]"+content);
+                                                    oneimagetest_record
+                                                            .edit()
+                                                            .putString(Integer.toString(index),content)
+                                                            .commit();
                                                 }
                                             }
                                         };
@@ -371,16 +389,57 @@ public class OneimageActivity extends AppCompatActivity {
                 public void run() {
                     int count = arrayAdapter.getCount() - 1;
                     ConnServer[] conn = new ConnServer[count];
-                    for (int index = 0; index < count; index++) {
+                    for (int index = RecordLength; index < count; index++) {
                         String content = arrayAdapter.getItem(index + 1);
                         Log.d("oneimageName", content);
                         conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
+
+                        Log.d("One image 此次新增","["+Integer.toString(index)+"]"+content);
+                        oneimagetest_record
+                                .edit()
+                                .putString(Integer.toString(index),content)
+                                .commit();
                     }
                 }
             };
             thread.start();
         }
     }
+
+    private void ChoseImage(){
+        final Dialog dialog = new Dialog(this,R.style.AppTheme);
+        dialog.setContentView(R.layout.choseimage);
+        dialog.show();
+
+        final int[] oneimages = {(R.drawable.oneimage_1),
+                (R.drawable.oneimage_2),
+                (R.drawable.oneimage_3),
+                (R.drawable.oneimage_4),
+                (R.drawable.oneimage_5)} ;
+
+        ImageView[] imgv = {(ImageView) dialog.findViewById(R.id.imageView1),
+                (ImageView) dialog.findViewById(R.id.imageView2),
+                (ImageView) dialog.findViewById(R.id.imageView3),
+                (ImageView) dialog.findViewById(R.id.imageView4),
+                (ImageView) dialog.findViewById(R.id.imageView5)} ;
+
+        for (int i =0;i < imgv.length ;i++){
+            final  int ChosenImgNum = i;
+            imgv[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // int tmp = v.getId();
+                    // Log.d("[Chose]",Integer.toString(tmp));
+                    Log.d("[Chose]",Integer.toString(ChosenImgNum));
+                    imgAssociate.setImageResource(oneimages[ChosenImgNum]);
+                    dialog.dismiss();
+                    guideView();    // 教學 dialog
+                }
+            });
+        }
+
+    }
+
 
     // guide dialog view
     private void guideView() {
