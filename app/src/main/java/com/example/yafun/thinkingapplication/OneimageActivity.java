@@ -395,6 +395,7 @@ public class OneimageActivity extends AppCompatActivity {
                         conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
 
                         Log.d("One image 此次新增","["+Integer.toString(index)+"]"+content);
+                        
                         oneimagetest_record
                                 .edit()
                                 .putString(Integer.toString(index),content)
