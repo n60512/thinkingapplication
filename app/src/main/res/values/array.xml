@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer-array name="chose_img">
+        <item>@drawable/oneimage_1</item>
+        <item>@drawable/oneimage_2</item>
+        <item>@drawable/oneimage_3</item>
+        <item>@drawable/oneimage_4</item>
+        <item>@drawable/oneimage_5</item>
+    </integer-array>
+
+</resources>
