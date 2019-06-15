@@ -101,11 +101,11 @@ public class ConnServer {
      * @param content
      * @param crtuser
      */
-    public ConnServer(String database, String content, String crtuser) {
+    public ConnServer(String database, String content, String crtuser,String chosenImage) {
         this.database = database;
 
         if (this.database.equals("oneimage")) {
-            oneimage(content, crtuser);
+            oneimage(content, crtuser,chosenImage);
         } else {
         }
 
@@ -208,7 +208,7 @@ public class ConnServer {
      * @param crtuser
      * @param
      */
-    private void oneimage(String Data, String crtuser) {
+    private void oneimage(String Data, String crtuser,String chosenImage) {
 
         JSONObject obj;
         //Object jsonOb = null;
@@ -223,7 +223,7 @@ public class ConnServer {
         params.add(new BasicNameValuePair("Data", Data));
         //params.add(new BasicNameValuePair("imageID", imageID));
         params.add(new BasicNameValuePair("crtuser", crtuser));
-
+        params.add(new BasicNameValuePair("chosenImage", chosenImage));
 
         //showMessage("oneimage imageID", imageID);
         try {

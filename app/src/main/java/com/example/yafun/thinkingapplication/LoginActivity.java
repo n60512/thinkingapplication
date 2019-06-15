@@ -1,6 +1,7 @@
 package com.example.yafun.thinkingapplication;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -140,9 +142,18 @@ public class LoginActivity extends AppCompatActivity {
             TV3_LP.topMargin = Math.round(
                     getTransformPx(convertPixelsToDp(TV3_LP.topMargin,getApplicationContext()),size.x)
             );
-            SignInBtn_LP.topMargin = Math.round(
-                    getTransformPx(convertPixelsToDp(SignInBtn_LP.topMargin,getApplicationContext()),size.x)
-            );
+
+
+            /// 18-9 螢幕屏比
+            if (size.x == 1440 & size.y == 2880){
+                SignInBtn_LP.topMargin = Math.round(
+                        getTransformPx(250,size.x)
+                );
+            }else {
+                SignInBtn_LP.topMargin = Math.round(
+                        getTransformPx(convertPixelsToDp(SignInBtn_LP.topMargin,getApplicationContext()),size.x)
+                );
+            }
             SignUpBtn_LP.topMargin = Math.round(
                     getTransformPx(convertPixelsToDp(SignUpBtn_LP.topMargin,getApplicationContext()),size.x)
             );
@@ -166,8 +177,7 @@ public class LoginActivity extends AppCompatActivity {
             ));
             edtId.setTextSize(Math.round(
                     convertPixelsToDp(
-                            getTransformPx(convertPixelsToDp(edtId.getTextSize(),getApplicationContext()),size.x)
-                            ,getApplicationContext())
+                            getTransformPx(convertPixelsToDp(edtId.getTextSize(),getApplicationContext()),size.x),getApplicationContext())
             ));
             edtPwd.setTextSize(Math.round(
                     convertPixelsToDp(

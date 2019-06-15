@@ -87,31 +87,8 @@ public class OneimageActivity extends AppCompatActivity {
         imgAssociate = (ImageView) findViewById(R.id.imgAssociate);
         imgAssociate.setImageResource(R.drawable.oneimage_2);   // 預設
 
-        ChoseImage();
+        ChosenImgNum = ChoseImage();
         // guideView();    // 教學 dialog
-
-
-
-        /**
-         *  Loaing image from Server
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    imageID = "as2";
-                    if (imageID != null) Log.d("Load image thread", "Successed");
-                    else Log.d("Load image thread", "Failed");
-                    Log.d("image_number", imageID);
-                    Picasso.get().load("http://140.122.91.218/thinkingapp/oneimagetest/image/" + imageID + ".png?1").into(imgAssociate);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.run();
-        */
-
 
         /// 左側滑出作答紀錄
         lvAssociate = (ListView) findViewById(R.id.lvAssociate);
@@ -183,8 +160,6 @@ public class OneimageActivity extends AppCompatActivity {
                             // if yes stop the timer and submit the sheet
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-
-                                /// Thread for timer update [0412]
                                 Thread timerthread = new Thread() {
                                     public void run() {
                                         Long currentTimer = timeRemaining / 1000;
@@ -194,8 +169,7 @@ public class OneimageActivity extends AppCompatActivity {
                                                 currentTimer.toString(),
                                                 getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
                                         );
-
-                                        Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                        /// 剩餘時間寫入 SharedPreferences
                                         getSharedPreferences("member", MODE_PRIVATE)
                                                 .edit()
                                                 .putString("oneimage",currentTimer.toString())
@@ -204,10 +178,6 @@ public class OneimageActivity extends AppCompatActivity {
                                 };
                                 timerthread.start();
 
-                                ///以下待修 使用 sharedpref 要改
-
-
-
                                 timer = null;
                                 Thread thread = new Thread() {
                                     public void run() {
@@ -215,9 +185,7 @@ public class OneimageActivity extends AppCompatActivity {
                                         ConnServer[] conn = new ConnServer[count];
                                         for (int index = RecordLength; index < count; index++) {
                                             String content = arrayAdapter.getItem(index + 1);
-                                            //Log.d("oneimageName", content);
-                                            conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
-
+                                            conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), oneimagetest_record.getString("chosenImage", "null"));
                                             Log.d("One image 此次新增","["+Integer.toString(index)+"]"+content);
                                             oneimagetest_record
                                                     .edit()
@@ -243,7 +211,6 @@ public class OneimageActivity extends AppCompatActivity {
                                     public void onTick(long l) {
                                         long time = l / 1000;
                                         if (isPaused) {
-                                            //timer.cancel();
                                             timer = null;
                                         } else {
                                             txtOneimageTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
@@ -254,12 +221,12 @@ public class OneimageActivity extends AppCompatActivity {
                                     @Override
                                     public void onFinish() {
                                         txtOneimageTimer.setText(String.format("00 分 00 秒"));
+                                        /// Time out dialog
                                         new AlertDialog.Builder(OneimageActivity.this)
                                                 .setMessage("時間結束。")
                                                 .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
-
                                                         /// Thread for timer update
                                                         Thread timerthread = new Thread() {
                                                             public void run() {
@@ -270,8 +237,7 @@ public class OneimageActivity extends AppCompatActivity {
                                                                         currentTimer.toString(),
                                                                         getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
                                                                 );
-
-                                                                Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                                                /// 剩餘時間寫入 SharedPreferences
                                                                 getSharedPreferences("member", MODE_PRIVATE)
                                                                         .edit()
                                                                         .putString("oneimage",currentTimer.toString())
@@ -279,22 +245,19 @@ public class OneimageActivity extends AppCompatActivity {
                                                             }
                                                         };
                                                         timerthread.start();
-
-                                                        //timer.cancel();
                                                         timer = null;
                                                         finish();
                                                     }
                                                 }).setCancelable(false).show();
+
+                                        /// Time out 資料全數送出
                                         Thread thread = new Thread() {
                                             public void run() {
                                                 int count = arrayAdapter.getCount() - 1;
                                                 ConnServer[] conn = new ConnServer[count];
                                                 for (int index = RecordLength; index < count; index++) {
                                                     String content = arrayAdapter.getItem(index + 1);
-                                                    //Log.d("oneimageName", content);
-
-                                                    conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
-
+                                                    conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), oneimagetest_record.getString("chosenImage", "null"));
                                                     Log.d("One image 此次新增","["+Integer.toString(index)+"]"+content);
                                                     oneimagetest_record
                                                             .edit()
@@ -319,7 +282,6 @@ public class OneimageActivity extends AppCompatActivity {
     private void startTimer() {
         if (timer == null) {
             // use MyCountDownTimer set myself context
-
 
             Long ltest = Long.parseLong(getSharedPreferences("member", MODE_PRIVATE).getString("oneimage", "null"));
             Log.d("簡圖聯想遊戲_讀秒",ltest.toString());
@@ -349,7 +311,7 @@ public class OneimageActivity extends AppCompatActivity {
             }
         }
 
-        // if timer finish
+        /// 時間結束
         @Override
         public void onFinish() {
             txtOneimageTimer.setText(String.format("00 分 00 秒"));
@@ -370,7 +332,7 @@ public class OneimageActivity extends AppCompatActivity {
                                             getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
                                     );
 
-                                    Log.d("剩餘時間(sp)",(currentTimer).toString());
+                                    /// 剩餘時間寫入 SharedPreferences
                                     getSharedPreferences("member", MODE_PRIVATE)
                                             .edit()
                                             .putString("oneimage",currentTimer.toString())
@@ -392,7 +354,7 @@ public class OneimageActivity extends AppCompatActivity {
                     for (int index = RecordLength; index < count; index++) {
                         String content = arrayAdapter.getItem(index + 1);
                         Log.d("oneimageName", content);
-                        conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
+                        conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), oneimagetest_record.getString("chosenImage", "null"));
 
                         Log.d("One image 此次新增","["+Integer.toString(index)+"]"+content);
 
@@ -407,7 +369,7 @@ public class OneimageActivity extends AppCompatActivity {
         }
     }
 
-    private void ChoseImage(){
+    private int ChoseImage(){
         final Dialog dialog = new Dialog(this,R.style.AppTheme);
         dialog.setContentView(R.layout.choseimage);
         dialog.show();
@@ -425,7 +387,7 @@ public class OneimageActivity extends AppCompatActivity {
                 (ImageView) dialog.findViewById(R.id.imageView5)} ;
 
         for (int i =0;i < imgv.length ;i++){
-            final  int ChosenImgNum = i;
+            final int ChosenImgNum = i;
             imgv[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -433,12 +395,25 @@ public class OneimageActivity extends AppCompatActivity {
                     // Log.d("[Chose]",Integer.toString(tmp));
                     Log.d("[Chose]",Integer.toString(ChosenImgNum));
                     imgAssociate.setImageResource(oneimages[ChosenImgNum]);
+
+//                    getSharedPreferences("member", MODE_PRIVATE)    // 寫入被選取圖片編號
+//                            .edit()
+//                            .putString("chosenImage",Integer.toString(ChosenImgNum))
+//                            .commit();
+
+                    oneimagetest_record
+                            .edit()
+                            .putString("chosenImage",Integer.toString(ChosenImgNum))
+                            .commit();
+
+                    Log.d("[Chose_SF]",oneimagetest_record.getString("chosenImage", "null"));
+
                     dialog.dismiss();
                     guideView();    // 教學 dialog
                 }
             });
         }
-
+        return ChosenImgNum;
     }
 
 
@@ -502,36 +477,4 @@ public class OneimageActivity extends AppCompatActivity {
         }
         return false;
     }
-
-    // post random image number
-    private String randomSetImage() {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        String webRequest = null;
-        String random_image;
-
-        HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/oneimagetest/fileCount.php");
-
-        try {
-            HttpResponse response = client.execute(request);
-            HttpEntity resEntity = response.getEntity();
-            webRequest = EntityUtils.toString(resEntity);
-            Log.d("webRequest", webRequest);
-
-            JSONObject obj = new JSONObject(webRequest);  // parse web request
-            random_image = obj.getString("random1");
-            Log.d("random_number", random_image);
-            return random_image;
-
-        } catch (java.io.IOException e) {
-            Log.d("IOException", e.getMessage());
-        } catch (org.json.JSONException e) {
-            Log.d("JSON Error", e.getMessage());
-        }
-        return null;
-    }
-
 }
