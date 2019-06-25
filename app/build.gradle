@@ -2,31 +2,36 @@ apply plugin: 'com.android.application'
 
 android {
     useLibrary 'org.apache.http.legacy'
-    compileSdkVersion 25
+    compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.yafun.thinkingapplication"
-        minSdkVersion 19
-        targetSdkVersion 25
-        versionCode 1
+        applicationId "kdd204.thinkingapplication"
+        minSdkVersion 25
+        targetSdkVersion 28
+        versionCode 3
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildToolsVersion '27.0.3'
+
+    productFlavors {
+    }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:25.+'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation 'com.android.support:support-v4:25.4.0'
-    testImplementation 'junit:junit:4.12'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.13-beta-3'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+//    implementation 'com.android.support:support-v4:25.4.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
 }
+

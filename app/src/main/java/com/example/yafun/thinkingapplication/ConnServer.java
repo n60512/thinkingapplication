@@ -171,7 +171,7 @@ public class ConnServer {
         //Object jsonOb = null;
 
         HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/drawing.php");
+        HttpPost request = new HttpPost("http://13.228.235.102/thinkingapp/connDB/drawing.php");
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
@@ -208,13 +208,13 @@ public class ConnServer {
      * @param crtuser
      * @param
      */
-    private void oneimage(String Data, String crtuser,String chosenImage) {
+    private void oneimage(String Data, String crtuser,String ChosenImage) {
 
         JSONObject obj;
         //Object jsonOb = null;
 
         HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/oneimage.php");
+        HttpPost request = new HttpPost("http://13.228.235.102/thinkingapp/connDB/oneimage.php");
 
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -223,7 +223,7 @@ public class ConnServer {
         params.add(new BasicNameValuePair("Data", Data));
         //params.add(new BasicNameValuePair("imageID", imageID));
         params.add(new BasicNameValuePair("crtuser", crtuser));
-        params.add(new BasicNameValuePair("chosenImage", chosenImage));
+        params.add(new BasicNameValuePair("ChosenImage", ChosenImage));
 
         //showMessage("oneimage imageID", imageID);
         try {
@@ -257,7 +257,7 @@ public class ConnServer {
     private void association(String description, String chosenContent, String crtuser) {
 
         HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/association.php");
+        HttpPost request = new HttpPost("http://13.228.235.102/thinkingapp/connDB/association.php");
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
@@ -291,7 +291,7 @@ public class ConnServer {
         String webResponse = null;
 
         HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/login.php");  // Post request
+        HttpPost request = new HttpPost("http://13.228.235.102/thinkingapp/connDB/login.php");  // Post request
 
         /// Setting Params
         List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -329,7 +329,7 @@ public class ConnServer {
         String webResponse = null;
 
         HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/signup.php");
+        HttpPost request = new HttpPost("http://13.228.235.102/thinkingapp/connDB/signup.php");
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
@@ -406,7 +406,7 @@ public class ConnServer {
         JSONObject obj;
 
         HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/update_answertime.php");
+        HttpPost request = new HttpPost("http://13.228.235.102/thinkingapp/connDB/update_answertime.php");
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
@@ -448,7 +448,7 @@ public class ConnServer {
         String webResponse = null;
         String answerRecord[] = null;
         HttpClient client = new DefaultHttpClient();
-        HttpPost request = new HttpPost("http://140.122.91.218/thinkingapp/connDB/select_personalRecord.php");
+        HttpPost request = new HttpPost("http://13.228.235.102/thinkingapp/connDB/select_personalRecord.php");
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 

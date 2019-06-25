@@ -1,6 +1,7 @@
 package com.example.yafun.thinkingapplication;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,32 +15,23 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.squareup.picasso.Picasso;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 import java.util.Map;
 
 public class OneimageActivity extends AppCompatActivity {
@@ -55,7 +47,9 @@ public class OneimageActivity extends AppCompatActivity {
     private ListView lvAssociate;
     private String imageID = null;
 
-    private ArrayAdapter<String> arrayAdapter;
+    ArrayList<listContext> mlist = new ArrayList<listContext>();
+    private myAdapter adapter;
+
 
     /// Timer Cont
     private long TIME = 481 * 1000L;
@@ -63,6 +57,7 @@ public class OneimageActivity extends AppCompatActivity {
 
     /// Timer State
     private boolean isPaused = false;
+    private boolean ifFinished = false;
     private long timeRemaining = 0;
 
 
@@ -87,32 +82,37 @@ public class OneimageActivity extends AppCompatActivity {
         imgAssociate = (ImageView) findViewById(R.id.imgAssociate);
         imgAssociate.setImageResource(R.drawable.oneimage_2);   // 預設
 
-        ChosenImgNum = ChoseImage();
-        // guideView();    // 教學 dialog
-
-        /// 左側滑出作答紀錄
-        lvAssociate = (ListView) findViewById(R.id.lvAssociate);
-        final List<String> listData = new ArrayList<String>(Arrays.asList("名稱"));   // new string list with title
-        // array adapter with string list
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listData);
-        lvAssociate.setAdapter(arrayAdapter);
-
-
-        /// 0412        改用登入先取資料
         oneimagetest_record = getSharedPreferences("oneimagetest_record", MODE_PRIVATE);
+        ChosenImgNum = ChoseImage();    // 這邊會接不到
+
+        // 左側滑出作答紀錄
+        lvAssociate = (ListView) findViewById(R.id.lvAssociate);
+
+        // add title to mlist
+
+        mlist.add(new listContext("名稱", "選擇"));
+        // new adapter with context and set
+        adapter = new myAdapter(OneimageActivity.this, mlist);
+        lvAssociate.setAdapter(adapter);
+
         Map<String,?> keys = oneimagetest_record.getAll();
 
         Log.d("Testing", "================================");
-        for(Map.Entry<String,?> entry : keys.entrySet()){
-            //Log.d("map values",entry.getKey() + ": " + entry.getValue().toString());
-            Log.d(entry.getKey(), entry.getValue().toString());
-
-            listData.add(entry.getValue().toString());
-            arrayAdapter.notifyDataSetChanged();
-        }
         Log.d("MapSize", Integer.toString(keys.size()));
-        RecordLength = (keys.size());//依據作答紀錄設置list起始位置
-        Log.d("Testing", "================================");
+        this.RecordLength = keys.size();
+        for(Map.Entry<String,?> entry : keys.entrySet()){
+            Log.d("map values",entry.getKey() + ": " + entry.getValue().toString());
+
+            String user_record = entry.getValue().toString().
+                    replace("[", "").
+                    replace("]", "").
+                    replace("\"", "");
+
+            String[] single_record_row = user_record.split(",");
+            Log.d("single_record_row",single_record_row[0] + ": " + single_record_row[1]);
+            mlist.add(new OneimageActivity.listContext(single_record_row[0], single_record_row[1]));
+            adapter.notifyDataSetChanged();
+        }
 
 
         btnOk.setOnClickListener(new Button.OnClickListener() {
@@ -120,8 +120,9 @@ public class OneimageActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // add string when click
                 if (!TextUtils.isEmpty(edtName.getText().toString())) {
-                    listData.add(edtName.getText().toString());
-                    arrayAdapter.notifyDataSetChanged();
+                    mlist.add(new OneimageActivity.listContext(edtName.getText().toString(),
+                            String.valueOf(ChosenImgNum)));
+                    adapter.notifyDataSetChanged();
                     edtName.setText("");
                 } else {
                     Toast.makeText(OneimageActivity.this, "請輸入作品名稱", Toast.LENGTH_SHORT).show();
@@ -137,6 +138,20 @@ public class OneimageActivity extends AppCompatActivity {
                 edtName.setText("");
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Do stuff you want here
+        ifFinished = true;
+    }
+
+    public void setChosenImgNum(int index){
+        ChosenImgNum = index;
+    }
+    public int getChosenImgNum(){
+        return ChosenImgNum;
     }
 
     // create menu
@@ -164,6 +179,7 @@ public class OneimageActivity extends AppCompatActivity {
                                     public void run() {
                                         Long currentTimer = timeRemaining / 1000;
                                         Log.d("剩餘時間(秒數)",(currentTimer).toString());
+
                                         connUpdate.updateAnwsertime(
                                                 "oneimage",
                                                 currentTimer.toString(),
@@ -181,15 +197,22 @@ public class OneimageActivity extends AppCompatActivity {
                                 timer = null;
                                 Thread thread = new Thread() {
                                     public void run() {
-                                        int count = arrayAdapter.getCount() - 1;
+                                        int count = adapter.getCount() - 1;
                                         ConnServer[] conn = new ConnServer[count];
                                         for (int index = RecordLength; index < count; index++) {
-                                            String content = arrayAdapter.getItem(index + 1);
-                                            conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), oneimagetest_record.getString("chosenImage", "null"));
-                                            Log.d("One image 此次新增","["+Integer.toString(index)+"]"+content);
+                                            listContext content = adapter.getItem(index + 1);   // !!!
+
+                                            conn[index] = new ConnServer("oneimage", content.name,
+                                                    getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                                    String.valueOf(getChosenImgNum())
+//                                                    oneimagetest_record.getString("ChosenImage", "null")
+                                            );
+
+                                            String insert_format = String.format("[\"%s\" ,%s]", content.name, getChosenImgNum());
+                                            Log.d("One image 此次新增","["+Integer.toString(index)+"]:" + insert_format);
                                             oneimagetest_record
                                                     .edit()
-                                                    .putString(Integer.toString(index),content)
+                                                    .putString(Integer.toString(index), insert_format)
                                                     .commit();
                                         }
                                     }
@@ -253,15 +276,22 @@ public class OneimageActivity extends AppCompatActivity {
                                         /// Time out 資料全數送出
                                         Thread thread = new Thread() {
                                             public void run() {
-                                                int count = arrayAdapter.getCount() - 1;
+                                                int count = adapter.getCount() - 1;
                                                 ConnServer[] conn = new ConnServer[count];
                                                 for (int index = RecordLength; index < count; index++) {
-                                                    String content = arrayAdapter.getItem(index + 1);
-                                                    conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), oneimagetest_record.getString("chosenImage", "null"));
-                                                    Log.d("One image 此次新增","["+Integer.toString(index)+"]"+content);
+                                                    listContext content = adapter.getItem(index + 1);   // !!!
+
+                                                    conn[index] = new ConnServer("oneimage", content.name,
+                                                            getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                                            String.valueOf(getChosenImgNum())
+//                                                            oneimagetest_record.getString("ChosenImage", "null")
+                                                    );
+
+                                                    Log.d("One image 此次新增","["+Integer.toString(index)+"]:" + content.name);
+                                                    String insert_format = String.format("[\"%s\" ,%s]", content.name, getChosenImgNum());
                                                     oneimagetest_record
                                                             .edit()
-                                                            .putString(Integer.toString(index),content)
+                                                            .putString(Integer.toString(index), insert_format)
                                                             .commit();
                                                 }
                                             }
@@ -315,7 +345,8 @@ public class OneimageActivity extends AppCompatActivity {
         @Override
         public void onFinish() {
             txtOneimageTimer.setText(String.format("00 分 00 秒"));
-            new AlertDialog.Builder(OneimageActivity.this)
+            AlertDialog.Builder finish_timer_AlertDialog = new AlertDialog.Builder(OneimageActivity.this);
+            finish_timer_AlertDialog
                     .setMessage("時間結束。")
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
@@ -345,22 +376,31 @@ public class OneimageActivity extends AppCompatActivity {
                             timer = null;
                             finish();
                         }
-                    }).setCancelable(false).show();
+                    }).setCancelable(false);
+
+            if (!ifFinished)    // if activity isn't destroy
+                finish_timer_AlertDialog.show();
+
             // submit the sheet
             Thread thread = new Thread() {
                 public void run() {
-                    int count = arrayAdapter.getCount() - 1;
+                    int count = adapter.getCount() - 1;
                     ConnServer[] conn = new ConnServer[count];
                     for (int index = RecordLength; index < count; index++) {
-                        String content = arrayAdapter.getItem(index + 1);
-                        Log.d("oneimageName", content);
-                        conn[index] = new ConnServer("oneimage", content, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"), oneimagetest_record.getString("chosenImage", "null"));
+                        listContext content = adapter.getItem(index + 1);   // !!!
 
-                        Log.d("One image 此次新增","["+Integer.toString(index)+"]"+content);
+                        conn[index] = new ConnServer("oneimage", content.name,
+                                getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                String.valueOf(getChosenImgNum())
+//                                oneimagetest_record.getString("ChosenImage", "null")
+                        );
 
+                        Log.d("One image 此次新增","["+Integer.toString(index)+"]:" + content.name);
+
+                        String insert_format = String.format("[\"%s\" ,%s]", content.name, getChosenImgNum());
                         oneimagetest_record
                                 .edit()
-                                .putString(Integer.toString(index),content)
+                                .putString(Integer.toString(index), insert_format)
                                 .commit();
                     }
                 }
@@ -372,6 +412,7 @@ public class OneimageActivity extends AppCompatActivity {
     private int ChoseImage(){
         final Dialog dialog = new Dialog(this,R.style.AppTheme);
         dialog.setContentView(R.layout.choseimage);
+        dialog.setCancelable(false);
         dialog.show();
 
         final int[] oneimages = {(R.drawable.oneimage_1),
@@ -386,36 +427,124 @@ public class OneimageActivity extends AppCompatActivity {
                 (ImageView) dialog.findViewById(R.id.imageView4),
                 (ImageView) dialog.findViewById(R.id.imageView5)} ;
 
-        for (int i =0;i < imgv.length ;i++){
+        for (int i = 0;i < imgv.length  ;i++){
             final int ChosenImgNum = i;
             imgv[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // int tmp = v.getId();
                     // Log.d("[Chose]",Integer.toString(tmp));
-                    Log.d("[Chose]",Integer.toString(ChosenImgNum));
+                    Log.d("[Chose]",Integer.toString(ChosenImgNum + 1));
                     imgAssociate.setImageResource(oneimages[ChosenImgNum]);
 
-//                    getSharedPreferences("member", MODE_PRIVATE)    // 寫入被選取圖片編號
+//                    oneimagetest_record
 //                            .edit()
-//                            .putString("chosenImage",Integer.toString(ChosenImgNum))
-//                            .commit();
-
-                    oneimagetest_record
-                            .edit()
-                            .putString("chosenImage",Integer.toString(ChosenImgNum))
-                            .commit();
-
-                    Log.d("[Chose_SF]",oneimagetest_record.getString("chosenImage", "null"));
+//                            .putString("ChosenImage",Integer.toString(ChosenImgNum + 1))
+//                            .commit();  /////1111
+//                    Log.d("[Chose_SF]",oneimagetest_record.getString("ChosenImage", "null"));
+                    setChosenImgNum(ChosenImgNum + 1);
 
                     dialog.dismiss();
                     guideView();    // 教學 dialog
                 }
             });
         }
-        return ChosenImgNum;
+        return getChosenImgNum();
     }
 
+    public class listContext {
+        private String name;
+        private String ChosenImage;
+        private ArrayList<String> select;
+
+        public listContext(String name, ArrayList<String> select) {
+            this.name = name;
+            this.select = select;
+        }
+
+        public listContext(String name, String ChosenImage) {
+            this.name = name;
+            this.ChosenImage = ChosenImage;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setSelect(ArrayList<String> select) {
+            this.select = select;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getChosenImage(){
+            return  ChosenImage;
+        }
+
+        public ArrayList<String> getSelect() {
+            return select;
+        }
+    }
+
+    // my adapter
+    public class myAdapter extends BaseAdapter {
+
+        // inflater context
+        private LayoutInflater mInflater;
+        // data context list
+        private ArrayList<OneimageActivity.listContext> mdatas;
+
+        public myAdapter(Context context, ArrayList<OneimageActivity.listContext> listcontext) {
+            mInflater = LayoutInflater.from(context);
+            this.mdatas = listcontext;
+        }
+
+        @Override
+        public int getCount() {
+            return mdatas.size();
+        }
+
+        @Override
+        public OneimageActivity.listContext getItem(int position) {
+            return mdatas.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return mdatas.indexOf(getItem(position));
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // set holder
+            OneimageActivity.myAdapter.ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.listitem, null);
+                holder = new OneimageActivity.myAdapter.ViewHolder((TextView) convertView.findViewById(R.id.txtListName),
+                        (TextView) convertView.findViewById(R.id.txtListSelect));
+                convertView.setTag(holder);
+            } else {
+                holder = (OneimageActivity.myAdapter.ViewHolder) convertView.getTag();
+            }
+            // set convertview with holder
+            OneimageActivity.listContext context = (OneimageActivity.listContext) getItem(position);
+            holder.txtListName.setText(context.getName());
+            holder.txtListSelect.setText(context.getChosenImage());
+            return convertView;
+        }
+
+        // holder structure
+        private class ViewHolder {
+            TextView txtListName;
+            TextView txtListSelect;
+
+            public ViewHolder(TextView txtListName, TextView txtListSelect) {
+                this.txtListName = txtListName;
+                this.txtListSelect = txtListSelect;
+            }
+        }
+    }
 
     // guide dialog view
     private void guideView() {

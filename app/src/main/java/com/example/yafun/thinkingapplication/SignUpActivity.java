@@ -73,7 +73,7 @@ public class SignUpActivity extends AppCompatActivity {
         privacy.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String showMsg = "《隱私權同意政策》\n同意收集個人資料，並用於學術研究";
+                String showMsg = "《隱私權同意政策》\n思考力活動為國立臺灣師範大學數位遊戲學習實驗室及資料探勘實驗室所共同開發之數位遊戲app，思考力活動開發團隊對於每位使用者的隱私權絕對尊重並保護重視。遵循《個人資料保護法》之規定，在未經您的同意之下，我們絕不會將您的個人資料提供予任何與本APP服務無關之第三方。請您妥善保密自己的使用帳號、密碼及個人資料，不要將任何個人資料，尤其是密碼提供給第三者。";
                 if(isChecked)
                 {
                     // Create an AlertDialog object.

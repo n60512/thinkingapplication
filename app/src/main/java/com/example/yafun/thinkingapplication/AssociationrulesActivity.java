@@ -43,6 +43,7 @@ import java.util.Hashtable;
 
 public class AssociationrulesActivity extends AppCompatActivity {
 
+    private boolean ifFinished = false;
     private boolean guideSet;
 
     // declare variable
@@ -326,6 +327,13 @@ public class AssociationrulesActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Do stuff you want here
+        ifFinished = true;
+    }
+
     // create menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -385,7 +393,9 @@ public class AssociationrulesActivity extends AppCompatActivity {
                                     }
                                 };
                                 thread.start();
+                                dialogInterface.dismiss();
                                 finish();
+
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -396,12 +406,13 @@ public class AssociationrulesActivity extends AppCompatActivity {
                                 // set remain time to new timer
                                 long millisInFuture = timeRemaining;
                                 long countDownInterval = 1000;
+
                                 timer = new CountDownTimer(millisInFuture, countDownInterval) {
                                     @Override
                                     public void onTick(long l) {
                                         long time = l / 1000;
                                         if (isPaused) {
-                                            //timer.cancel();
+                                            timer.cancel();
                                             timer = null;
                                         } else {
                                             txtAttributeTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
@@ -413,7 +424,7 @@ public class AssociationrulesActivity extends AppCompatActivity {
                                     public void onFinish() {
                                         txtAttributeTimer.setText(String.format("00 分 00 秒"));
                                         new AlertDialog.Builder(AssociationrulesActivity.this)
-                                                .setMessage("時間結束。")
+                                                .setMessage("時間結束.。")
                                                 .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -423,26 +434,28 @@ public class AssociationrulesActivity extends AppCompatActivity {
                                                             public void run() {
                                                                 Long currentTimer = timeRemaining / 1000;
                                                                 Log.d("剩餘時間(秒數)",(currentTimer).toString());
+
                                                                 connUpdate.updateAnwsertime(
-                                                                        "association",
+                                                                        "associationrules",
                                                                         currentTimer.toString(),
                                                                         getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
                                                                 );
-
                                                                 Log.d("剩餘時間(sp)",(currentTimer).toString());
                                                                 getSharedPreferences("member", MODE_PRIVATE)
                                                                         .edit()
-                                                                        .putString("association",currentTimer.toString())
+                                                                        .putString("associationrules",currentTimer.toString())
                                                                         .commit();
                                                             }
                                                         };
                                                         timerthread.start();
 
-                                                        //timer.cancel();
+                                                        timer.cancel();
                                                         timer = null;
+                                                        dialogInterface.dismiss();
                                                         finish();
                                                     }
                                                 }).setCancelable(false).show();
+
                                         Thread thread = new Thread() {
                                             public void run() {
                                                 int count = adapter.getCount() - 1;
@@ -493,25 +506,23 @@ public class AssociationrulesActivity extends AppCompatActivity {
         public MyCountDownTimer(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
         }
-
-        // counting time
         @Override
         public void onTick(long l) {
             long time = l / 1000;
+            Log.d("timer", String.valueOf(time));
             if (isPaused) {
-                //timer.cancel();
+                timer.cancel();
                 timer = null;
             } else {
                 txtAttributeTimer.setText(String.format("%02d 分 %02d 秒", time / 60, time % 60));
                 timeRemaining = l - 1000;
             }
         }
-
-        // if timer finish
         @Override
         public void onFinish() {
             txtAttributeTimer.setText(String.format("00 分 00 秒"));
-            new AlertDialog.Builder(AssociationrulesActivity.this)
+            AlertDialog.Builder finish_timer_AlertDialog = new AlertDialog.Builder(AssociationrulesActivity.this);
+            finish_timer_AlertDialog
                     .setMessage("時間結束。")
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
@@ -523,7 +534,7 @@ public class AssociationrulesActivity extends AppCompatActivity {
                                     Long currentTimer = timeRemaining / 1000;
                                     Log.d("剩餘時間(秒數)",(currentTimer).toString());
                                     connUpdate.updateAnwsertime(
-                                            "association",
+                                            "associationrules",
                                             currentTimer.toString(),
                                             getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
                                     );
@@ -539,9 +550,14 @@ public class AssociationrulesActivity extends AppCompatActivity {
 
                             //timer.cancel();
                             timer = null;
+                            dialogInterface.dismiss();
                             finish();
                         }
-                    }).setCancelable(false).show();
+                    }).setCancelable(false);
+
+            if (!ifFinished)    // if activity isn't destroy
+                finish_timer_AlertDialog.show();
+
             // submit the sheet
             Thread thread = new Thread() {
                 public void run() {
