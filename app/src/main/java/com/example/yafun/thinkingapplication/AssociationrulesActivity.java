@@ -328,7 +328,7 @@ public class AssociationrulesActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         // Do stuff you want here
         ifFinished = true;
@@ -555,29 +555,30 @@ public class AssociationrulesActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false);
 
-            if (!ifFinished)    // if activity isn't destroy
+            if (!ifFinished) {  // if activity isn't destroy
                 finish_timer_AlertDialog.show();
 
-            // submit the sheet
-            Thread thread = new Thread() {
-                public void run() {
-                    int count = adapter.getCount() - 1;
-                    ConnServer[] conn = new ConnServer[count];
-                    for (int index = RecordLength; index < count; index++) {
-                        String content = adapter.getItem(index + 1).getName();
-                        ArrayList<String> select = adapter.getItem(index + 1).getSelect();
-                        String[] chosenImgID = new String[select.size()];
-                        for (int idIndex = 0; idIndex < select.size(); idIndex++) {
-                            String key = select.get(idIndex);
-                            String value = "" + dict.get(key);
-                            chosenImgID[idIndex] = value;
-                            Log.d("chosenID", value);
+                // submit the sheet
+                Thread thread = new Thread() {
+                    public void run() {
+                        int count = adapter.getCount() - 1;
+                        ConnServer[] conn = new ConnServer[count];
+                        for (int index = RecordLength; index < count; index++) {
+                            String content = adapter.getItem(index + 1).getName();
+                            ArrayList<String> select = adapter.getItem(index + 1).getSelect();
+                            String[] chosenImgID = new String[select.size()];
+                            for (int idIndex = 0; idIndex < select.size(); idIndex++) {
+                                String key = select.get(idIndex);
+                                String value = "" + dict.get(key);
+                                chosenImgID[idIndex] = value;
+                                Log.d("chosenID", value);
+                            }
+                            conn[index] = new ConnServer("association", content, chosenImgID, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
                         }
-                        conn[index] = new ConnServer("association", content, chosenImgID, getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"));
                     }
-                }
-            };
-            thread.start();
+                };
+                thread.start();
+            }
         }
     }
 

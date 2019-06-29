@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.graphics.Point;
 import android.support.constraint.ConstraintLayout.LayoutParams;
 import android.content.Context;
+import android.net.ConnectivityManager;
 
 import org.json.*;
 
@@ -84,8 +85,17 @@ public class LoginActivity extends AppCompatActivity {
                 final String account = edtId.getText().toString();
                 final String password = edtPwd.getText().toString();
 
-                // Initialize  AsyncLogin() class with id and password
-                new AsyncLogin().execute(account, password);
+                if (edtId.getText().toString().equals("") || edtPwd.getText().toString().equals("")) {
+                    Toast.makeText(LoginActivity.this, "請輸入帳號及密碼", Toast.LENGTH_SHORT).show();
+                }else {
+                    if (isNetworkConnected()){
+                        // Initialize  AsyncLogin() class with id and password
+                        new AsyncLogin().execute(account, password);
+                    }
+                    else
+                        Toast.makeText(LoginActivity.this, "請確認網路連線狀況", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -96,6 +106,15 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(toreg);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed () {
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 
     public static float convertPixelsToDp(float px, Context context){
@@ -237,6 +256,8 @@ public class LoginActivity extends AppCompatActivity {
 
             // Log.d("Start AsyncLogin", params[0] + "," + params[1]);
             conn = new ConnServer();    //  Connect to database && check login information
+
+
             PERMISSION = conn.CheckLogin(params[0], params[1]); // 設定 permission;確認登入
 
             writeShardPreferences("drawing",params[0]);         // 待修
@@ -306,10 +327,10 @@ public class LoginActivity extends AppCompatActivity {
             if (PERMISSION) {
                 connRecord = new ConnServer();  //  get Record
                 /**
-                             *  recordList
-                             *   drawing && drawingmult 時為 [ [data,imag],[data,imag],... ]
-                             *   oneimage 則為 [ data ,data,... ]
-                             */
+                 *  recordList
+                 *   drawing && drawingmult 時為 [ [data,imag],[data,imag],... ]
+                 *   oneimage 則為 [ data ,data,... ]
+                 */
                 String[] recordList = connRecord.PersonalRecord(database, account);
                 imagetest = getSharedPreferences(database + "_record", MODE_PRIVATE);       // Store historic answer into Shared Preference
 

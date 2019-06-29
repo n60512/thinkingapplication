@@ -1,7 +1,9 @@
 package com.example.yafun.thinkingapplication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -73,7 +75,7 @@ public class SignUpActivity extends AppCompatActivity {
         privacy.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String showMsg = "《隱私權同意政策》\n思考力活動為國立臺灣師範大學數位遊戲學習實驗室及資料探勘實驗室所共同開發之數位遊戲app，思考力活動開發團隊對於每位使用者的隱私權絕對尊重並保護重視。遵循《個人資料保護法》之規定，在未經您的同意之下，我們絕不會將您的個人資料提供予任何與本APP服務無關之第三方。請您妥善保密自己的使用帳號、密碼及個人資料，不要將任何個人資料，尤其是密碼提供給第三者。";
+                String showMsg = "《隱私權同意政策》\n\n\t思考力活動為國立臺灣師範大學數位遊戲學習實驗室及資料探勘實驗室所共同開發之數位遊戲app，思考力活動開發團隊對於每位使用者的隱私權絕對尊重並保護重視。遵循《個人資料保護法》之規定，在未經您的同意之下，我們絕不會將您的個人資料提供予任何與本APP服務無關之第三方。請您妥善保密自己的使用帳號、密碼及個人資料，不要將任何個人資料，尤其是密碼提供給第三者。";
                 if(isChecked)
                 {
                     // Create an AlertDialog object.
@@ -85,12 +87,8 @@ public class SignUpActivity extends AppCompatActivity {
                     // Show the alert dialog.
                     alertDialog.show();
                 }
-
             }
         });
-
-
-
         SharedPreferences tmp;
         tmp = getSharedPreferences("member", MODE_PRIVATE);
         SharedPreferences.Editor editor = tmp.edit();
@@ -124,14 +122,22 @@ public class SignUpActivity extends AppCompatActivity {
                 if (edtId.getText().toString().equals("") || edtPwd.getText().toString().equals("")) {
                     Toast.makeText(SignUpActivity.this, "帳號及密碼欄位為必填項目", Toast.LENGTH_SHORT).show();
                 }else {
-
-                    // Initialize  AsyncLogin() class with param
-                    new SignUpActivity.AsyncLogin().execute(account, password, classdata, emailtext, school, sex,age,living,religion);
+                    if (isNetworkConnected()){
+                        // Initialize  AsyncLogin() class with param
+                        new SignUpActivity.AsyncLogin().execute(account, password, classdata, emailtext, school, sex,age,living,religion);
+                    }
+                    else
+                        Toast.makeText(SignUpActivity.this, "請確認網路連線狀況", Toast.LENGTH_SHORT).show();
                 }
 
 
             }
         });
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 
     private AdapterView.OnItemSelectedListener spnOnItemSelected = new AdapterView.OnItemSelectedListener()
@@ -174,10 +180,9 @@ public class SignUpActivity extends AppCompatActivity {
             Log.i("Start AsyncLogin", params[0] + "," + params[1] + "," + params[2] + "," + params[3]+ "," + params[4] + "," + params[5]+ "," + params[6]+ "," + params[7]+ "," + params[8]);
 
             // Connect to database && check login information
-            conn = new ConnServer(params[0], params[1], params[2] , params[3], params[4], params[5], params[6], params[7], params[8]);
-
+            conn = new ConnServer();
             // 設定 permission;確認登入
-            permission = conn.checkSignUp();
+            permission =  conn.CheckSignUp(params[0], params[1], params[2] , params[3], params[4], params[5], params[6], params[7], params[8]);
 
             return null;
         }
@@ -185,93 +190,17 @@ public class SignUpActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
 
-            if(permission){
+            if(permission) {
                 //toast message
                 Toast.makeText(SignUpActivity.this, "註冊成功", Toast.LENGTH_SHORT).show();
-
-                //Intent backtologin = new Intent(SignUpActivity.this, LoginActivity.class);
-                //startActivity(backtologin);
                 finish();
-//            }else{
-//                Toast.makeText(SignUpActivity.this, "註冊失敗", Toast.LENGTH_SHORT).show();
-//            }
-//
-//
-//            member = getSharedPreferences("member", MODE_PRIVATE);
-//                //member.edit().remove().commit();
-//
-//                String content = conn.getMemberInf();               //  Get member information , type:String
-//                Log.d("getMemberInf",content);
-//                try {
-//                    JSONObject jsonObj = new JSONObject(content);   // JSONObject
-//                    Iterator<String> keys = jsonObj.keys();         // Iterator
-//
-//                    while (keys.hasNext()) {
-//                        //Log.d(key,jsonObj.getString(key));
-//                        String key = (String) keys.next();
-//                        member.edit()
-//                                .putString(key, jsonObj.getString(key))
-//                                .commit();
-//                    }
-//                } catch (JSONException e) {
-//                    Log.d("JSONException", e.getLocalizedMessage());
-//                } finally {
-//                    Log.d("test",
-//                            getSharedPreferences("member", MODE_PRIVATE).getString("id", "null")
-//                    );
-//                }
-//
-//
-//                // toast message
-//                Toast.makeText(SignUpActivity.this, "註冊成功", Toast.LENGTH_SHORT).show();
-//
-//                // get intent to put result value
-//                Intent intent = SignUpActivity.this.getIntent();
-//                intent.putExtra("username", edtId.getText().toString());
-//
-//                // return result to original activity
-//                SignUpActivity.this.setResult(RESULT_OK, intent);
-//                SignUpActivity.this.finish();
             }
-            // else show login fail
             else {
-                //Log.d("login result", "fail");
                 new AlertDialog.Builder(SignUpActivity.this)
                         .setMessage("註冊失敗")
                         .setPositiveButton("OK", null)
                         .show();
             }
         }
-//
-//        @Override
-//        protected void onPreExecute() {
-//        }
-//
-//        @Override
-//        protected void onProgressUpdate(Void... values) {
-//        }
-//
-//        private void writeShardPreferences(String database,String account){
-//            connRecord = new ConnServer();//get Record
-//            String[] tmparr = connRecord.PersonalRecord(database,account);
-//            imagetest = getSharedPreferences(database+"_record", MODE_PRIVATE);
-//            Log.d(database+"_record","success");//data
-//            if(tmparr!=null) {
-//                for (int i = 0; i < tmparr.length; i++) {
-//                    try {
-//                        JSONArray data = new JSONArray(tmparr[i]);
-//                        //Log.d("JSONArray",data.get(1).toString());//data
-//
-//                        Log.d("JSONArray", data.get(0).toString());
-//                        imagetest.edit()
-//                                .putString(data.get(0).toString(), data.get(1).toString())
-//                                .commit();
-//
-//                    } catch (JSONException e) {
-//                        Log.d("Err", "");
-//                    }
-//                }
-//            }
-//        }
     }
 }

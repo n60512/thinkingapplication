@@ -141,7 +141,7 @@ public class OneimageActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         // Do stuff you want here
         ifFinished = true;
@@ -378,34 +378,35 @@ public class OneimageActivity extends AppCompatActivity {
                         }
                     }).setCancelable(false);
 
-            if (!ifFinished)    // if activity isn't destroy
+            if (!ifFinished) {    // if activity isn't destroy
                 finish_timer_AlertDialog.show();
 
-            // submit the sheet
-            Thread thread = new Thread() {
-                public void run() {
-                    int count = adapter.getCount() - 1;
-                    ConnServer[] conn = new ConnServer[count];
-                    for (int index = RecordLength; index < count; index++) {
-                        listContext content = adapter.getItem(index + 1);   // !!!
+                // submit the sheet
+                Thread thread = new Thread() {
+                    public void run() {
+                        int count = adapter.getCount() - 1;
+                        ConnServer[] conn = new ConnServer[count];
+                        for (int index = RecordLength; index < count; index++) {
+                            listContext content = adapter.getItem(index + 1);   // !!!
 
-                        conn[index] = new ConnServer("oneimage", content.name,
-                                getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
-                                String.valueOf(getChosenImgNum())
+                            conn[index] = new ConnServer("oneimage", content.name,
+                                    getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                    String.valueOf(getChosenImgNum())
 //                                oneimagetest_record.getString("ChosenImage", "null")
-                        );
+                            );
 
-                        Log.d("One image 此次新增","["+Integer.toString(index)+"]:" + content.name);
+                            Log.d("One image 此次新增", "[" + Integer.toString(index) + "]:" + content.name);
 
-                        String insert_format = String.format("[\"%s\" ,%s]", content.name, getChosenImgNum());
-                        oneimagetest_record
-                                .edit()
-                                .putString(Integer.toString(index), insert_format)
-                                .commit();
+                            String insert_format = String.format("[\"%s\" ,%s]", content.name, getChosenImgNum());
+                            oneimagetest_record
+                                    .edit()
+                                    .putString(Integer.toString(index), insert_format)
+                                    .commit();
+                        }
                     }
-                }
-            };
-            thread.start();
+                };
+                thread.start();
+            }
         }
     }
 

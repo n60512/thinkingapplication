@@ -43,6 +43,7 @@ import java.util.Map;
 public class DrawingmultActivity extends AppCompatActivity {
 
     private Boolean guideSet;
+    private boolean ifFinished = false; //  check if activity is destroy
 
     // declare variable
     private EditText edtName;
@@ -164,7 +165,12 @@ public class DrawingmultActivity extends AppCompatActivity {
             }
         });
     }
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Do stuff you want here
+        ifFinished = true;
+    }
     // create menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -369,7 +375,8 @@ public class DrawingmultActivity extends AppCompatActivity {
         @Override
         public void onFinish() {
             txtExpandTimer.setText(String.format("00 分 00 秒"));
-            new AlertDialog.Builder(DrawingmultActivity.this)
+            AlertDialog.Builder finish_timer_AlertDialog = new AlertDialog.Builder(DrawingmultActivity.this);
+            finish_timer_AlertDialog
                     .setMessage("時間結束。")
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
@@ -399,34 +406,39 @@ public class DrawingmultActivity extends AppCompatActivity {
                             timer = null;
                             finish();
                         }
-                    }).setCancelable(false).show();
-            // submit the sheet
-            Thread thread = new Thread() {
-                public void run() {
-                    int count = adapter.getCount();
-                    // create datalist and upload data to server
-                    ConnServer[] conn = new ConnServer[count];
-                    for (int index = RecordLength; index < count; index++) {
-                        // get adapter info.
-                        String content = adapter.getItem(index).getName();
-                        Bitmap uploadimg = adapter.getItem(index).getImage();
-                        // connect to Server
-                        conn[index] = new ConnServer(
-                                "drawingmult",
-                                content,
-                                getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
-                                uploadimg
-                        );
-                        drawingmult_record
-                                .edit()
-                                .putString(content,conn[index].toBase64(uploadimg))
-                                .commit();
+                    }).setCancelable(false);
 
-                        uploadimg.recycle();   //  recycle resource
+            if (!ifFinished) {    // if activity isn't destroy
+                finish_timer_AlertDialog.show();
+
+                // submit the sheet
+                Thread thread = new Thread() {
+                    public void run() {
+                        int count = adapter.getCount();
+                        // create datalist and upload data to server
+                        ConnServer[] conn = new ConnServer[count];
+                        for (int index = RecordLength; index < count; index++) {
+                            // get adapter info.
+                            String content = adapter.getItem(index).getName();
+                            Bitmap uploadimg = adapter.getItem(index).getImage();
+                            // connect to Server
+                            conn[index] = new ConnServer(
+                                    "drawingmult",
+                                    content,
+                                    getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                    uploadimg
+                            );
+                            drawingmult_record
+                                    .edit()
+                                    .putString(content, conn[index].toBase64(uploadimg))
+                                    .commit();
+
+                            uploadimg.recycle();   //  recycle resource
+                        }
                     }
-                }
-            };
-            thread.start();
+                };
+                thread.start();
+            }
         }
     }
 

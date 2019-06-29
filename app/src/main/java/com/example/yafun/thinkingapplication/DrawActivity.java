@@ -51,6 +51,7 @@ import java.util.Map;
 public class DrawActivity extends AppCompatActivity {
 
     private Boolean guideSet;
+    private boolean ifFinished = false; //  check if activity is destroy
 
     // declare variable
     private EditText edtName;
@@ -179,6 +180,14 @@ public class DrawActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Do stuff you want here
+        ifFinished = true;
     }
 
     // create menu
@@ -365,7 +374,8 @@ public class DrawActivity extends AppCompatActivity {
         @Override
         public void onFinish() {
             txtDrawTimer.setText(String.format("00 分 00 秒"));
-            new AlertDialog.Builder(DrawActivity.this)
+            AlertDialog.Builder finish_timer_AlertDialog = new AlertDialog.Builder(DrawActivity.this);
+            finish_timer_AlertDialog
                     .setMessage("時間結束。")
                     .setPositiveButton("返回首頁", new DialogInterface.OnClickListener() {
                         @Override
@@ -395,33 +405,38 @@ public class DrawActivity extends AppCompatActivity {
                             timer = null;
                             finish();
                         }
-                    }).setCancelable(false).show();
-            // submit the sheet
-            // commit content to database
-            Thread thread = new Thread() {
-                public void run() {
-                    int count = adapter.getCount();
-                    ConnServer[] conn = new ConnServer[count];
-                    for (int index = RecordLength; index < count; index++) {
-                        String content = adapter.getItem(index).getName();
-                        Bitmap uploadimg = adapter.getItem(index).getImage();
-                        // connect to Server
-                        conn[index] = new ConnServer(
-                                "drawing",
-                                content,
-                                getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
-                                uploadimg
-                        );
-                        drawing_record
-                                .edit()
-                                .putString(content,conn[index].toBase64(uploadimg))
-                                .commit();
+                    }).setCancelable(false);
 
-                        uploadimg.recycle();   //  recycle resource
+            if (!ifFinished) {    // if activity isn't destroy
+                finish_timer_AlertDialog.show();
+
+                // submit the sheet
+                // commit content to database
+                Thread thread = new Thread() {
+                    public void run() {
+                        int count = adapter.getCount();
+                        ConnServer[] conn = new ConnServer[count];
+                        for (int index = RecordLength; index < count; index++) {
+                            String content = adapter.getItem(index).getName();
+                            Bitmap uploadimg = adapter.getItem(index).getImage();
+                            // connect to Server
+                            conn[index] = new ConnServer(
+                                    "drawing",
+                                    content,
+                                    getSharedPreferences("member", MODE_PRIVATE).getString("id", "null"),
+                                    uploadimg
+                            );
+                            drawing_record
+                                    .edit()
+                                    .putString(content, conn[index].toBase64(uploadimg))
+                                    .commit();
+
+                            uploadimg.recycle();   //  recycle resource
+                        }
                     }
-                }
-            };
-            thread.start();
+                };
+                thread.start();
+            }
         }
     }
 

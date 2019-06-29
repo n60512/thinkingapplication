@@ -49,32 +49,6 @@ public class ConnServer {
     }
 
     /**
-     * Sign up
-     *
-     * @param account
-     * @param password
-     * @param classdata
-     * @param emailtext
-     * @param school
-     * @param sex
-     * @param age
-     * @param living
-     * @param religion
-     *
-     */
-    public ConnServer(String account, String password, String classdata, String emailtext, String school, String sex,String age,String living,String religion) {
-        this.account = account;
-        this.password = password;
-        this.classdata = classdata;
-        this.emailtext = emailtext;
-        this.school = school;
-        this.sex = sex;
-        this.age = age;
-        this.living = living;
-        this.religion = religion;
-    }
-
-    /**
      * 處理遊戲 drawing , drawingmult 建構子
      *
      * @param database
@@ -124,26 +98,6 @@ public class ConnServer {
 
         int index = 0;
         String tmpText = "";
-
-        //1001更改
-        /*for (String option : chosenList)
-            tmpText = tmpText + "'chosen" + Integer.toString(index = index + 1) + "','" + option + "',";
-        String chosenContent = "column_create(" + tmpText.substring(0, tmpText.length() - 1) + ")";     // column_create('chosen1','0','chosen2','0' ...)
-            */
-
-        //1001更改格式
-        /*for (String option : chosenList)
-            tmpText = tmpText + option + ",";
-
-        String chosenContent = tmpText.substring(0, tmpText.length() - 1) ;     // column_create('chosen1','0','chosen2','0' ...)
-
-        showMessage("chosenContent_test", chosenContent); //for test
-
-        if (this.database.equals("association")) {
-            association(description, chosenContent, crtuser);
-        } else {
-        }*/
-
 
         //1116 整合格式
         for (String option : chosenList)
@@ -307,10 +261,15 @@ public class ConnServer {
 
             obj = new JSONObject(this.webRequest);            // parse web request
             webResponse = obj.getString("response");    // store webResponse
-            this.memberData = obj.getString("member");   // store member information
-
             showMessage("Response", webResponse);
-            showMessage("Member Data", this.memberData);
+
+            if (webResponse.equals("successful")) {
+                this.memberData = obj.getString("member");   // store member information
+                showMessage("Member Data", this.memberData);
+                return true;
+            }
+            else
+                return false;
 
         } catch (java.io.IOException e) {
             showMessage("IOException", e.getMessage());
@@ -323,7 +282,12 @@ public class ConnServer {
                 return false;
         }
     }
-    public boolean checkSignUp(){
+
+    /**
+     * Check Sign Up
+     * @return boolean
+     */
+    public boolean CheckSignUp(String account, String password, String classdata, String emailtext, String school, String sex,String age,String living,String religion){
 
         JSONObject obj;
         String webResponse = null;
@@ -333,20 +297,17 @@ public class ConnServer {
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-        params.add(new BasicNameValuePair("account", this.account));
-        params.add(new BasicNameValuePair("password", this.password));
-        params.add(new BasicNameValuePair("classdata", this.classdata));
-        params.add(new BasicNameValuePair("emailtext", this.emailtext));
-        params.add(new BasicNameValuePair("school", this.school));
-        params.add(new BasicNameValuePair("sex", this.sex));
-        params.add(new BasicNameValuePair("age", this.age));
-        params.add(new BasicNameValuePair("living", this.living));
-        params.add(new BasicNameValuePair("religion", this.religion));
-        //Log.i("AsyncLogin", this.account + "," + this.password + "," + this.classdata + "," + this.emailtext+ "," + this.school + "," + this.sex+ "," + this.age+ "," + this.living+ "," + this.religion);
-
+        params.add(new BasicNameValuePair("account", account));
+        params.add(new BasicNameValuePair("password", password));
+        params.add(new BasicNameValuePair("classdata", classdata));
+        params.add(new BasicNameValuePair("emailtext", emailtext));
+        params.add(new BasicNameValuePair("school", school));
+        params.add(new BasicNameValuePair("sex", sex));
+        params.add(new BasicNameValuePair("age", age));
+        params.add(new BasicNameValuePair("living", living));
+        params.add(new BasicNameValuePair("religion", religion));
 
         try {
-
             request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params
             HttpResponse response = client.execute(request);        //  get web response
 
@@ -355,11 +316,7 @@ public class ConnServer {
 
             obj = new JSONObject(this.webRequest);            // parse web request
             webResponse = obj.getString("response");    // store webResponse
-
-            //this.memberInf = obj.getString("member");   // store member information
-
-            //showMessage("memberInf", this.memberInf);
-            //showMessage("login", webResponse);
+            showMessage("Response", webResponse);
 
         } catch (java.io.IOException e) {
             showMessage("IOException", e.getMessage());
@@ -373,7 +330,6 @@ public class ConnServer {
                 return false;
             else
                 return false;
-
         }
     }
 
