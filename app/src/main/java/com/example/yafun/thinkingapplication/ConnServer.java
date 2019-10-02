@@ -370,6 +370,8 @@ public class ConnServer {
         params.add(new BasicNameValuePair("currentTime", currentTime));
         params.add(new BasicNameValuePair("userID", userID));
 
+        showMessage("updateAnwsertime console", (game+" "+currentTime+" "+userID));
+
         try {
 
             request.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));    //  set post params
